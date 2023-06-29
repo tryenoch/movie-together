@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bitc.full505_team2_project.mapper.MovieDetailMapper">
+
+    <insert id="makeData" parameterType="String">
+        INSERT INTO
+            movie (movie_title)
+        SELECT
+            #{movieTitle}
+        FROM DUAL
+        WHERE NOT EXISTS
+            (SELECT * FROM movie WHERE movie_title = #{movieTitle});
+    </insert>
+
+    <select id="getMoviePk" parameterType="String" resultType="int">
+        SELECT
+            movie_pk
+        FROM
+            movie
+        WHERE
+            movie_title = #{movieTitle};
+    </select>
+
+    <select id="selectMovieInfo" parameterType="int" resultType="com.bitc.full505_team2_project.dto.MovieDto">
+        SELECT
+            movie_pk, movie_title, movie_like_cnt
+        FROM
+            movie
+        WHERE
+            movie_pk = #{moviePk}
+    </select>
+</mapper>
+
