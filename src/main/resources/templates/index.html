@@ -17,10 +17,15 @@
   <script></script>
 </head>
 <body>
-<header></header>
+<!-- header 영역-->
+<header th:replace="~{layout/header :: header-basic}"></header>
+
+<!-- main 영역 -->
 <main class="container my-4">
   <h1>테스트 페이지입니다.</h1>
 </main>
-<footer></footer>
+
+<!--footer 영역-->
+<footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>
 </html>
