@@ -16,19 +16,18 @@
     <script>
         $(document).ready(function (){
             let today = new Date();
-            let yesterday = today.getFullYear().toString()+(today.getMonth()+1).toString()+(today.getDate()-1).toString()
-            let targetDate = yesterday;
+            let year = today.getFullYear();
+            let month = today.getMonth()+1;
+            let day = today.getDate()-1;
+            let targetDate = year.toString().padStart(4,'0')+month.toString().padStart(2,'0')+day.toString().padStart(2,'0');
             $.ajax({
                 url:"http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=0cef8373c2ef480da57a59e3967ca38f&targetDt="+targetDate,
                 type:"GET",
                 data:{},
                 success: function (data){
                     const boxOfficeResult = data.boxOfficeResult;
-                    // const boxofficeType = boxOfficeResult.boxofficeType;
-                    // const showRange = boxOfficeResult.showRange;
                     const dailyBoxOfficeList = boxOfficeResult.dailyBoxOfficeList;
-                    const card = "";
-                    card.empty()
+                    const card = $("div.row");
                     for(let i = 0; i<dailyBoxOfficeList.length; i++){
                         let tag = "<div class=\"col-sm-3\">"
                         tag +="<div class=\"card\" style=\"width: 18rem;\">"
@@ -37,8 +36,8 @@
                         tag +="<p>"+dailyBoxOfficeList[i].rank+"</p>"
                         tag +="</div>"
                         tag +="<div class=\"card-body\">"
-                        tag +="<h4 class=\"card-title\">"+dailyBoxOfficeList +"</h4>"
-                        tag +="<p class=\"card-text\">"+"평점?"+dailyBoxOfficeList[i].audiAcc+"<br>"+dailyBoxOfficeList[i].openDt+"</p>"
+                        tag +="<h4 class=\"card-title\">"+dailyBoxOfficeList[i].movieNm +"</h4>"
+                        tag +="<p class=\"card-text\">"+"평점?"+"총 관람객:"+dailyBoxOfficeList[i].audiAcc+"<br>"+"상영시작날짜"+dailyBoxOfficeList[i].openDt+"</p>"
                         tag +="</div>"
                         tag +="</div>"
                         tag +="</div>"
