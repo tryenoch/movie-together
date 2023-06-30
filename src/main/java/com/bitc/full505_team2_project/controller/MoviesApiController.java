@@ -1,7 +1,9 @@
 package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.dto.DailyMovieDTO;
+import com.bitc.full505_team2_project.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +24,9 @@ import java.util.Objects;
 
 @Controller
 public class MoviesApiController {
+    @Autowired
+    private  MovieService movieService;
+
 //    @GetMapping("Movie")
 //    public String getApi(){
 //        HashMap<String, Object> result = new HashMap<String,Object>();
@@ -65,7 +70,7 @@ public class MoviesApiController {
     public Object MovieTogetherProcess(@RequestParam("targetDt")String targetDt)throws Exception{
         String url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=0cef8373c2ef480da57a59e3967ca38f&targetDt="+targetDt;
 
-        List<DailyMovieDTO> dailyMovieDTOList = null;
+        List<DailyMovieDTO> dailyMovieDTOList = movieService.getDailyMovieList(url);
         return dailyMovieDTOList;
     }
         }
