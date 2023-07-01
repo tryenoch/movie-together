@@ -28,6 +28,13 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.jsoup/jsoup
 	implementation 'org.jsoup:jsoup:1.16.1'
 
+	// https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5
+	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.2'
+
+	// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl
+	implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
+
+
 
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

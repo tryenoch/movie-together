@@ -1,7 +1,7 @@
 package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.crowling.JsoupCrowling;
-import com.bitc.full505_team2_project.dto.MovieDto;
+import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.crowling.Selenium;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
 import com.bitc.full505_team2_project.service.MovieDetailService;
@@ -46,14 +46,22 @@ public class MovieDetailController {
     public ModelAndView movieDetailView( @PathVariable String moviePk) throws Exception {
         int pk = Integer.parseInt(moviePk);
         ModelAndView mv = new ModelAndView("movie/detail");
-        MovieDto movie = mds.selectMovieInfo(pk);
+        MovieDTO movie = mds.selectMovieInfo(pk);
         mv.addObject("movie",movie);
 
-        Selenium selenium = new Selenium();
-        List<MovieTimeTableDto> timeTable = selenium.getCgvSchedule("스파이더맨-어크로스 더 유니버스");
-        System.out.println(timeTable);
-        mv.addObject("timeTable", timeTable);
+        Selenium selenium = new Selenium("20230702");
+        List<MovieTimeTableDto> timeTableCgv = selenium.getCgvSchedule("스파이더맨-어크로스 더 유니버스");
+        System.out.println(timeTableCgv);
+        List<MovieTimeTableDto> timeTableMegaBox = selenium.getMegaBoxSchedule("인디아나 존스: 운명의 다이얼");
+        System.out.println(timeTableMegaBox);
+
+
+//        mv.addObject("timeTableCgv", timeTableCgv);
 
         return mv;
+    }
+    @RequestMapping(value = "/megabox")
+    public String megaboxText() throws Exception {
+        return "redirect:https://www.megabox.co.kr/on/oh/ohc/Brch/schedulePage.do";
     }
 }

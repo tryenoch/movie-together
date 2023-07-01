@@ -1,6 +1,6 @@
 package com.bitc.full505_team2_project.service;
 
-import com.bitc.full505_team2_project.dto.MovieDto;
+import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.mapper.MovieDetailMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         return pk;
     }
     @Override
-    public MovieDto selectMovieInfo(int moviePk) throws Exception {
-        MovieDto movie = mdm.selectMovieInfo(moviePk);
+    public MovieDTO selectMovieInfo(int moviePk) throws Exception {
+        MovieDTO movie = mdm.selectMovieInfo(moviePk);
         return movie;
     }
 }

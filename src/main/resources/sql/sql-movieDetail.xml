@@ -24,7 +24,7 @@
             movie_title = #{movieTitle};
     </select>
 
-    <select id="selectMovieInfo" parameterType="int" resultType="com.bitc.full505_team2_project.dto.MovieDto">
+    <select id="selectMovieInfo" parameterType="int" resultType="com.bitc.full505_team2_project.dto.MovieDTO">
         SELECT
             movie_pk, movie_title, movie_like_cnt
         FROM
