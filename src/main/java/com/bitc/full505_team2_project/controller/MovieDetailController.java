@@ -1,8 +1,7 @@
 package com.bitc.full505_team2_project.controller;
 
-import com.bitc.full505_team2_project.crowling.JsoupCrowling;
 import com.bitc.full505_team2_project.dto.MovieDTO;
-import com.bitc.full505_team2_project.crowling.Selenium;
+import com.bitc.full505_team2_project.crowling.TimeTable;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
 import com.bitc.full505_team2_project.service.MovieDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,15 +45,20 @@ public class MovieDetailController {
     public ModelAndView movieDetailView( @PathVariable String moviePk) throws Exception {
         int pk = Integer.parseInt(moviePk);
         ModelAndView mv = new ModelAndView("movie/detail");
+
+        // pk를 가지고 영화정보(pk, title, likeCnt)를 db에서가져옴
         MovieDTO movie = mds.selectMovieInfo(pk);
         mv.addObject("movie",movie);
 
-        Selenium selenium = new Selenium("20230702");
-        List<MovieTimeTableDto> timeTableCgv = selenium.getCgvSchedule("스파이더맨-어크로스 더 유니버스");
+        // 날짜 설정해서 TimeTable클래스 객체 생성후 클래스의 메소드를 이용하여 3개 영화관에서 시간표를 가져옴
+        // 제목과 부제목이 :이나 - 아무거나 써도 알아서 각 영화관 홈페이지의 양식에 맞게 변환하여 검색해줌
+        TimeTable timeTable = new TimeTable("20230703");
+        List<MovieTimeTableDto> timeTableCgv = timeTable.getCgvSchedule("인디아나 존스:운명의 다이얼");
         System.out.println(timeTableCgv);
-        List<MovieTimeTableDto> timeTableMegaBox = selenium.getMegaBoxSchedule("인디아나 존스: 운명의 다이얼");
+        List<MovieTimeTableDto> timeTableMegaBox = timeTable.getMegaBoxSchedule("인디아나 존스:운명의 다이얼");
         System.out.println(timeTableMegaBox);
-
+        List<MovieTimeTableDto> timeTableLC = timeTable.getLotteCinemaSchedule("인디아나 존스:운명의 다이얼");
+        System.out.println(timeTableLC);
 
 //        mv.addObject("timeTableCgv", timeTableCgv);
 
