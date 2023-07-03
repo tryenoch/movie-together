@@ -10,5 +10,19 @@
         values (#{memberId},#{memberPw},#{memberName},#{memberEmail},#{memberBirth},now())
     </insert>
 
+    <select id="loginCheck" resultType="int" parameterType="String">
+        select count(member_id) as 'cnt'
+        from member
+        where member_id = #{memberId} and member_pw = #{memberPw}
+    </select>
+
+    <select id="selectMember" parameterType="String" resultType="com.bitc.full505_team2_project.dto.MemberDto">
+        select member_id , member_name,member_email,member_grade
+        from member
+        where member_id = #{memberId} and member_pw = #{memberPw}
+    </select>
+
+
+
 </mapper>
 
