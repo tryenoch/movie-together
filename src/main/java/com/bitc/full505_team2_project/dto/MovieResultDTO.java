@@ -10,4 +10,6 @@ public class MovieResultDTO {
     private String boxofficeType;
     private String showRange;
     private List<DailyMovieDTO> dailyBoxOfficeList = null;
+    private List<MovieDetailDTO> movieDetailList = null;
+
 }
