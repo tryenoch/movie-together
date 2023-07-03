@@ -7,7 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Full505Team2ProjectApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(Full505Team2ProjectApplication.class, args);
+
 	}
+
 
 }

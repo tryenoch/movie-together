@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery-3.7.0.js"></script>
+    <!-- css파일 -->
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+    </style>
+
+    <script>
+        $(document).ready(function () {
+
+            let movieTitle = $("#title").text();
+            getAllTable(movieTitle, '20230704');
+
+            function getAllTable(title, date) {
+                getTable('cgv', title, date);
+                getTable('megaBox', title, date);
+                getTable('lotteCinema', title, date);
+            }
+
+            function getTable(site, movieTitle, date) {
+                $.ajax({
+                    // 접속할 서버의 주소 입력
+                    url: "/detail/" + site + "/getTimetable.do",
+                    // 서버와 통신 방식, GET/POST
+                    type: "GET",
+                    // 서버로 전송할 매개변수, JSON 방식으로 전송, 자바의 hashmap 타입과 비슷
+                    // controller에서 RequestParam의 설정값과 동일해야함
+                    data: {title: movieTitle, date: date},
+                    // 통신 성공 시 전달받을 데이터의 타입 설정, json/text/html
+                    dataType: "json",
+                    // 통신 성공 시 동작하는 콜백함수
+                    success: function (data) {
+                        // 시간표결과가 없으면 정보없다고뜨고 있으면 로딩중... 이라는 p태그 지우기
+                        if (data.length == 0) {
+                            $("#" + site + "Load").text("상영 정보가 없습니다.");
+                        } else {
+                            $("#" + site + "Load").hide();
+                        }
+
+                        // MovieTimeTableDto 리스트 for문 돌리기
+                        for (let i = 0; i < data.length; i++) {
+                            console.log(site);
+                            // 상영관을 표시해주는 ul은 html에 미리 써놨고 상영관의 총 좌석수는 json파일에서 가져옴
+                            let ul = $("#" + site + "Ul");
+                            let tototalSeat = data[i].totalSeat;
+
+                            // hall을 각 영화관 ul에 li로 추가
+                            let hall = "<li class='list-unstyled' id='" + site + i + "'>" + "<span>" + data[i].hall + "</span>" + "</li>";
+                            ul.append(hall);
+
+                            // 시간과 잔여좌석이 표시되는 ul태그
+                            let hallLi = $("#"+site+i);
+                            hallLi.append("<ul class='clearfix'></ul>")
+                            let timeUl = $("#" + site + "Ul > #"+ site + i+" > ul");
+                            let timeTable = data[i].startTimeAndSeatRemain;
+
+                            // MovieTimeTableDto의 시간표인 timeTable for문 돌리기
+                            for (let key in timeTable) {
+                                let value = timeTable[key];
+                                // 시간과 잔여좌석을 하나하나 li로 추가
+                                let appendStr = "<li class=' border float-start m-1 py-1 px-2 list-unstyled text-center timeSeat'><strong>"+key+"</strong><br><span>"+value+"/"+tototalSeat+"</span></li>"
+                                timeUl.append(appendStr)
+
+                                console.log('Key: ' + key + ', Value: ' + value);
+
+                            }
+                        }
+                    },
+                    // 통신 실패 시 동작하는 콜백함수
+                    error: function () {
+                        alert("ajax 통신 중 오류 발생")
+                    }
+                });
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+<header th:replace="~{layout/header :: header-basic}"></header>
+<main class="container-md my-4">
+    <p>movie_pk</p>
+    <p th:text="${movie.moviePk}"></p>
+    <p>movie_title</p>
+    <p id="title" th:text="${movie.movieTitle}"></p>
+    <p>movie_like_cnt</p>
+    <p th:text="${movie.movieLikeCnt}"></p>
+
+    <hr>
+
+    <div id="megaBox">
+        <p>메가박스</p>
+        <p id="megaBoxLoad">로딩 중..</p>
+        <ul id="megaBoxUl"></ul>
+    </div>
+    <div id="lotteCinema">
+        <p>롯데시네마</p>
+        <p id="lotteCinemaLoad">로딩 중..</p>
+        <ul id="lotteCinemaUl"></ul>
+    </div>
+    <div id="cgv">
+        <p>cgv</p>
+        <p id="cgvLoad">로딩 중..</p>
+        <ul id="cgvUl"></ul>
+    </div>
+    <hr>
+</main>
+<footer th:replace="~{layout/footer :: footer-basic}"></footer>
+</body>
+</html>
