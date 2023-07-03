@@ -39,45 +39,8 @@ public class TimeTable {
         this.targetDate = targetDate;
     }
 
-    // 테스트용 메소드
-    public void activateBot() {
-        url = "https://www.melon.com/chart/index.htm";
-        try {
-            // WebDriver 경로 설정
-            System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
-
-            // WebDriver 옵션 설정
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--disable-popup-blocking");
-
-            driver = new ChromeDriver(options);
-
-            driver.get(url);
-
-            Thread.sleep(2000);
-
-            // 곡 제목 파싱
-            // /html/body/div[1]/div[3]/div/div/div[3]/form/div/table/tbody/tr[1]/td[6]/div/div/div[1]/span/a
-            element = driver.findElement(By.xpath("/html/body/div[1]/div[3]/div/div/div[3]/form/div/table/tbody/tr[1]/td[6]/div/div/div[1]/span/a"));
-            String title = element.getAttribute("title");
-
-            // 좋아요 수 파싱
-            element = driver.findElement(By.xpath("/html/body/div[1]/div[3]/div/div/div[3]/form/div/table/tbody/tr[1]/td[8]/div/button/span[2]"));
-            String cntLike = element.getText();
-
-
-            System.out.println("1위 노래는 [" + title + "]입니다.");
-            System.out.println("좋아요 수는 [" + cntLike + "]입니다.");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            driver.close();
-        }
-    }
-
     public List<MovieTimeTableDto> getCgvSchedule(String title) {
-        String[] targetTitle = this.titleChange(title);
+        String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         // 지역: 부산/울산 지역, 굳이 극장이 있는 지역과 일치하지 않아도됨
         // (서울지역코드를 입력해도 극장을 0005로 선택하면 cgv서면의 시간표가 출력됨)
@@ -117,8 +80,8 @@ public class TimeTable {
 
             for (WebElement item : elements) {
                 WebElement titleItem = item.findElement(By.cssSelector("div.info-movie a")); // 영화제목과 영화 링크를 가지는 요소
-
-                if (titleItem.getText().contains(targetTitle[0]) && titleItem.getText().contains(targetTitle[1])) {
+                String[] titleInPage = this.titleSplit(titleItem.getText());
+                if (titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])) {
                     List<WebElement> typeHalls = item.findElements(By.cssSelector("div.type-hall"));
 
                     for (WebElement typeHall : typeHalls) {
@@ -152,7 +115,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getMegaBoxSchedule(String title) {
-        String[] targetTitle = this.titleChange(title);
+        String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String urlString = "https://www.megabox.co.kr/on/oh/ohc/Brch/schedulePage.do";
 
@@ -218,7 +181,8 @@ public class TimeTable {
                     String totSeatCnt = movieNode.get("totSeatCnt").asText();
                     String restSeatCnt = movieNode.get("restSeatCnt").asText();
                     String hall = theabExpoNm + "-" + playKindNm; // MovieTimeTableDto에 들어갈 hall값
-                    if(rpstMovieNm.contains(targetTitle[0]) && rpstMovieNm.contains(targetTitle[1])){
+                    String[] titleInPage = this.titleSplit(rpstMovieNm);
+                    if (titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])){
                         if(dtoList.isEmpty()){
                             MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, totSeatCnt);
                             movieDto.addTimeAndSeat(playStartTime, restSeatCnt);
@@ -252,7 +216,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getLotteCinemaSchedule(String title) {
-        String[] targetTitle = this.titleChange(title);
+        String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String url  = "https://www.lottecinema.co.kr/LCWS/Ticketing/TicketingData.aspx";
 
@@ -345,8 +309,8 @@ public class TimeTable {
                 String TotalSeatCount = movieNode.get("TotalSeatCount").asText();
                 String BookingSeatCount = movieNode.get("BookingSeatCount").asText();
 
-
-                if(IsBookingYN != null && MovieNameKR.contains(targetTitle[0]) && MovieNameKR.contains(targetTitle[1])){
+                String[] titleInPage = titleSplit(MovieNameKR);
+                if(IsBookingYN != null && titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])){
                     if(dtoList.isEmpty()){
                         MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, TotalSeatCount);
                         movieDto.addTimeAndSeat(StartTime, BookingSeatCount);
@@ -375,7 +339,7 @@ public class TimeTable {
         return dtoList;
     }
 
-    public String[] titleChange(String title) {
+    public String[] titleSplit(String title) {
         String[] str = new String[2];
 
         if(title.contains(":")){

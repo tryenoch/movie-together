@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/jquery-3.7.0.js"></script>
+    <!-- css파일 -->
+    <link href="/css/style.css" rel="stylesheet">
 
     <style>
     </style>
@@ -83,8 +85,8 @@
 </head>
 <body>
 
-<div class="container">
-
+<header th:replace="~{layout/header :: header-basic}"></header>
+<main class="container-md my-4">
     <p>movie_pk</p>
     <p th:text="${movie.moviePk}"></p>
     <p>movie_title</p>
@@ -92,8 +94,6 @@
     <p>movie_like_cnt</p>
     <p th:text="${movie.movieLikeCnt}"></p>
 
-    <hr>
-    <p>ajax</p>
     <hr>
 
     <div id="megaBox">
@@ -111,8 +111,8 @@
         <p id="cgvLoad">로딩 중..</p>
         <ul id="cgvUl"></ul>
     </div>
-
-
-</div>
+    <hr>
+</main>
+<footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>
 </html>
