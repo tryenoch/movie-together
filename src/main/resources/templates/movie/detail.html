@@ -45,7 +45,7 @@
                         // MovieTimeTableDto 리스트 for문 돌리기
                         for (let i = 0; i < data.length; i++) {
                             console.log(site);
-                            // 상영관을 표시해주는 ul 생성
+                            // 상영관을 표시해주는 ul은 html에 미리 써놨고 상영관의 총 좌석수는 json파일에서 가져옴
                             let ul = $("#" + site + "Ul");
                             let tototalSeat = data[i].totalSeat;
 
