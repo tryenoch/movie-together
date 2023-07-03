@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.service;
 
 import com.bitc.full505_team2_project.dto.DailyMovieDTO;
 import com.bitc.full505_team2_project.dto.MovieDTO;
+import com.bitc.full505_team2_project.dto.MovieDetailDTO;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,39 @@ public class MovieServiceImpl implements MovieService {
             Gson gson = new Gson();
             MovieDTO movie = gson.fromJson(sb.toString(),MovieDTO.class);
             itemList = movie.getMovieResultDTO().getDailyBoxOfficeList();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            {
+                if (reader != null){
+                    urlConn.disconnect();
+                }
+            }
+        }
+        return itemList;
+    }
+
+    @Override
+    public List<MovieDetailDTO> getMovieResarchList(String strUrl) throws Exception {
+        List<MovieDetailDTO> itemList = null;
+        URL url = null;
+        HttpURLConnection urlConn = null;
+        BufferedReader reader = null;;
+        try {
+            url = new URL(strUrl);
+            urlConn = (HttpURLConnection) url.openConnection();
+            urlConn.setRequestMethod("GET");
+
+            reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null){
+                sb.append(line);
+            }
+            Gson gson = new Gson();
+            MovieDTO movie = gson.fromJson(sb.toString(),MovieDTO.class);
+            itemList = movie.getMovieResultDTO().getMovieDetailList();
         }catch (Exception e){
             e.printStackTrace();
         }finally {
