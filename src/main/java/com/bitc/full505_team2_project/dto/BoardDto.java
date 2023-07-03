@@ -12,4 +12,6 @@ public class BoardDto {
   private int boardVisitCnt;
   private String boardOfile;
   private String boardSfile;
+  private long boardFileSize;
+  private String boardDeleteYn;
 }
