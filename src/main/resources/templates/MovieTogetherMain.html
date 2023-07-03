@@ -29,7 +29,7 @@
                     const dailyBoxOfficeList = boxOfficeResult.dailyBoxOfficeList;
                     const card = $("div.row");
                     for(let i = 0; i<dailyBoxOfficeList.length; i++){
-                        let tag = "<div class=\"col-sm-3\">"
+                        let tag = "<div class=\"col-sm-3\"> <a class='text-decoration-none text-black' href='/detail/data/"+dailyBoxOfficeList[i].movieNm+"'>" // 디테일 페이지로 이동하기위한 링크 추가
                         tag +="<div class=\"card\" style=\"width: 18rem;\">"
                         tag +="<img src=\"\" alt=\"아직은 빈 공간\" class=\"card-img-top\">"
                         tag +="<div class=\"card-img-overlay\">"
@@ -40,7 +40,7 @@
                         tag +="<p class=\"card-text\">"+"평점?"+"총 관람객:"+dailyBoxOfficeList[i].audiAcc+"<br>"+"상영시작날짜"+dailyBoxOfficeList[i].openDt+"</p>"
                         tag +="</div>"
                         tag +="</div>"
-                        tag +="</div>"
+                        tag +="</a></div>"
                         card.append(tag);
                     }
                 },
