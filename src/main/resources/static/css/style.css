@@ -1,3 +1,101 @@
-.menu-list > a{
-    margin-right: 40px;
+/* font */
+@import url('https://webfontworld.github.io/gmarket/GmarketSans.css');
+@import url('https://webfontworld.github.io/NanumSquare/NanumSquare.css');
+
+/* default */
+body {
+    font-family: 'NanumSquare';
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+input {
+    border : none;
+    outline: none;
+}
+
+/* nav */
+
+.menu-list {
+    margin-top : 10px;
+
+}
+
+.menu-list > li{
+    margin-right: 30px ;
+    vertical-align: bottom;
+}
+
+.menu-list a {
+    line-height: 40px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.menu-list a:hover {
+    color : #ef3668;
+    font-weight: 700;
+}
+
+.logo {
+    margin-right: 35px;
+    font-family: 'GmarketSans';
+    font-weight: 800 !important;
+    font-size: 1.4rem !important;
+    letter-spacing: -1px;
+}
+
+.logo span:first-of-type {
+    color : #ef3668;
+}
+
+.logo span:last-of-type {
+    color : #595959;
+}
+
+.btn-pink {
+    background-color: #ef3668;
+    color : #fff;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.btn-pink:hover {
+    background-color: #f5799a;
+    color : #fff;
+}
+
+/* search */
+.movie-search form {
+    width: 250px;
+    display: flex;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.movie-search label {
+    width: 100%;
+    background: #f5f5f7;
+    padding: 7px 20px;
+    border-radius: 5px;
+}
+
+.movie-search input {
+    width: 100%;
+    background-color: #f5f5f7;
+}
+
+/* login */
+.login {
+    margin-top: 5px;
+    line-height: 40px;
+}
+
+/* test css */
+
+h1.test {
+    font-weight: bolder !important;
 }
