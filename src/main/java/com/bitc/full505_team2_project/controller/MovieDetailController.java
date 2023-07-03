@@ -6,9 +6,7 @@ import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
 import com.bitc.full505_team2_project.service.MovieDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -51,21 +49,47 @@ public class MovieDetailController {
         mv.addObject("movie",movie);
 
         // 날짜 설정해서 TimeTable클래스 객체 생성후 클래스의 메소드를 이용하여 3개 영화관에서 시간표를 가져옴
-        // 제목과 부제목이 :이나 - 아무거나 써도 알아서 각 영화관 홈페이지의 양식에 맞게 변환하여 검색해줌
-        TimeTable timeTable = new TimeTable("20230703");
-        List<MovieTimeTableDto> timeTableCgv = timeTable.getCgvSchedule("인디아나 존스:운명의 다이얼");
-        System.out.println(timeTableCgv);
-        List<MovieTimeTableDto> timeTableMegaBox = timeTable.getMegaBoxSchedule("인디아나 존스:운명의 다이얼");
-        System.out.println(timeTableMegaBox);
-        List<MovieTimeTableDto> timeTableLC = timeTable.getLotteCinemaSchedule("인디아나 존스:운명의 다이얼");
-        System.out.println(timeTableLC);
-
+        // 제목과 부제목이 :이나 - 아무거나 써도 알아서 해당 제목과 부제목을 포함하는 영화를 검색해줌
+//        TimeTable timeTable = new TimeTable("20230703");
+//        List<MovieTimeTableDto> timeTableCgv = timeTable.getCgvSchedule("엘리멘탈");
+//        System.out.println(timeTableCgv);
+//        List<MovieTimeTableDto> timeTableMB = timeTable.getMegaBoxSchedule("엘리멘탈");
+//        System.out.println(timeTableMB);
+//        List<MovieTimeTableDto> timeTableLC = timeTable.getLotteCinemaSchedule("엘리멘탈");
+//        System.out.println(timeTableLC);
+//
 //        mv.addObject("timeTableCgv", timeTableCgv);
+//        mv.addObject("timeTableMB", timeTableMB);
+//        mv.addObject("timeTableLC", timeTableLC);
 
         return mv;
     }
-    @RequestMapping(value = "/megabox")
-    public String megaboxText() throws Exception {
-        return "redirect:https://www.megabox.co.kr/on/oh/ohc/Brch/schedulePage.do";
+
+    @ResponseBody
+    @RequestMapping(value = "/cgv/getTimetable.do", method = RequestMethod.GET)
+    public Object cgvAjax(@RequestParam String title, @RequestParam String date) throws Exception {
+
+        TimeTable timeTable = new TimeTable(date);
+        List<MovieTimeTableDto> timeTableMB = timeTable.getCgvSchedule(title);
+        System.out.println(timeTableMB);
+        return timeTableMB;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/megaBox/getTimetable.do", method = RequestMethod.GET)
+    public Object megaBoxAjax(@RequestParam String title, @RequestParam String date) throws Exception {
+
+        TimeTable timeTable = new TimeTable(date);
+        List<MovieTimeTableDto> timeTableMB = timeTable.getMegaBoxSchedule(title);
+        System.out.println(timeTableMB);
+        return timeTableMB;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/lotteCinema/getTimetable.do", method = RequestMethod.GET)
+    public Object lotteCinemaAjax(@RequestParam String title, @RequestParam String date) throws Exception {
+
+        TimeTable timeTable = new TimeTable(date);
+        List<MovieTimeTableDto> timeTableMB = timeTable.getLotteCinemaSchedule(title);
+        System.out.println(timeTableMB);
+        return timeTableMB;
     }
 }

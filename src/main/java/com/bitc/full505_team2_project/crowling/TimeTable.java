@@ -77,7 +77,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getCgvSchedule(String title) {
-        String targetTitle = this.titleChange("-", title);
+        String[] targetTitle = this.titleChange(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         // 지역: 부산/울산 지역, 굳이 극장이 있는 지역과 일치하지 않아도됨
         // (서울지역코드를 입력해도 극장을 0005로 선택하면 cgv서면의 시간표가 출력됨)
@@ -96,7 +96,7 @@ public class TimeTable {
             options.addArguments("--window-position=-100000,-100000");
             options.addArguments("--window-size=0,0");
             options.addArguments("--lang=ko");
-            options.addArguments("--disable-gpu");			//gpu 비활성화
+            options.addArguments("--disable-gpu");            //gpu 비활성화
             options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
 
             driver = new ChromeDriver(options);
@@ -118,7 +118,7 @@ public class TimeTable {
             for (WebElement item : elements) {
                 WebElement titleItem = item.findElement(By.cssSelector("div.info-movie a")); // 영화제목과 영화 링크를 가지는 요소
 
-                if (titleItem.getText().equals(targetTitle)) {
+                if (titleItem.getText().contains(targetTitle[0]) && titleItem.getText().contains(targetTitle[1])) {
                     List<WebElement> typeHalls = item.findElements(By.cssSelector("div.type-hall"));
 
                     for (WebElement typeHall : typeHalls) {
@@ -141,6 +141,7 @@ public class TimeTable {
                         dtoList.add(hallAndtimeTable);
                     }
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,7 +152,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getMegaBoxSchedule(String title) {
-        String targetTitle = this.titleChange(": ", title);
+        String[] targetTitle = this.titleChange(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String urlString = "https://www.megabox.co.kr/on/oh/ohc/Brch/schedulePage.do";
 
@@ -217,7 +218,7 @@ public class TimeTable {
                     String totSeatCnt = movieNode.get("totSeatCnt").asText();
                     String restSeatCnt = movieNode.get("restSeatCnt").asText();
                     String hall = theabExpoNm + "-" + playKindNm; // MovieTimeTableDto에 들어갈 hall값
-                    if(rpstMovieNm.equals(targetTitle)){
+                    if(rpstMovieNm.contains(targetTitle[0]) && rpstMovieNm.contains(targetTitle[1])){
                         if(dtoList.isEmpty()){
                             MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, totSeatCnt);
                             movieDto.addTimeAndSeat(playStartTime, restSeatCnt);
@@ -251,7 +252,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getLotteCinemaSchedule(String title) {
-        String targetTitle = this.titleChange(": ", title);
+        String[] targetTitle = this.titleChange(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String url  = "https://www.lottecinema.co.kr/LCWS/Ticketing/TicketingData.aspx";
 
@@ -345,9 +346,7 @@ public class TimeTable {
                 String BookingSeatCount = movieNode.get("BookingSeatCount").asText();
 
 
-                if(IsBookingYN != null && MovieNameKR.equals(targetTitle)){
-
-
+                if(IsBookingYN != null && MovieNameKR.contains(targetTitle[0]) && MovieNameKR.contains(targetTitle[1])){
                     if(dtoList.isEmpty()){
                         MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, TotalSeatCount);
                         movieDto.addTimeAndSeat(StartTime, BookingSeatCount);
@@ -376,17 +375,25 @@ public class TimeTable {
         return dtoList;
     }
 
-    public String titleChange(String spliter, String title) {
-        String mainSub = title;
+    public String[] titleChange(String title) {
+        String[] str = new String[2];
 
         if(title.contains(":")){
-            String[] str = title.split(":",2);
-            mainSub = str[0].strip() + spliter + str[1].strip();
+            str = title.split(":",2);
         }
         else if (title.contains("-")) {
-            String[] str = title.split("-",2);
-            mainSub = str[0].strip() + spliter + str[1].strip();
+            str = title.split("-",2);
         }
-        return mainSub;
+        else if (title.contains("\"")) {
+            str = title.split("\"", 3);
+        }
+        else {
+            str[0] = title;
+            str[1] = "";
+        }
+        for (int i = 0; i < str.length; i++){
+            str[i] = str[i].strip();
+        }
+        return str;
     }
 }
