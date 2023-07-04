@@ -10,4 +10,6 @@ public interface MemberMapper {
     int loginCheck(String memberId, String memberPw);
 
     public MemberDto selectMember(String memberId,String memberPw);
+
+    public int IdCheck(String ID1);
 }

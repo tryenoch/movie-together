@@ -34,24 +34,23 @@ public class MemberController {
         return "member/Login";
     }
 
-    @RequestMapping(value = "/Login",method = RequestMethod.POST)
+    @RequestMapping(value = "/Login", method = RequestMethod.POST)
     public String login_check(@ModelAttribute MemberDto dto, HttpServletRequest request) {
         int result = memberService.loginCheck(dto.getMemberId(), dto.getMemberPw());
 
         if (result == 1) { //로그인 성공 시
             // 사용자 아이디 패스워드 기반으로 사용자 정보를 가져오기
-            MemberDto member = memberService.selectMember(dto.getMemberId(),dto.getMemberPw());
+            MemberDto member = memberService.selectMember(dto.getMemberId(), dto.getMemberPw());
             // 세션 생성
             HttpSession session = request.getSession();
-            session.setAttribute("uId",member.getMemberId());
-            session.setAttribute("uName",member.getMemberName());
-            session.setAttribute("uEmail",member.getMemberEmail());
-            session.setAttribute("uGradle",member.getMemberGrade());
-            session.setMaxInactiveInterval(600);
+            session.setAttribute("uId", member.getMemberId());
+            session.setAttribute("uName", member.getMemberName());
+            session.setAttribute("uEmail", member.getMemberEmail());
+            session.setAttribute("uGradle", member.getMemberGrade());
+            session.setMaxInactiveInterval(1800);
             // 세션에 가져온 사용자 정보 등록하기
 
-            
-            
+
 //            mav.setViewName("/member/loginok"); //뷰의 이름
             return "redirect:/member/loginok";
         } else { //로그인 실패 시
@@ -64,12 +63,11 @@ public class MemberController {
     @RequestMapping("logout.do")
     public ModelAndView logout(HttpSession session, ModelAndView mav) {
         memberService.logout(session);
-        mav.addObject("message","logout");
+        mav.addObject("message", "logout");
         return mav;
     }
 
 
-    @PostMapping("/join")
 //    RequestParam 이라는걸 사용해서 네임 값을 여기다 적어준다 담겨온 값을 오른쪽에 집어 넣는다
 //    public String join(@RequestParam("joinId")String joinId,
 //                       @RequestParam("joinPw")String joinPw,
@@ -80,6 +78,7 @@ public class MemberController {
 
 
     //회원가입 가입 완료시 로그인할 화면 출력
+    @RequestMapping(value = "/join", method = RequestMethod.POST)
     public String join(MemberDto member) {
         System.out.println("MemberController.join");
 //        System.out.println("joinId = " + joinId + ", joinPw = " + joinPw + ", joinPwd = " + joinPwd + ", joinName = " + joinName + ", joinDay = " + joinDay + ", joinEmail = " + joinEmail);
@@ -88,10 +87,22 @@ public class MemberController {
         return "/member/Login";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/IdCheck",method = RequestMethod.POST)
+    public String IdCheck(@RequestParam("userId") String userId){
+        int Check = memberService.IdCheck(userId);
+
+        if (Check == 0) {
+            return "true";
+        }
+        else {
+            return "false";
+        }
+    }
 
     // 로그인시 임시로 만든 loginok 화면 출력
     @RequestMapping(value = "/loginok", method = RequestMethod.GET)
-    public String ok(HttpServletRequest request){
+    public String ok(HttpServletRequest request) {
 
         HttpSession session = request.getSession();
 
@@ -102,3 +113,4 @@ public class MemberController {
         return "member/loginok";
     }
 }
+

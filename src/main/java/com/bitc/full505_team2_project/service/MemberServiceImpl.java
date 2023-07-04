@@ -16,6 +16,7 @@ public class MemberServiceImpl implements MemberService{
     @Autowired
     private MemberMapper memberMapper;
 
+
     @Override
     public void memberJoin(MemberDto member) {
        memberMapper.memberJoin(member);
@@ -41,5 +42,12 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public MemberDto selectMember(String memberId,String memberPw) {
        return memberMapper.selectMember(memberId,memberPw);
+
+
+    }
+
+    @Override
+    public int IdCheck(String Id1) {
+       return memberMapper.IdCheck(Id1);
     }
 }
