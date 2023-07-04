@@ -1,15 +1,18 @@
 package com.bitc.full505_team2_project.controller;
 
 
+import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.MemberDto;
 import com.bitc.full505_team2_project.service.Inject;
 import com.bitc.full505_team2_project.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/member")
@@ -29,13 +32,13 @@ public class MemberController {
         return "member/join";
     }
 
-    @RequestMapping(value = {"/Login"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public String Login() throws Exception {
-        return "member/Login";
+        return "member/login";
     }
 
-    @RequestMapping(value = "/Login", method = RequestMethod.POST)
-    public String login_check(@ModelAttribute MemberDto dto, HttpServletRequest request) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login_check(@ModelAttribute MemberDto dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         int result = memberService.loginCheck(dto.getMemberId(), dto.getMemberPw());
 
         if (result == 1) { //로그인 성공 시
@@ -43,28 +46,31 @@ public class MemberController {
             MemberDto member = memberService.selectMember(dto.getMemberId(), dto.getMemberPw());
             // 세션 생성
             HttpSession session = request.getSession();
-            session.setAttribute("uId", member.getMemberId());
-            session.setAttribute("uName", member.getMemberName());
-            session.setAttribute("uEmail", member.getMemberEmail());
-            session.setAttribute("uGradle", member.getMemberGrade());
+            session.setAttribute("userId", member.getMemberId());
+            session.setAttribute("userName", member.getMemberName());
+            session.setAttribute("userEmail", member.getMemberEmail());
+            session.setAttribute("userGradle", member.getMemberGrade());
             session.setMaxInactiveInterval(1800);
             // 세션에 가져온 사용자 정보 등록하기
 
 
 //            mav.setViewName("/member/loginok"); //뷰의 이름
-            return "redirect:/member/loginok";
+            // return "redirect:/member/loginok";
+            return "redirect:/MovieTogetherMain"; // 로그인 성공시 이동
         } else { //로그인 실패 시
 //            mav.setViewName("member/Login");
 //            mav.addObject("message","error");
-            return "redirect:/member/Login";
+            ScriptUtils.alertAndMovePage(response,"회원 정보가 일치하지 않습니다.", "/member/login");
+            return "redirect:/member/login";
         }
     }
 
-    @RequestMapping("logout.do")
-    public ModelAndView logout(HttpSession session, ModelAndView mav) {
+    @RequestMapping("logout")
+    public String logout(HttpSession session) {
         memberService.logout(session);
-        mav.addObject("message", "logout");
-        return mav;
+        /*mav.addObject("message", "logout");
+        return mav;*/
+        return "redirect:/MovieTogetherMain"; // 로그아웃 시 메인으로 이동
     }
 
 
@@ -84,7 +90,7 @@ public class MemberController {
 //        System.out.println("joinId = " + joinId + ", joinPw = " + joinPw + ", joinPwd = " + joinPwd + ", joinName = " + joinName + ", joinDay = " + joinDay + ", joinEmail = " + joinEmail);
         memberService.memberJoin(member);
 
-        return "/member/Login";
+        return "login";
     }
 
     @ResponseBody
