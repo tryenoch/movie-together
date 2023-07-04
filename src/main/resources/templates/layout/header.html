@@ -21,7 +21,13 @@
         localStorage.setItem('moviename',movie_name);
         window.location.href = "MTResarch.html";
         })
-
+      function enterkey(){
+        if(window.event.keycode == 13){
+          let movie_name = $("#movie_name").val();
+          localStorage.setItem('moviename',movie_name);
+          window.location.href = "MTResarch.html";
+        }
+      }
       })
   </script>
 </head>
@@ -30,7 +36,7 @@
     <nav class="navbar navbar-expand container-md py-3">
       <div>
         <ul class="navbar-nav menu-list">
-          <li class=""><a href="#" class="logo">
+          <li class=""><a href="/MovieTogetherMain" class="logo">
             <span class="">MOVIE</span>
             <span>TOGETHER</span>
           </a></li>
@@ -40,7 +46,7 @@
           <li class="movie-search">
             <form action="#" method="post">
               <label for="movie_name" class="">
-                <input type="text" class="" id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요.">
+                <input type="text" class=""  id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요." onkeyup="enterkey">
               </label>
             </form>
             <button type="submit" class="btn btn-success d-flex" id="btn-search"> 검 색</button>
