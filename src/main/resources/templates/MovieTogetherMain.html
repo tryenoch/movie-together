@@ -55,42 +55,43 @@
                     });
                 })
             }
-        getBoxOfficeList()
-            .then(function (dailyBoxOfficeList){
-                const  card = $("div.row");
-                const promises = [];
 
-                for(let i =0; i < dailyBoxOfficeList.length; i++){
-                    const movieName = dailyBoxOfficeList[i].movieNm;
-                    const promise = getMovieDetails(movieName);
-                    promises.push(promise);
-                }
-                Promise.all(promises)
-                    .then(function (results){
-                        for (let i = 0; i < results.length; i++) {
-                            const movieDetails = results[i];
-                            const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
-                            let tag = "<div class=\"col-sm-3\">";
-                            tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
-                            tag += "<div class=\"card\" style=\"width: 18rem;\">";
-                            tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\" style=''>";
-                            tag += "<div class=\"card-img-overlay\">";
-                            tag += "<p>" + dailyBoxOfficeList[i].rank + "</p>";
-                            tag += "</div>";
-                            tag += "<div class=\"card-body\">";
-                            tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
-                            tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
-                            tag += "</div>";
-                            tag += "</div>";
-                            tag += "</a></div>";
+            getBoxOfficeList()
+                .then(function (dailyBoxOfficeList) {
+                    const card = $("div.row");
+                    const promises = [];
 
-                            card.append(tag);
-                        }
-                    })
-                    .catch(function (error){
-                        alert(error);
-                    });
-            })
+                    for (let i = 0; i < dailyBoxOfficeList.length; i++) {
+                        const movieName = dailyBoxOfficeList[i].movieNm;
+                        const promise = getMovieDetails(movieName);
+                        promises.push(promise);
+                    }
+                    Promise.all(promises)
+                        .then(function (results) {
+                            for (let i = 0; i < results.length; i++) {
+                                const movieDetails = results[i];
+                                const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
+                                let tag = "<div class=\"col-sm-3\">";
+                                tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
+                                tag += "<div class=\"card\" style=\"width: 18rem;\">";
+                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\" style=''>";
+                                tag += "<div class=\"card-img-overlay\">";
+                                tag += "<p>" + dailyBoxOfficeList[i].rank + "</p>";
+                                tag += "</div>";
+                                tag += "<div class=\"card-body\">";
+                                tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
+                                tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
+                                tag += "</div>";
+                                tag += "</div>";
+                                tag += "</a></div>";
+
+                                card.append(tag);
+                            }
+                        })
+                        .catch(function (error) {
+                            alert(error);
+                        });
+                })
         })
     </script>
     <style>

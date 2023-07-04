@@ -5,5 +5,27 @@
 
 <mapper namespace="com.bitc.full505_team2_project.mapper.MemberMapper">
 
+    <insert id="memberJoin" parameterType="com.bitc.full505_team2_project.dto.MemberDto">
+        insert into member (member_id,member_pw,member_name,member_email,member_birth,member_regidate)
+        values (#{memberId},#{memberPw},#{memberName},#{memberEmail},#{memberBirth},now())
+    </insert>
+
+    <select id="loginCheck" resultType="int" parameterType="String">
+        select count(member_id) as 'cnt'
+        from member
+        where member_id = #{memberId} and member_pw = #{memberPw}
+    </select>
+
+    <select id="selectMember" parameterType="String" resultType="com.bitc.full505_team2_project.dto.MemberDto">
+        select member_id , member_name,member_email,member_grade
+        from member
+        where member_id = #{memberId} and member_pw = #{memberPw}
+    </select>
+
+    <select id="IdCheck" parameterType="String" resultType="int">
+        SELECT count(member_id) as 'cnt' from member where member_id = #{ID1}
+    </select>
+
+
 </mapper>
 
