@@ -7,6 +7,10 @@ body {
     font-family: 'NanumSquare';
 }
 
+input[type=password]{
+    font-family:"굴림";
+}
+
 a {
     text-decoration: none;
     color: #000;
@@ -41,7 +45,7 @@ input {
 }
 
 .logo {
-    margin-right: 35px;
+    margin-right: 25px;
     font-family: 'GmarketSans';
     font-weight: 800 !important;
     font-size: 1.4rem !important;
@@ -68,10 +72,21 @@ input {
     color : #fff;
 }
 
-/* search */
-/*li.movie-search {
+.btn-outline-pink {
+    background-color: #fff;
+    border: 1px solid #ef3668;
+    color: #ef3668;
+}
+
+.btn-outline-pink:hover {
+    background-color: #ef3668;
+    color : #fff;
+}
+
+
+li.movie-search {
     margin-right: 8px;
-}*/
+}
 
 .movie-search form {
     width: 250px;
@@ -96,6 +111,10 @@ input {
 .login {
     margin-top: 5px;
     line-height: 40px;
+}
+.user-login {margin-top:8px;}
+.user-login span {
+    font-size: 1.08rem;
 }
 
 /* movie-board */
@@ -161,18 +180,39 @@ input {
 /* board-detail */
 
 .board-detail {
-    margin: 30px 0;
+    margin: 30px 0 30px 0;
     border-top: 2px solid #666;
     font-size: 1.1rem;
+}
+
+.board-detail tbody tr:last-of-type {
+    border-bottom: 2px solid #666;
 }
 
 .board-detail th, td {
     padding: 20px 20px;
 }
 
-.board-info span {
+.board-info{
     background-color: #efefef;
+    padding: 15px 0;
+}
+
+.board-info span {
     margin-right: 10px;
+}
+
+.board-content {
+    min-height: 400px;
+    white-space: pre;
+}
+
+.board-content textarea {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: none;
+    resize: none;
 }
 
 /* test css */

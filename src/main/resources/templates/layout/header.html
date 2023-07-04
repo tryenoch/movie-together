@@ -57,16 +57,20 @@
                 <input type="text" class=""  id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요." >
               </label>
             </form>
-            <button type="submit" class="btn btn-success d-flex" id="btn-search"> 검 색</button>
+          </li>
+          <li>
+            <button type="submit" class="btn btn-pink d-flex" id="btn-search">검 색</button>
           </li>
         </ul>
       </div>
       <div class="collapse navbar-collapse d-flex justify-content-end">
-        <div class="">
-
+        <div th:if="${session.userName}" class="user-login">
+          <span th:text="${session.userName}" class="fw-bolder">사용자이름</span>
+          <span>님 환영합니다!</span>
+          <a href="/member/logout" class="btn btn-outline-pink p-2 px-3 ms-3">로그아웃</a>
         </div>
-        <div class="login">
-          <button class="btn p-2 px-3 btn-pink">로그인</button>
+        <div th:unless="${session.userName}" class="login">
+          <a href="/member/login" class="btn p-2 px-3 btn-pink">로그인</a>
         </div>
       </div>
     </nav>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class BoardController {
   private BoardService boardService;
 
   /* 게시글 리스트 */
-  @RequestMapping(value = "/list", method = RequestMethod.GET)
+  @RequestMapping(value = {"/list", "/" }, method = RequestMethod.GET)
   public ModelAndView boardList() throws Exception {
     ModelAndView mv = new ModelAndView("board/boardList");
 
@@ -40,4 +41,18 @@ public class BoardController {
 
     return mv;
   }
+
+  /* 게시글 작성하기 */
+  @RequestMapping(value = "/write", method = RequestMethod.GET)
+  public String boardWriteView() throws Exception{
+    return "board/boardWrite";
+  }
+
+  /* 게시글 작성 프로세스 (첨부파일 포함) */
+  @RequestMapping(value = "/write", method = RequestMethod.POST)
+  public String boardWriteProcess(BoardDto board, MultipartHttpServletRequest multipart) throws Exception {
+    boardService.insertBoard(board, multipart);
+    return "redirect:/list";
+  }
+
 }

@@ -28,49 +28,42 @@
   </div>
   <div class="d-flex justify-content-center ">
     <div class="movie-board">
-      <!-- 글 내용 상세  -->
+      <form th:action="@{/board/write}" method="post" enctype="multipart/form-data">
+      <!-- 글 작성 폼  -->
       <table class="table board-detail">
         <thead>
           <tr>
-            <th th:text="${board.boardTitle}">글 제목</th>
+            <th>
+              <input type="text" name="boardTitle" placeholder="제목을 입력하세요" id="title">
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr class="board-info">
-            <td class=" d-flex justify-content-between">
-              <div>
-                <span th:text="${board.boardWriter}" class="ps-2">작성자</span>
-              </div>
-              <div>
-                <span class="fw-bold">작성일</span>
-                <span th:text="${board.boardDate}">작성일</span>
-                <span class="fw-bold">조회수</span>
-                <span th:text="${board.boardVisitCnt}">조회수</span>
-              </div>
-            </td>
-          </tr>
           <tr>
             <td class="">
-              <div class="board-content p-2" th:text="${board.boardContent}">
-                게시글 내용
+              <div class="board-content p-2">
+                <textarea placeholder="내용을 입력하세요." name="boardContent" rows="20"></textarea>
               </div>
             </td>
           </tr>
           <tr class="board-info">
             <td class="py-3">
-              <span class="ps-2  fw-bold">첨부파일</span>
-              <a href="" th:if="${#lists.size(board.fileList)} > 0" th:each="list : ${board.fileList}" th:text="${list.boardOfileName}">파일명</a>
+              <input type="file" class="form-control" name="files" multiple>
             </td>
           </tr>
         </tbody>
       </table>
+      <!-- 사용자 명 -->
+      <input type="text" name="boardWriter" value="test" hidden="hidden">
+
       <div class="d-flex justify-content-between mt-2 mb-4">
         <a href="/board/list" class="btn btn-dark px-4">목록</a>
         <div>
-          <a href="/board/update" class="btn btn-dark px-3">수정</a>
-          <a href="/board/delete" class="btn btn-dark px-3">삭제</a>
+          <button type="submit" class="btn btn-dark px-3">등록하기</button>
         </div>
       </div>
+
+      </form>
     </div>
 
   </div>

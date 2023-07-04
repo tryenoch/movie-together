@@ -29,6 +29,12 @@
     WHERE board_pk = #{boardPk}
   </update>
 
+  <!-- 게시글 등록 -->
+  <insert id="insertBoard" parameterType="com.bitc.full505_team2_project.dto.BoardDto" useGeneratedKeys="true" keyProperty="boardPk">
+    INSERT INTO board (board_title, board_writer, board_content, board_date)
+    VALUES (#{boardTitle}, #{boardWriter}, #{boardContent}, NOW())
+  </insert>
+
   <!-- 지정한 게시글의 첨부 파일 목록보기 -->
   <select id="selectBoardFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
@@ -36,5 +42,16 @@
     FROM board_file
     WHERE board_pk = #{boardPk}
   </select>
+
+  <!-- 첨부파일 정보 DB에 추가하기 -->
+  <insert id="insertBoardFileList" parameterType="com.bitc.full505_team2_project.dto.BoardFileDto">
+    INSERT INTO board_file(board_pk, board_ofile_name, board_sfile_name, board_file_size, board_created_date)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW())
+    </foreach>
+  </insert>
+
+
 </mapper>
 
