@@ -14,14 +14,89 @@
 
     <script>
         $(document).ready(function () {
+            let today = new Date();
+            getDate(today);
+
 
             let movieTitle = $("#title").text();
             getAllTable(movieTitle, '20230704');
 
+
+            $("#prev").on("click", function(){
+                const day0 = updateTargetDate($("#day0"));
+                day0.setDate(day0.getDate() -7);
+                getDate(day0);
+            });
+            $("#next").on("click", function(){
+                const day0 = updateTargetDate($("#day0"));
+                day0.setDate(day0.getDate() +7);
+                getDate(day0);
+            });
+
+            // 오늘날짜의 연도 + 버튼에 씌여진 월 + 버튼에 씌여진 일, padStart는 2자리수, 첫째자리가 비었으면 0으로 채우는 문자열로 변환하는 함수
+            function parseDate (date) {
+                const returnDate = String(date.getFullYear()) +
+                    String(date.getMonth() + 1).padStart(2, '0') +
+                    String(date.getDate()).padStart(2, '0');
+
+                return returnDate;
+            }
+
+            // 버튼을 클릭하면 상영시간표 다시 불러오기
+            $("button.days").on('click', function (){
+
+                const targetDate = updateTargetDate($(this));
+                const returnDate = parseDate(targetDate);
+
+                // 선택한 날짜로 영화상영정보 다시 불러오기
+                getAllTable(movieTitle, returnDate);
+            });
+
+            // button태그 요소를 매개변수로 받아서 해당 버튼에 입력된 텍스트를 이용해 날짜데이터를 반환하는 함수
+            function updateTargetDate(button) {
+                let targetDate = new Date();
+                const month = parseInt(button.find('span.month').text()) - 1;
+                const date = parseInt(button.find('span.date').text());
+
+                targetDate.setMonth(month);
+                targetDate.setDate(date);
+
+                return targetDate;
+            }
+
+            // date객체를 매개변수로 받아서 해당 주의 날짜를 표시하는 버튼 7개를 그리는 함수
+            function getDate(day0) { // day0는 Date 객체
+                $("button.days span").remove();
+                for(let i=0; i<7; i++) {
+                    $("#day"+i).append(
+                        '<span class="month"></span>\n' +
+                        '<span class="date"></span>\n' +
+                        '<span class="day"></span>'
+                    );
+
+                    // 매개변수로 받은 기준날짜(#day0에 들어갈 날짜)에 +i 일을 더함
+                    let thisDate = new Date(day0);
+                    thisDate.setDate(thisDate.getDate() + i);
+
+                    const week = ['일', '월', '화', '수', '목', '금', '토'];
+                    let dayOfWeek = week[thisDate.getDay()];
+
+                    $("#day"+i+" .month").text(thisDate.getMonth()+1+"월");
+                    $("#day"+i+" .date").text(thisDate.getDate()+"일");
+                    $("#day"+i+" .day").text(dayOfWeek);
+                }
+
+            }
             function getAllTable(title, date) {
+                $("ul.timeTable li").remove();
+                $("p.load").text("로딩 중...");
+                $("p.load").css('display','block');
                 getTable('cgv', title, date);
                 getTable('megaBox', title, date);
                 getTable('lotteCinema', title, date);
+            }
+            function removeTable(site) {
+                $("ul#Ul li").remove();
             }
 
             function getTable(site, movieTitle, date) {
@@ -37,6 +112,7 @@
                     dataType: "json",
                     // 통신 성공 시 동작하는 콜백함수
                     success: function (data) {
+
                         // 시간표결과가 없으면 정보없다고뜨고 있으면 로딩중... 이라는 p태그 지우기
                         if (data.length == 0) {
                             $("#" + site + "Load").text("상영 정보가 없습니다.");
@@ -46,7 +122,6 @@
 
                         // MovieTimeTableDto 리스트 for문 돌리기
                         for (let i = 0; i < data.length; i++) {
-                            console.log(site);
                             // 상영관을 표시해주는 ul은 html에 미리 써놨고 상영관의 총 좌석수는 json파일에서 가져옴
                             let ul = $("#" + site + "Ul");
                             let tototalSeat = data[i].totalSeat;
@@ -56,20 +131,17 @@
                             ul.append(hall);
 
                             // 시간과 잔여좌석이 표시되는 ul태그
-                            let hallLi = $("#"+site+i);
+                            let hallLi = $("#" + site + i);
                             hallLi.append("<ul class='clearfix'></ul>")
-                            let timeUl = $("#" + site + "Ul > #"+ site + i+" > ul");
+                            let timeUl = $("#" + site + "Ul > #" + site + i + " > ul");
                             let timeTable = data[i].startTimeAndSeatRemain;
 
                             // MovieTimeTableDto의 시간표인 timeTable for문 돌리기
                             for (let key in timeTable) {
                                 let value = timeTable[key];
                                 // 시간과 잔여좌석을 하나하나 li로 추가
-                                let appendStr = "<li class=' border float-start m-1 py-1 px-2 list-unstyled text-center timeSeat'><strong>"+key+"</strong><br><span>"+value+"/"+tototalSeat+"</span></li>"
+                                let appendStr = "<li class=' border float-start m-1 py-1 px-2 list-unstyled text-center timeSeat'><strong>" + key + "</strong><br><span>" + value + "/" + tototalSeat + "</span></li>"
                                 timeUl.append(appendStr)
-
-                                console.log('Key: ' + key + ', Value: ' + value);
-
                             }
                         }
                     },
@@ -96,22 +168,40 @@
 
     <hr>
 
+    <div id="calendar">
+        <button type="button" id="prev" class="pageChange btn btn-outline-secondary">이전</button>
+
+        <button type="button" id="day0" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day1" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day2" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day3" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day4" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day5" class="days btn btn-outline-primary"></button>
+        <button type="button" id="day6" class="days btn btn-outline-primary"></button>
+
+
+        <button type="button" id="next" class="pageChange btn btn-outline-secondary">다음</button>
+    </div>
+
+    <hr>
+
     <div id="megaBox">
         <p>메가박스 <a href="https://www.megabox.co.kr/booking">홈페이지</a></p>
-        <p id="megaBoxLoad">로딩 중..</p>
-        <ul id="megaBoxUl"></ul>
+        <p id="megaBoxLoad" class="load">로딩 중..</p>
+        <ul id="megaBoxUl" class="timeTable"></ul>
     </div>
     <div id="lotteCinema">
         <p>롯데시네마 <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing">홈페이지</a></p>
-        <p id="lotteCinemaLoad">로딩 중..</p>
-        <ul id="lotteCinemaUl"></ul>
+        <p id="lotteCinemaLoad" class="load">로딩 중..</p>
+        <ul id="lotteCinemaUl" class="timeTable"></ul>
     </div>
     <div id="cgv">
         <p>cgv <a href="http://www.cgv.co.kr/ticket/">홈페이지</a></p>
-        <p id="cgvLoad">로딩 중..</p>
-        <ul id="cgvUl"></ul>
+        <p id="cgvLoad" class="load">로딩 중..</p>
+        <ul id="cgvUl" class="timeTable"></ul>
     </div>
     <hr>
+
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>

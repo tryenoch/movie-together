@@ -40,6 +40,7 @@ public class TimeTable {
     }
 
     public List<MovieTimeTableDto> getCgvSchedule(String title) {
+
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         // 지역: 부산/울산 지역, 굳이 극장이 있는 지역과 일치하지 않아도됨
@@ -64,7 +65,6 @@ public class TimeTable {
 
             driver = new ChromeDriver(options);
             driver.get(url);
-
 
             // 대기시간 duration 객체 생성
             Duration duration = Duration.ofSeconds(60);

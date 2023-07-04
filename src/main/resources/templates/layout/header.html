@@ -16,6 +16,14 @@
   <style></style>
   <script>
     $(Document).ready(function (){
+      enterkey();
+      function enterkey(){
+        if(window.event.keycode == 13){
+          let movie_name = $("#movie_name").val();
+          localStorage.setItem('moviename',movie_name);
+          window.location.href = "MTResarch.html";
+        }
+      }
       $("#btn-search").on("click",function (){
         let movie_name = $("#movie_name").val();
         localStorage.setItem('moviename',movie_name);
