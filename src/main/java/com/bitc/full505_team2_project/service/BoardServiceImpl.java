@@ -6,6 +6,7 @@ import com.bitc.full505_team2_project.dto.BoardFileDto;
 import com.bitc.full505_team2_project.mapper.BoardMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
@@ -53,8 +54,18 @@ public class BoardServiceImpl implements BoardService{
   }
 
   @Override
-  public void insertBoard(BoardDto board, MultipartHttpServletRequest multipart) throws Exception {
+  public void insertBoard(BoardDto board, MultipartHttpServletRequest uploadFiles) throws Exception {
+    /* 1. 컨트롤러에서 전달된 데이터 가져오기
+    * 2. mapper를 사용해서 db에 등록(게시글, 파일 정보 분리) */
 
+    boardMapper.insertBoard(board);
+
+    List<BoardFileDto> fileList = fileUtils.parseFileInfo(board.getBoardPk(), uploadFiles);
+
+    // CollectionUtils : 스프링 프레임워크에서 제공하는 클래스
+    if(CollectionUtils.isEmpty(fileList) == false){
+      boardMapper.insertBoardFileList(fileList);
+    }
   }
 
   @Override
