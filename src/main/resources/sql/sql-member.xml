@@ -22,6 +22,9 @@
         where member_id = #{memberId} and member_pw = #{memberPw}
     </select>
 
+    <select id="IdCheck" parameterType="String" resultType="int">
+        SELECT count(member_id) as 'cnt' from member where member_id = #{ID1}
+    </select>
 
 
 </mapper>
