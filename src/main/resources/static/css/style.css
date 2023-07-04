@@ -158,6 +158,23 @@ input {
     display: none;*/
 }
 
+/* board-detail */
+
+.board-detail {
+    margin: 30px 0;
+    border-top: 2px solid #666;
+    font-size: 1.1rem;
+}
+
+.board-detail th, td {
+    padding: 20px 20px;
+}
+
+.board-info span {
+    background-color: #efefef;
+    margin-right: 10px;
+}
+
 /* test css */
 
 h1.test {

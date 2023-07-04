@@ -1,6 +1,7 @@
 package com.bitc.full505_team2_project.mapper;
 
 import com.bitc.full505_team2_project.dto.BoardDto;
+import com.bitc.full505_team2_project.dto.BoardFileDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,5 +28,15 @@ public interface BoardMapper {
 
   // 조회수 업데이트
   void updateHitCount(@Param("boardPk") int boardPk) throws Exception;
+
+  // 파일 목록 등록
+  void insertBoardFileList(List<BoardFileDto> fileList) throws Exception;
+
+  // 파일 목록 불러오기
+  List<BoardFileDto> selectBoardFileList(int boardPk) throws Exception;
+
+  // 각 파일 정보 불러오기
+  BoardFileDto selectBoardFileInfo(@Param("boardFileId") int boardFileId, @Param("boardPk") int boardPk) throws Exception;
+
 
 }

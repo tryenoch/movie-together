@@ -28,15 +28,29 @@
   </div>
   <div class="d-flex justify-content-center ">
     <div class="movie-board">
-      <!-- 글쓰기 페이지 -->
-      <div class="board-search text-center">
-        <form action="">
-          <input type="text" value="제목" id="" name="" class="text-center" readonly>
-          <input type="text" placeholder="제목을 입력해주세요." id="search-title" name="searchTitle">
-          <button type="submit" class="btn btn-dark px-4">검색</button>
-        </form>
-      </div>
-      <!-- 리스트 테이블 -->
+      <!-- 글 내용 상세  -->
+      <table class="table board-detail">
+        <thead>
+          <tr>
+            <th th:text="${board.boardTitle}">글 제목</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="board-info d-flex justify-content-between">
+              <div>
+                <span th:text="${board.boardWriter}" class="ps-2">작성자</span>
+              </div>
+              <div>
+                <span class="fw-bold">작성일</span>
+                <span th:text="${board.boardDate}">작성일</span>
+                <span class="fw-bold">조회수</span>
+                <span th:text="${board.boardVisitCnt}">조회수</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
 

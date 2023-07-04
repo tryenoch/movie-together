@@ -18,6 +18,7 @@ public class BoardController {
   @Autowired
   private BoardService boardService;
 
+  /* 게시글 리스트 */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
   public ModelAndView boardList() throws Exception {
     ModelAndView mv = new ModelAndView("board/boardList");
@@ -29,6 +30,7 @@ public class BoardController {
     return mv;
   }
 
+  /* 게시글 상세 보기 */
   @RequestMapping(value = "{boardPk}", method = RequestMethod.GET)
   public ModelAndView boardDetail(@PathVariable("boardPk") int boardPk) throws Exception{
     ModelAndView mv = new ModelAndView("board/boardDetail");
