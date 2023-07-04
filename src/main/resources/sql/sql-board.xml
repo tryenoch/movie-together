@@ -4,6 +4,37 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bitc.full505_team2_project.mapper.BoardMapper">
+  <!-- 게시글 리스트 불러오기 -->
+  <select id="selectBoardList" resultType="com.bitc.full505_team2_project.dto.BoardDto">
+    SELECT
+      board_pk, board_title, board_writer,
+      date_format(board_date, '%Y-%m-%d') AS board_date, board_visit_cnt
+    FROM board
+    WHERE board_delete_yn = 'N'
+    ORDER BY board_pk desc
+  </select>
 
+  <!-- 게시글 상세 페이지 -->
+  <select id="selectBoardDetail" resultType="com.bitc.full505_team2_project.dto.BoardDto" parameterType="int">
+    SELECT board_pk, board_title, board_writer, board_content, date_format(board_date, '%Y-%m-%d') AS board_date,
+    board_visit_cnt
+    FROM board
+    WHERE board_pk = #{boardPk}
+  </select>
+
+  <!-- 조회수 업데이트 -->
+  <update id="updateHitCount" parameterType="int">
+    UPDATE board
+    SET board_visit_cnt = board_visit_cnt +1
+    WHERE board_pk = #{boardPk}
+  </update>
+
+  <!-- 지정한 게시글의 첨부 파일 목록보기 -->
+  <select id="selectBoardFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
+    SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
+    format(ROUND(board_file_size/1024), 0) AS board_file_size
+    FROM board_file
+    WHERE board_pk = #{boardPk}
+  </select>
 </mapper>
 
