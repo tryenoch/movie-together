@@ -54,7 +54,7 @@
           <li class="movie-search">
             <form action="#" method="post">
               <label for="movie_name" class="">
-                <input type="text" class=""  id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요." onkeyup="enterkey">
+                <input type="text" class=""  id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요." >
               </label>
             </form>
             <button type="submit" class="btn btn-success d-flex" id="btn-search"> 검 색</button>
@@ -78,7 +78,14 @@
           localStorage.setItem('moviename',movie_name);
           window.location.href = "/MovieTogeherSearch";
         });
-
+        enterkey();
+        function enterkey(){
+          if(window.event.keycode == 13){
+            let movie_name = $("#movie_name").val();
+            localStorage.setItem('moviename',movie_name);
+            window.location.href = "MTResarch.html";
+          }
+        }
       });
     </script>
   </header>

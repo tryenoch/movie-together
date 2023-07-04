@@ -9,31 +9,125 @@
     <!-- css파일 -->
     <link href="/css/style.css" rel="stylesheet">
 
-    <style>
-    </style>
+
+
 
     <script>
         $(document).ready(function () {
-            let today = new Date();
-            getDate(today);
-
 
             let movieTitle = $("#title").text();
             getAllTable(movieTitle, '20230704');
 
 
-            $("#prev").on("click", function(){
-                const day0 = updateTargetDate($("#day0"));
-                day0.setDate(day0.getDate() -7);
-                getDate(day0);
-            });
-            $("#next").on("click", function(){
-                const day0 = updateTargetDate($("#day0"));
-                day0.setDate(day0.getDate() +7);
-                getDate(day0);
+            let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+            let today = initDate(new Date());     // 페이지를 로드한 날짜를 저장
+
+            buildCalendarFrame();
+            buildCalendar(today);
+            // const todayStr = parseDate(new Date());
+            // $("#date"+todayStr).addClass("active");
+
+            $(".calBtn").on("click",function(){
+                getAllTable(movieTitle, $(this).val().slice(4));
+                $(".calBtn").removeClass("active");
+                $(this).addClass("active");
             });
 
-            // 오늘날짜의 연도 + 버튼에 씌여진 월 + 버튼에 씌여진 일, padStart는 2자리수, 첫째자리가 비었으면 0으로 채우는 문자열로 변환하는 함수
+            $("#prev").on("click", function (){
+                today.setMonth(today.getMonth()-1);
+                buildCalendar(today);
+                $(".calBtn").removeClass("active");
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.addClass("active")
+            });
+
+            $("#next").on("click", function (){
+                today.setMonth(today.getMonth()+1);
+                buildCalendar(today);
+                $(".calBtn").removeClass("active");
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.addClass("active")
+            });
+
+            function buildCalendarFrame(){
+                for(let i = 0; i<6; i++) {
+                    // 일 ~ 토 까지 돌기
+                    for (let j = 0; j < 7; j++) {
+                        $("#calTr" + i).append("<td class='p-0'><button class='calBtn btn border-0' id='cal" + i + j + "'></button></td>");
+                    }
+                }
+            };
+
+            function buildCalendar(today) {
+                const firstDateMonth = initDate(new Date(today.getFullYear(), today.getMonth(), 1));
+
+                $("#calYear").text(today.getFullYear());
+                $("#calMonth").text(today.getMonth()+1);
+
+                let temp = firstDateMonth;
+
+                $(".calBtn").removeClass("todayCell btn-outline-success");
+
+                // tr 한줄씩 돌기
+                for(let i = 0; i<6; i++) {
+                    // 일 ~ 토 까지 돌기
+                    for(let j = 0; j<7; j++) {
+                        let cell = $("#calTr"+i+" td button#cal"+i+j);
+
+                        // 현재 td의 인덱스가 월 첫째날의 요일 인덱스와 같을경우 data에 값 집어넣기
+                        if(j == temp.getDay()) {
+                            const dateStr = String(temp.getDate()).padStart(2, '0');
+                            cell.val("date"+parseDate(temp));
+                            cell.text(dateStr);
+                            temp.setDate(temp.getDate()+1);
+                        }
+                        // 달의 첫째날이 일요일이 아닌경우 temp에 마이너스 며칠 해가지고 날짜를 맞춰서 temp를 재설정
+                        else{
+                            temp.setDate(temp.getDate()-temp.getDay());
+                            const dateStr = String(temp.getDate()).padStart(2, '0');
+                            cell.val("date"+parseDate(temp));
+                            cell.text(dateStr);
+                            temp.setDate(temp.getDate()+1);
+                        }
+                        // 이번달이 아닌 경우
+                        let tempB = new Date(temp);
+                        tempB.setDate(temp.getDate()-1);
+                        if(tempB.getMonth() > today.getMonth() || tempB.getMonth() < today.getMonth()){
+                            cell.addClass("btn-outline-secondary");
+                        }
+                        // 일요일
+                        else if(j == 0) {
+                            cell.addClass("btn-outline-danger");
+                        }
+                        // 토요일
+                        else if(j == 6) {
+                            cell.addClass("btn-outline-primary");
+                        }
+                        // 이번달 평일
+                        else{
+                            cell.addClass("btn-outline-dark");
+                        }
+                        if(cell.val().slice(4)<parseDate(new Date())){
+                            cell.prop("disabled","true");
+                            cell.parent().addClass("bg-secondary bg-opacity-10");
+                        } else{
+                            cell.prop("disabled","false");
+                            cell.parent().removeClass("bg-secondary bg-opacity-10");
+                        }
+                    }
+                }
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.removeClass();
+                todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active");
+            }
+
+            // Date 객체의 시,분,초,밀리초를 0으로 초기화시켜주는 함수
+            function initDate (date) {
+                date.setHours(0,0,0,0);
+                return date;
+            }
+
+            // date를 yyyyMMdd로 변환, padStart는 2자리수, 첫째자리가 비었으면 0으로 채우는 문자열로 변환하는 함수
             function parseDate (date) {
                 const returnDate = String(date.getFullYear()) +
                     String(date.getMonth() + 1).padStart(2, '0') +
@@ -42,51 +136,6 @@
                 return returnDate;
             }
 
-            // 버튼을 클릭하면 상영시간표 다시 불러오기
-            $("button.days").on('click', function (){
-
-                const targetDate = updateTargetDate($(this));
-                const returnDate = parseDate(targetDate);
-
-                // 선택한 날짜로 영화상영정보 다시 불러오기
-                getAllTable(movieTitle, returnDate);
-            });
-
-            // button태그 요소를 매개변수로 받아서 해당 버튼에 입력된 텍스트를 이용해 날짜데이터를 반환하는 함수
-            function updateTargetDate(button) {
-                let targetDate = new Date();
-                const month = parseInt(button.find('span.month').text()) - 1;
-                const date = parseInt(button.find('span.date').text());
-
-                targetDate.setMonth(month);
-                targetDate.setDate(date);
-
-                return targetDate;
-            }
-
-            // date객체를 매개변수로 받아서 해당 주의 날짜를 표시하는 버튼 7개를 그리는 함수
-            function getDate(day0) { // day0는 Date 객체
-                $("button.days span").remove();
-                for(let i=0; i<7; i++) {
-                    $("#day"+i).append(
-                        '<span class="month"></span>\n' +
-                        '<span class="date"></span>\n' +
-                        '<span class="day"></span>'
-                    );
-
-                    // 매개변수로 받은 기준날짜(#day0에 들어갈 날짜)에 +i 일을 더함
-                    let thisDate = new Date(day0);
-                    thisDate.setDate(thisDate.getDate() + i);
-
-                    const week = ['일', '월', '화', '수', '목', '금', '토'];
-                    let dayOfWeek = week[thisDate.getDay()];
-
-                    $("#day"+i+" .month").text(thisDate.getMonth()+1+"월");
-                    $("#day"+i+" .date").text(thisDate.getDate()+"일");
-                    $("#day"+i+" .day").text(dayOfWeek);
-                }
-
-            }
             function getAllTable(title, date) {
                 $("ul.timeTable li").remove();
                 $("p.load").text("로딩 중...");
@@ -96,7 +145,7 @@
                 getTable('lotteCinema', title, date);
             }
             function removeTable(site) {
-                $("ul#Ul li").remove();
+                $("ul#"+site+"Ul li").remove();
             }
 
             function getTable(site, movieTitle, date) {
@@ -112,7 +161,7 @@
                     dataType: "json",
                     // 통신 성공 시 동작하는 콜백함수
                     success: function (data) {
-
+                        removeTable(site);
                         // 시간표결과가 없으면 정보없다고뜨고 있으면 로딩중... 이라는 p태그 지우기
                         if (data.length == 0) {
                             $("#" + site + "Load").text("상영 정보가 없습니다.");
@@ -167,21 +216,39 @@
     <p th:text="${movie.movieLikeCnt}"></p>
 
     <hr>
+    <div>
+        <table class="Calendar table w-auto">
+            <thead>
+            <tr>
+                <td><button type="button" id="prev"><</button></td>
+                <td colspan="5" class="text-center">
+                    <span id="calYear"></span><span>년</span>
+                    <span id="calMonth"></span><span>월</span>
+                </td>
+                <td><button type="button" id="next">></button></td>
+            </tr>
+            <tr>
+                <td>일</td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+                <td>토</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr id="calTr0"></tr>
+            <tr id="calTr1"></tr>
+            <tr id="calTr2"></tr>
+            <tr id="calTr3"></tr>
+            <tr id="calTr4"></tr>
+            <tr id="calTr5"></tr>
+            </tbody>
+        </table>
 
-    <div id="calendar">
-        <button type="button" id="prev" class="pageChange btn btn-outline-secondary">이전</button>
-
-        <button type="button" id="day0" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day1" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day2" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day3" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day4" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day5" class="days btn btn-outline-primary"></button>
-        <button type="button" id="day6" class="days btn btn-outline-primary"></button>
-
-
-        <button type="button" id="next" class="pageChange btn btn-outline-secondary">다음</button>
     </div>
+
 
     <hr>
 
