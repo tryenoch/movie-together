@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자유게시판</title>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link href="/css/style.css" rel="stylesheet">
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+          crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script></script>
+</head>
+<body>
+<!-- header 영역-->
+<header th:replace="~{layout/header :: header-basic}"></header>
+
+<!-- main 영역 -->
+<main class="container my-4">
+  <div class="d-flex justify-content-center">
+    <h1 class="board-title mt-5">
+      자유게시판
+    </h1>
+  </div>
+  <div class="d-flex justify-content-center ">
+    <div class="movie-board">
+      <form th:action="@{/board/write}" method="post" enctype="multipart/form-data">
+      <!-- 글 작성 폼  -->
+      <table class="table board-detail">
+        <thead>
+          <tr>
+            <th>
+              <input type="text" name="boardTitle" placeholder="제목을 입력하세요" id="title">
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="">
+              <div class="board-content p-2">
+                <textarea placeholder="내용을 입력하세요." name="boardContent" rows="20"></textarea>
+              </div>
+            </td>
+          </tr>
+          <tr class="board-info">
+            <td class="py-3">
+              <input type="file" class="form-control" name="files" multiple>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 사용자 명 -->
+      <input type="text" name="boardWriter" value="test" hidden="hidden">
+
+      <div class="d-flex justify-content-between mt-2 mb-4">
+        <a href="/board/list" class="btn btn-dark px-4">목록</a>
+        <div>
+          <button type="submit" class="btn btn-dark px-3">등록하기</button>
+        </div>
+      </div>
+
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<!--footer 영역-->
+<footer th:replace="~{layout/footer :: footer-basic}"></footer>
+</body>
+</html>
