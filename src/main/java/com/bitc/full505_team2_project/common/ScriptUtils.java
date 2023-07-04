@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 
 public class ScriptUtils {
 
-    /* 사용법
+    /* 사용법 (작성자 chanmi, 문제 있으면 얘기해주세요)
     * 해당 Controller 메소드 매개변수로 HttpServletResponse response 추가
     * 알림창만 띄울 때 예시 : ScriptUtils.alert(response, "회원만 이용 가능 합니다.");
     * 알림창 띄운 후 특정 주소로 이동 시킬 때 : ScriptUtils.alertAndMovePage(response, "회원만 이용 가능 합니다.", "/member/login");
