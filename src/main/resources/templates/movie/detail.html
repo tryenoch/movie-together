@@ -9,8 +9,8 @@
     <!-- css파일 -->
     <link href="/css/style.css" rel="stylesheet">
 
-    <style>
-    </style>
+
+
 
     <script>
         $(document).ready(function () {
@@ -18,12 +18,143 @@
             let movieTitle = $("#title").text();
             getAllTable(movieTitle, '20230704');
 
+            let today = initDate(new Date());     // 페이지를 로드한 날짜를 저장
+
+            buildCalendarFrame();
+            buildCalendar(today);
+
+
+            // 캘린더의 버튼 클릭시 시간표 출력
+            $(".calBtn").on("click",function(){
+                getAllTable(movieTitle, $(this).val().slice(4));
+                $(".calBtn").removeClass("active");
+                $(this).addClass("active");
+            });
+
+            // 캘린더 이전 월
+            $("#prev").on("click", function (){
+                today.setMonth(today.getMonth()-1);
+                buildCalendar(today);
+                $(".calBtn").removeClass("active");
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.addClass("active")
+            });
+
+            // 캘린더 다음 월
+            $("#next").on("click", function (){
+                today.setMonth(today.getMonth()+1);
+                buildCalendar(today);
+                $(".calBtn").removeClass("active");
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.addClass("active")
+            });
+
+            // 캘린더 테이블의 td와 button태그를 그려주는 함수, 최초 1회 실행됨
+            function buildCalendarFrame(){
+                for(let i = 0; i<6; i++) {
+                    // 일 ~ 토 까지 돌기
+                    for (let j = 0; j < 7; j++) {
+                        $("#calTr" + i).append("<td class='p-0'><button id='cal" + i + j + "'></button></td>");
+                    }
+                }
+            };
+
+            // 캘린더 안에 날짜들을 그려주는 함수, 날짜를 매개변수로 받아 해당 날짜의 월을 표시해줌
+            function buildCalendar(today) {
+                const firstDateMonth = initDate(new Date(today.getFullYear(), today.getMonth(), 1));
+
+                $("#calYear").text(today.getFullYear());
+                $("#calMonth").text(today.getMonth()+1);
+
+                let temp = firstDateMonth;
+                $(".Calendar tbody tr td button").removeClass();
+                $(".Calendar tbody tr td button").addClass("calBtn btn border-0");
+                $(".Calendar tbody tr td").removeClass();
+                $(".Calendar tbody tr td").addClass("p-0");
+
+                // tr 한줄씩 돌기
+                for(let i = 0; i<6; i++) {
+                    // 일 ~ 토 까지 돌기
+                    for(let j = 0; j<7; j++) {
+                        let cell = $("#calTr"+i+" td button#cal"+i+j);
+
+                        // 현재 td의 인덱스가 월 첫째날의 요일 인덱스와 같을경우 data에 값 집어넣기
+                        if(j == temp.getDay()) {
+                            const dateStr = String(temp.getDate()).padStart(2, '0');
+                            cell.val("date"+parseDate(temp));
+                            cell.text(dateStr);
+                            temp.setDate(temp.getDate()+1);
+                        }
+                        // 달의 첫째날이 일요일이 아닌경우 temp에 마이너스 며칠 해가지고 날짜를 맞춰서 temp를 재설정
+                        else{
+                            temp.setDate(temp.getDate()-temp.getDay());
+                            const dateStr = String(temp.getDate()).padStart(2, '0');
+                            cell.val("date"+parseDate(temp));
+                            cell.text(dateStr);
+                            temp.setDate(temp.getDate()+1);
+                        }
+                        // 이번달이 아닌 경우
+                        let tempB = new Date(temp);
+                        tempB.setDate(temp.getDate()-1);
+                        if(tempB.getMonth() > today.getMonth() || tempB.getMonth() < today.getMonth()){
+                            cell.addClass("btn-outline-secondary opacity-50");
+                        }
+                        // 일요일
+                        else if(j == 0) {
+                            cell.addClass("btn-outline-danger");
+                        }
+                        // 토요일
+                        else if(j == 6) {
+                            cell.addClass("btn-outline-primary");
+                        }
+                        // 이번달 평일
+                        else{
+                            cell.addClass("btn-outline-dark");
+                        }
+                        if(cell.val().slice(4)<parseDate(new Date())){
+                            cell.attr("disabled","true");
+                            cell.parent().addClass("bg-secondary bg-opacity-10");
+                        } else{
+                            cell.removeAttr("disabled");
+                        }
+                    }
+                }
+                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                todayCell.removeClass();
+                todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active");
+            }
+
+            // Date 객체의 시,분,초,밀리초를 0으로 초기화시켜주는 함수
+            function initDate (date) {
+                date.setHours(0,0,0,0);
+                return date;
+            }
+
+            // date를 yyyyMMdd로 변환, padStart는 2자리수, 첫째자리가 비었으면 0으로 채우는 문자열로 변환하는 함수
+            function parseDate (date) {
+                const returnDate = String(date.getFullYear()) +
+                    String(date.getMonth() + 1).padStart(2, '0') +
+                    String(date.getDate()).padStart(2, '0');
+
+                return returnDate;
+            }
+
+            // 모든 시간표를 그리는 함수
             function getAllTable(title, date) {
+                $(".timeTable li").remove();
+                $("p.load").text("로딩 중...");
+                $("p.load").css('display','block');
                 getTable('cgv', title, date);
                 getTable('megaBox', title, date);
                 getTable('lotteCinema', title, date);
             }
 
+            // 시간표를 지워주는 함수
+            function removeTable(site) {
+                $("ul#"+site+"Ul li").remove();
+            }
+
+            // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
             function getTable(site, movieTitle, date) {
 
                 $.ajax({
@@ -38,6 +169,7 @@
                     dataType: "json",
                     // 통신 성공 시 동작하는 콜백함수
                     success: function (data) {
+                        removeTable(site);
                         // 시간표결과가 없으면 정보없다고뜨고 있으면 로딩중... 이라는 p태그 지우기
                         if (data.length == 0) {
                             $("#" + site + "Load").text("상영 정보가 없습니다.");
@@ -47,7 +179,6 @@
 
                         // MovieTimeTableDto 리스트 for문 돌리기
                         for (let i = 0; i < data.length; i++) {
-                            console.log(site);
                             // 상영관을 표시해주는 ul은 html에 미리 써놨고 상영관의 총 좌석수는 json파일에서 가져옴
                             let ul = $("#" + site + "Ul");
                             let tototalSeat = data[i].totalSeat;
@@ -57,20 +188,17 @@
                             ul.append(hall);
 
                             // 시간과 잔여좌석이 표시되는 ul태그
-                            let hallLi = $("#"+site+i);
+                            let hallLi = $("#" + site + i);
                             hallLi.append("<ul class='clearfix'></ul>")
-                            let timeUl = $("#" + site + "Ul > #"+ site + i+" > ul");
+                            let timeUl = $("#" + site + "Ul > #" + site + i + " > ul");
                             let timeTable = data[i].startTimeAndSeatRemain;
 
                             // MovieTimeTableDto의 시간표인 timeTable for문 돌리기
                             for (let key in timeTable) {
                                 let value = timeTable[key];
                                 // 시간과 잔여좌석을 하나하나 li로 추가
-                                let appendStr = "<li class=' border float-start m-1 py-1 px-2 list-unstyled text-center timeSeat'><strong>"+key+"</strong><br><span>"+value+"/"+tototalSeat+"</span></li>"
+                                let appendStr = "<li class=' border float-start m-1 py-1 px-2 list-unstyled text-center timeSeat'><strong>" + key + "</strong><br><span>" + value + "/" + tototalSeat + "</span></li>"
                                 timeUl.append(appendStr)
-
-                                console.log('Key: ' + key + ', Value: ' + value);
-
                             }
                         }
                     },
@@ -79,7 +207,16 @@
                         alert("ajax 통신 중 오류 발생")
                     }
                 });
-            }
+            };
+
+            $(".timeTableBtn").on("click",function(){
+                $(".timeTable").addClass("d-none");
+                const id = $(this).val();
+                $("#"+id).removeClass("d-none");
+                $(".timeTableBtn").removeClass("active");
+                $(this).addClass("active");
+            });
+
         });
     </script>
 
@@ -96,23 +233,75 @@
     <p th:text="${movie.movieLikeCnt}"></p>
 
     <hr>
+    <div class="row">
+        <div class="col-3">
+            <table class="Calendar table w-auto">
+                <thead>
+                <tr>
+                    <td><button type="button" id="prev" class="btn btn-sm btn-secondary opacity-50"><</button></td>
+                    <td colspan="5" class="text-center h4">
+                        <span id="calYear"></span><span>년</span>
+                        <span id="calMonth"></span><span>월</span>
+                    </td>
+                    <td><button type="button" id="next" class="btn btn-sm btn-secondary opacity-50">></button></td>
+                </tr>
+                <tr>
+                    <td>일</td>
+                    <td>월</td>
+                    <td>화</td>
+                    <td>수</td>
+                    <td>목</td>
+                    <td>금</td>
+                    <td>토</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id="calTr0"></tr>
+                <tr id="calTr1"></tr>
+                <tr id="calTr2"></tr>
+                <tr id="calTr3"></tr>
+                <tr id="calTr4"></tr>
+                <tr id="calTr5"></tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div id="megaBox">
-        <p>메가박스</p>
-        <p id="megaBoxLoad">로딩 중..</p>
-        <ul id="megaBoxUl"></ul>
+        <div class="col-9">
+            <div class="my-2">
+                <button value="megaBox" class="timeTableBtn btn">메가박스</button>
+                <button value="lotteCinema" class="timeTableBtn btn">롯데시네마</button>
+                <button value="cgv" class="timeTableBtn btn">CGV</button>
+            </div>
+
+
+            <div id="megaBox" class="timeTable d-none">
+                <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
+                <p id="megaBoxLoad" class="load">로딩 중..</p>
+                <ul id="megaBoxUl"></ul>
+            </div>
+
+
+            <div id="lotteCinema" class="timeTable d-none">
+                <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
+                <p id="lotteCinemaLoad" class="load">로딩 중..</p>
+                <ul id="lotteCinemaUl"></ul>
+            </div>
+
+
+            <div id="cgv" class="timeTable d-none">
+                <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
+                <p id="cgvLoad" class="load">로딩 중..</p>
+                <ul id="cgvUl"></ul>
+            </div>
+        </div>
+
     </div>
-    <div id="lotteCinema">
-        <p>롯데시네마</p>
-        <p id="lotteCinemaLoad">로딩 중..</p>
-        <ul id="lotteCinemaUl"></ul>
-    </div>
-    <div id="cgv">
-        <p>cgv</p>
-        <p id="cgvLoad">로딩 중..</p>
-        <ul id="cgvUl"></ul>
-    </div>
+
+
+
     <hr>
+
+
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>
