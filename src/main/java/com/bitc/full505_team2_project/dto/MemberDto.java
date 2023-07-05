@@ -13,6 +13,8 @@ public class MemberDto {
   private String memberLikeList;
   private int memberGrade;
 
+
+
 //
 ////  로그인에 쓰일 getter setter 아이디
 //  public String getMemberid() {

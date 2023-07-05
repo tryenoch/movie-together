@@ -26,6 +26,19 @@
         SELECT count(member_id) as 'cnt' from member where member_id = #{ID1}
     </select>
 
+    <update id="Correction" parameterType="com.bitc.full505_team2_project.dto.MemberDto">
+        update member
+        SET member_name = #{memberName},member_pw = #{memberPw} WHERE member_id = #{memberId}
+    </update>
+
+<!--    회원 정보 수정 이름 과 비밀번호-->
+<!--    <update id="" parameterType="">-->
+<!--        SET member_name = #{memberName},-->
+<!--            member_pw = #{memberPw}-->
+<!--        WHERE member_name = #{memberName}, member_pw = #{memberPw}-->
+<!--    </update>-->
+
+
 
 </mapper>
 

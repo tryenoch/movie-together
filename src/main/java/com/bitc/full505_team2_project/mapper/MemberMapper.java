@@ -12,4 +12,6 @@ public interface MemberMapper {
     public MemberDto selectMember(String memberId,String memberPw);
 
     public int IdCheck(String ID1);
+
+    public void Correction(MemberDto memberDto);
 }
