@@ -54,7 +54,7 @@
         </tbody>
       </table>
       <!-- 사용자 명 -->
-      <input type="text" name="boardWriter" value="test" hidden="hidden">
+      <input type="text" name="boardWriter" th:value="${session.userName}" hidden="hidden">
 
       <div class="d-flex justify-content-between mt-2 mb-4">
         <a href="/board/list" class="btn btn-dark px-4">목록</a>
