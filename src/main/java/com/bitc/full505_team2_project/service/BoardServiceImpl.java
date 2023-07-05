@@ -70,12 +70,12 @@ public class BoardServiceImpl implements BoardService{
 
   @Override
   public void updateBoard(BoardDto board) throws Exception {
-
+    boardMapper.updateBoard(board);
   }
 
   @Override
   public void deleteBoard(int boardPk) throws Exception {
-
+    boardMapper.deleteBoard(boardPk);
   }
 
   @Override

@@ -28,40 +28,40 @@
   </div>
   <div class="d-flex justify-content-center ">
     <div class="movie-board">
-      <form th:action="@{/board/write}" method="post" enctype="multipart/form-data">
-      <!-- 글 작성 폼  -->
-      <table class="table board-detail">
-        <thead>
-          <tr>
-            <th>
-              <input type="text" name="boardTitle" placeholder="제목을 입력하세요" id="title">
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="">
-              <div class="board-write p-2">
-                <textarea placeholder="내용을 입력하세요." name="boardContent" rows="20"></textarea>
-              </div>
-            </td>
-          </tr>
-          <tr class="board-info">
-            <td class="py-3">
-              <input type="file" class="form-control" name="files" multiple>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- 사용자 명 -->
-      <input type="text" name="boardWriter" value="test" hidden="hidden">
+      <form th:action="@{/board/update}" method="post">
+        <!-- 글 작성 폼  -->
+        <table class="table board-detail">
+          <thead>
+            <tr>
+              <th>
+                <input type="text" name="boardTitle" placeholder="제목을 입력하세요" id="title" th:value="${board.boardTitle}">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="">
+                <div class="board-write p-2">
+                  <textarea placeholder="내용을 입력하세요." name="boardContent" rows="20" th:text="${board.boardContent}"></textarea>
+                </div>
+              </td>
+            </tr>
+            <!--<tr class="board-info">
+              <td class="py-3">
+                <input type="file" class="form-control" name="files" multiple>
+              </td>
+            </tr>-->
+          </tbody>
+        </table>
+        <!-- 게시글 번호 -->
+        <input type="text" name="boardPk" th:value="${board.boardPk}" hidden="hidden">
 
-      <div class="d-flex justify-content-between mt-2 mb-4">
-        <a href="/board/list" class="btn btn-dark px-4">목록</a>
-        <div>
-          <button type="submit" class="btn btn-dark px-3">등록하기</button>
+        <div class="d-flex justify-content-between mt-2 mb-4">
+          <a href="/board/list" class="btn btn-dark px-4">목록</a>
+          <div>
+            <button type="submit" class="btn btn-dark px-3">등록하기</button>
+          </div>
         </div>
-      </div>
 
       </form>
     </div>
