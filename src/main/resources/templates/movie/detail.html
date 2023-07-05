@@ -23,6 +23,8 @@
             buildCalendarFrame();
             buildCalendar(today);
 
+            let movieName = "[[${movie.movieTitle}]]";
+            drawDetailInfo(movieName);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click",function(){
@@ -216,6 +218,38 @@
                 $(this).addClass("active");
             });
 
+            function drawDetailInfo(movieName){
+                $.ajax({
+                    url:"https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+movieName,
+                    type:"GET",
+                    data:{},
+                    success: function (data){
+                        const MovieDetailList = data.results;
+                        const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
+                        for(let i = 0; i<MovieDetailList.length; i++){
+
+                            let infoDiv = $("#movieInfo");
+                            const imgSrc = imageBaseUrl + MovieDetailList[i].poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
+                            infoDiv.append("<img class='moviePoster' src='"+imgSrc+"'></img>");
+                            // let tag ="<div class=\"card\" style=\"height: 20rem;\"><a class='text-decoration-none text-black' href='/detail/data/"+MovieDetailList[i].title+"'>" // 디테일 페이지로 이동하기위한 링크 추가
+                            // tag += "<div class=\"row g-0\">"
+                            // tag +="<div class=\"col-md-5\">"
+                            // tag +="<img src=\""+imageBaseUrl+MovieDetailList[i].poster_path+"\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">"
+                            // tag +="</div>"
+                            // tag +="<div class=\"col-7 \">"
+                            // tag +="<div class=\"card-body\">"
+                            // tag +="<h5 class=\"card-title\">"+MovieDetailList[i].title+"</h5>"
+                            // tag +="<p class=\"card-text\">"+MovieDetailList[i].overview+"</p>"
+                            // tag +="<p class=\"card-text\">"+MovieDetailList[i].vote_average+"</p>"
+                            // tag +="</div>"
+                            // tag +="</div>"
+                            // tag +="</div>"
+                            // tag +="</a></div>"
+                            // $("main").append(tag);
+                        }
+                    }
+                });
+            }
         });
     </script>
 
@@ -224,12 +258,16 @@
 
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
-    <p>movie_pk</p>
-    <p th:text="${movie.moviePk}"></p>
-    <p>movie_title</p>
-    <p id="title" th:text="${movie.movieTitle}"></p>
-    <p>movie_like_cnt</p>
-    <p th:text="${movie.movieLikeCnt}"></p>
+
+    <div class="row" id="movieInfo">
+        <p>movie_pk</p>
+        <p th:text="${movie.moviePk}"></p>
+        <p>movie_title</p>
+        <p id="title" th:text="${movie.movieTitle}"></p>
+        <p>movie_like_cnt</p>
+        <p th:text="${movie.movieLikeCnt}"></p>
+    </div>
+
 
     <hr>
     <div class="row">
