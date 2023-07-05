@@ -1,5 +1,6 @@
 package com.bitc.full505_team2_project.controller;
 
+import com.bitc.full505_team2_project.crowling.MovieInfo;
 import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.crowling.TimeTable;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
@@ -48,19 +49,8 @@ public class MovieDetailController {
         MovieDTO movie = mds.selectMovieInfo(pk);
         mv.addObject("movie",movie);
 
-        // 날짜 설정해서 TimeTable클래스 객체 생성후 클래스의 메소드를 이용하여 3개 영화관에서 시간표를 가져옴
-        // 제목과 부제목이 :이나 - 아무거나 써도 알아서 해당 제목과 부제목을 포함하는 영화를 검색해줌
-//        TimeTable timeTable = new TimeTable("20230703");
-//        List<MovieTimeTableDto> timeTableCgv = timeTable.getCgvSchedule("엘리멘탈");
-//        System.out.println(timeTableCgv);
-//        List<MovieTimeTableDto> timeTableMB = timeTable.getMegaBoxSchedule("엘리멘탈");
-//        System.out.println(timeTableMB);
-//        List<MovieTimeTableDto> timeTableLC = timeTable.getLotteCinemaSchedule("엘리멘탈");
-//        System.out.println(timeTableLC);
-//
-//        mv.addObject("timeTableCgv", timeTableCgv);
-//        mv.addObject("timeTableMB", timeTableMB);
-//        mv.addObject("timeTableLC", timeTableLC);
+        MovieInfo movieInfo = new MovieInfo();
+        movieInfo.getInfo(movie.getMovieTitle());
 
         return mv;
     }

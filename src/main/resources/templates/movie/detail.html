@@ -277,12 +277,36 @@
 
     <div class="row" id="movieInfo">
         <div class="col-4" id="moviePosterSpace"></div>
-        <div class="col-8" id="movieInfoSpace">
-            <h1 th:text="${movie.movieTitle}"></h1>
-            <div id="movieDateSpace"><span>개봉일: </span></div>
-            <div id="movieStorySpace">
-                <div style="height: 1px" class="w-25 bg-secondary bg-opacity-50 my-3"></div>
+
+        <div class="col-8">
+            <div class="d-flex justify-content-between row">
+                <div id="movieInfoSpace" class="col">
+                    <h1 th:text="${movie.movieTitle}"></h1>
+                    <div class="row h4">
+                        <div class="col">
+                            <div class="infoItem" id="movieDateSpace"><span>개봉일: </span></div>
+                            <div class="infoItem"><span>누적관객: </span></div>
+                            <div class="infoItem"><span>박스오피스: </span></div>
+                        </div>
+                        <div class="col">
+                            <div class="infoItem"><span>국가: </span></div>
+                            <div class="infoItem"><span>등급: </span></div>
+                            <div class="infoItem"><span>러닝타임: </span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                    <span>관심영화</span>
+                </div>
             </div>
+
+            <div>
+                <div id="movieStorySpace">
+                    <div style="height: 1px" class="w-25 bg-secondary bg-opacity-50 my-3"></div>
+                </div>
+
+            </div>
+
         </div>
 
 
