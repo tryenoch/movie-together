@@ -2,6 +2,8 @@ package com.bitc.full505_team2_project.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class BoardDto {
   private int boardPk;
@@ -10,6 +12,7 @@ public class BoardDto {
   private String boardContent;
   private String boardDate;
   private int boardVisitCnt;
-  private String boardOfile;
-  private String boardSfile;
+  private String boardDeleteYn;
+
+  private List<BoardFileDto> fileList;
 }
