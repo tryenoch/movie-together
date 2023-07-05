@@ -34,6 +34,7 @@
                 });
             console.log(tmdbId);
 
+
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click",function(){
                 getAllTable(movieTitle, $(this).val().slice(4));
@@ -166,6 +167,7 @@
 
             // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
             function getTable(site, movieTitle, date) {
+
                 $.ajax({
                     // 접속할 서버의 주소 입력
                     url: "/detail/" + site + "/getTimetable.do",
