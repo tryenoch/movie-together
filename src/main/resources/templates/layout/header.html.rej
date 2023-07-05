@@ -1,0 +1,9 @@
+diff a/src/main/resources/templates/layout/header.html b/src/main/resources/templates/layout/header.html	(rejected hunks)
+@@ -54,7 +54,7 @@
+           <li class="movie-search">
+             <form action="#" method="post">
+               <label for="movie_name" class="">
++                <input type="text" class=""  id="movie_name"  name="movie_name" placeholder="영화명을 입력하세요." >
+               </label>
+             </form>
+             <button type="submit" class="btn btn-success d-flex" id="btn-search"> 검 색</button>

@@ -73,10 +73,10 @@
                                 const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
                                 let tag = "<div class=\"col-sm-3\">";
                                 tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
-                                tag += "<div class=\"card\" style=\"width: 18rem;\">";
-                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\" style=''>";
+                                tag += "<div class=\"card\" style=\"max-width:300px;\">";
+                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
                                 tag += "<div class=\"card-img-overlay\">";
-                                tag += "<p>" + dailyBoxOfficeList[i].rank + "</p>";
+                                tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
                                 tag += "</div>";
                                 tag += "<div class=\"card-body\">";
                                 tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
