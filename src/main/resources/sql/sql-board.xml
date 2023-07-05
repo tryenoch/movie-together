@@ -35,6 +35,21 @@
     VALUES (#{boardTitle}, #{boardWriter}, #{boardContent}, NOW())
   </insert>
 
+  <!-- 게시글 수정 -->
+  <update id="updateBoard" parameterType="com.bitc.full505_team2_project.dto.BoardDto">
+    UPDATE board
+    SET board_title = #{boardTitle},
+        board_content = #{boardContent}
+    WHERE board_pk = #{boardPk}
+  </update>
+
+  <!-- 게시글 삭제 -->
+  <update id="deleteBoard" parameterType="int">
+    UPDATE board
+    SET board_delete_yn = 'Y'
+    WHERE board_pk = #{boardPk}
+  </update>
+
   <!-- 지정한 게시글의 첨부 파일 목록보기 -->
   <select id="selectBoardFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
