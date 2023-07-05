@@ -24,7 +24,15 @@
             buildCalendar(today);
 
             let movieName = "[[${movie.movieTitle}]]";
-            drawDetailInfo(movieName);
+            let tmdbId;
+            drawDetailInfo(movieName)
+                .then(function(data){
+                    tmbId = data;
+                })
+                .catch(function(err){
+                    tmbId = 0;
+                });
+            console.log(tmdbId);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click",function(){
@@ -219,27 +227,42 @@
             });
 
             function drawDetailInfo(movieName){
-                $.ajax({
-                    url:"https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+movieName,
-                    type:"GET",
-                    data:{},
-                    success: function (data){
-                        const MovieDetailList = data.results;
-                        const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
-                        while(MovieDetailList.length > 0){
+                let movieId = 0;
+                return new Promise(function(resolve, reject) {
+                    $.ajax({
+                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName,
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            const MovieDetailList = data.results;
+                            const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
+                            if (MovieDetailList.length > 0) {
+                                const result = MovieDetailList[0];
 
-                            const infoDiv = $("#movieInfo");
-                            const imgSrc = imageBaseUrl + MovieDetailList[0].poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
-                            const overView = MovieDetailList[0].overview;
-                            const releaseDate = MovieDetailList[0].release_date;
-                            const posterDiv = infoDiv.children("#moviePosterSpace");
-                            const storyDiv = infoDiv.find("#movieStorySpace");
-                            posterDiv.append("<img class='moviePoster w-100' src='"+imgSrc+"'>");
-                            storyDiv.append("<p>"+overView+"</p>");
-                            break;
+                                const infoDiv = $("#movieInfo");
+
+                                const imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
+                                const overView = result.overview;
+                                const releaseDate = result.release_date;
+                                movieId = result.id;
+                                console.log(result.id);
+
+                                const posterDiv = infoDiv.children("#moviePosterSpace");
+                                const storyDiv = infoDiv.find("#movieStorySpace");
+                                const dateDiv = infoDiv.find("#movieDateSpace");
+
+                                posterDiv.append("<img class='moviePoster w-100' src='" + imgSrc + "'>");
+                                storyDiv.append("<p>" + overView + "</p>");
+                                dateDiv.append("<span>" + releaseDate + "</span>");
+
+                            }
                         }
-                    }
-                })
+                    });
+                    // 비동기 실행이 정상 실행 시 실행
+                    resolve(data);
+                    // 비동기 실행에 오류가 있을 경우 실행
+                    reject("에러 발생");
+                });
             }
         });
     </script>
@@ -254,7 +277,7 @@
         <div class="col-4" id="moviePosterSpace"></div>
         <div class="col-8" id="movieInfoSpace">
             <h1 th:text="${movie.movieTitle}"></h1>
-
+            <div id="movieDateSpace"><span>개봉일: </span></div>
             <div id="movieStorySpace">
                 <div style="height: 1px" class="w-25 bg-secondary bg-opacity-50 my-3"></div>
             </div>
