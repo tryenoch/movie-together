@@ -16,5 +16,6 @@ public class MovieDetailDTO {
    private boolean video;
    private float vote_average;
    private int vote_count;
+   private String original_title;
 
 }

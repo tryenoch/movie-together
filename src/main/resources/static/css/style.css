@@ -214,6 +214,10 @@ li.movie-search {
     border: none;
     resize: none;
 }
+.card-img-same{
+    height:300px;
+    object-fit: cover;
+}
 
 /* test css */
 
