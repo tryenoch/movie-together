@@ -37,6 +37,12 @@ public class MemberController {
         return "member/login";
     }
 
+    @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
+    public String Mypage() throws Exception {
+        return "member/mypage";
+    }
+
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login_check(@ModelAttribute MemberDto dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         int result = memberService.loginCheck(dto.getMemberId(), dto.getMemberPw());
@@ -65,6 +71,8 @@ public class MemberController {
         }
     }
 
+
+
     @RequestMapping("logout")
     public String logout(HttpSession session) {
         memberService.logout(session);
@@ -90,7 +98,7 @@ public class MemberController {
 //        System.out.println("joinId = " + joinId + ", joinPw = " + joinPw + ", joinPwd = " + joinPwd + ", joinName = " + joinName + ", joinDay = " + joinDay + ", joinEmail = " + joinEmail);
         memberService.memberJoin(member);
 
-        return "login";
+        return "/member/login";
     }
 
     @ResponseBody
@@ -118,5 +126,6 @@ public class MemberController {
 
         return "member/loginok";
     }
+
 }
 
