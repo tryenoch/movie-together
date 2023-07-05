@@ -226,29 +226,20 @@
                     success: function (data){
                         const MovieDetailList = data.results;
                         const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
-                        for(let i = 0; i<MovieDetailList.length; i++){
+                        while(MovieDetailList.length > 0){
 
-                            let infoDiv = $("#movieInfo");
-                            const imgSrc = imageBaseUrl + MovieDetailList[i].poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
-                            infoDiv.append("<img class='moviePoster' src='"+imgSrc+"'></img>");
-                            // let tag ="<div class=\"card\" style=\"height: 20rem;\"><a class='text-decoration-none text-black' href='/detail/data/"+MovieDetailList[i].title+"'>" // 디테일 페이지로 이동하기위한 링크 추가
-                            // tag += "<div class=\"row g-0\">"
-                            // tag +="<div class=\"col-md-5\">"
-                            // tag +="<img src=\""+imageBaseUrl+MovieDetailList[i].poster_path+"\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">"
-                            // tag +="</div>"
-                            // tag +="<div class=\"col-7 \">"
-                            // tag +="<div class=\"card-body\">"
-                            // tag +="<h5 class=\"card-title\">"+MovieDetailList[i].title+"</h5>"
-                            // tag +="<p class=\"card-text\">"+MovieDetailList[i].overview+"</p>"
-                            // tag +="<p class=\"card-text\">"+MovieDetailList[i].vote_average+"</p>"
-                            // tag +="</div>"
-                            // tag +="</div>"
-                            // tag +="</div>"
-                            // tag +="</a></div>"
-                            // $("main").append(tag);
+                            const infoDiv = $("#movieInfo");
+                            const imgSrc = imageBaseUrl + MovieDetailList[0].poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
+                            const overView = MovieDetailList[0].overview;
+                            const releaseDate = MovieDetailList[0].release_date;
+                            const posterDiv = infoDiv.children("#moviePosterSpace");
+                            const storyDiv = infoDiv.find("#movieStorySpace");
+                            posterDiv.append("<img class='moviePoster w-100' src='"+imgSrc+"'>");
+                            storyDiv.append("<p>"+overView+"</p>");
+                            break;
                         }
                     }
-                });
+                })
             }
         });
     </script>
@@ -260,6 +251,16 @@
 <main class="container-md my-4">
 
     <div class="row" id="movieInfo">
+        <div class="col-4" id="moviePosterSpace"></div>
+        <div class="col-8" id="movieInfoSpace">
+            <h1 th:text="${movie.movieTitle}"></h1>
+
+            <div id="movieStorySpace">
+                <div style="height: 1px" class="w-25 bg-secondary bg-opacity-50 my-3"></div>
+            </div>
+        </div>
+
+
         <p>movie_pk</p>
         <p th:text="${movie.moviePk}"></p>
         <p>movie_title</p>
