@@ -10,59 +10,74 @@
     <link href="/css/style.css" rel="stylesheet">
 
 
-
-
     <script>
         $(document).ready(function () {
 
-            let movieTitle = $("#title").text();
-            getAllTable(movieTitle, '20230704');
 
             let today = initDate(new Date());     // 페이지를 로드한 날짜를 저장
 
             buildCalendarFrame();
             buildCalendar(today);
 
-            let movieName = "[[${movie.movieTitle}]]";
+            // 최초 모델앤뷰로 pk값 받아옴
+            let moviePk = "[[${pk}]]";
+            let movieTitle;
+            let movieLikeCnt;
+            let genres;
+            let nation;
+            let gradeAge;
+            let runningTime;
+            let audience;
+            let boxOfficeRank;
+            let casts;
+            let releaseDate;
+            let imgSrc;
+            let overview;
+
             let tmdbId;
-            drawDetailInfo(movieName)
-                .then(function(data){
-                    tmbId = data;
+            getInfo(moviePk)
+                .then(function () {
+                    getAllTable(movieTitle, '20230704');
+                    posterReleasePlot(movieTitle)
+                        .then(function () {
+                            drawInfo();
+                        })
+                        .catch(function () {
+                        })
                 })
-                .catch(function(err){
+                .catch(function (err) {
                     tmbId = 0;
                 });
-            console.log(tmdbId);
 
 
             // 캘린더의 버튼 클릭시 시간표 출력
-            $(".calBtn").on("click",function(){
+            $(".calBtn").on("click", function () {
                 getAllTable(movieTitle, $(this).val().slice(4));
                 $(".calBtn").removeClass("active");
                 $(this).addClass("active");
             });
 
             // 캘린더 이전 월
-            $("#prev").on("click", function (){
-                today.setMonth(today.getMonth()-1);
+            $("#prev").on("click", function () {
+                today.setMonth(today.getMonth() - 1);
                 buildCalendar(today);
                 $(".calBtn").removeClass("active");
-                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.addClass("active")
             });
 
             // 캘린더 다음 월
-            $("#next").on("click", function (){
-                today.setMonth(today.getMonth()+1);
+            $("#next").on("click", function () {
+                today.setMonth(today.getMonth() + 1);
                 buildCalendar(today);
                 $(".calBtn").removeClass("active");
-                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.addClass("active")
             });
 
             // 캘린더 테이블의 td와 button태그를 그려주는 함수, 최초 1회 실행됨
-            function buildCalendarFrame(){
-                for(let i = 0; i<6; i++) {
+            function buildCalendarFrame() {
+                for (let i = 0; i < 6; i++) {
                     // 일 ~ 토 까지 돌기
                     for (let j = 0; j < 7; j++) {
                         $("#calTr" + i).append("<td class='p-0'><button id='cal" + i + j + "'></button></td>");
@@ -75,7 +90,7 @@
                 const firstDateMonth = initDate(new Date(today.getFullYear(), today.getMonth(), 1));
 
                 $("#calYear").text(today.getFullYear());
-                $("#calMonth").text(today.getMonth()+1);
+                $("#calMonth").text(today.getMonth() + 1);
 
                 let temp = firstDateMonth;
                 $(".Calendar tbody tr td button").removeClass();
@@ -84,65 +99,65 @@
                 $(".Calendar tbody tr td").addClass("p-0");
 
                 // tr 한줄씩 돌기
-                for(let i = 0; i<6; i++) {
+                for (let i = 0; i < 6; i++) {
                     // 일 ~ 토 까지 돌기
-                    for(let j = 0; j<7; j++) {
-                        let cell = $("#calTr"+i+" td button#cal"+i+j);
+                    for (let j = 0; j < 7; j++) {
+                        let cell = $("#calTr" + i + " td button#cal" + i + j);
 
                         // 현재 td의 인덱스가 월 첫째날의 요일 인덱스와 같을경우 data에 값 집어넣기
-                        if(j == temp.getDay()) {
+                        if (j == temp.getDay()) {
                             const dateStr = String(temp.getDate()).padStart(2, '0');
-                            cell.val("date"+parseDate(temp));
+                            cell.val("date" + parseDate(temp));
                             cell.text(dateStr);
-                            temp.setDate(temp.getDate()+1);
+                            temp.setDate(temp.getDate() + 1);
                         }
                         // 달의 첫째날이 일요일이 아닌경우 temp에 마이너스 며칠 해가지고 날짜를 맞춰서 temp를 재설정
-                        else{
-                            temp.setDate(temp.getDate()-temp.getDay());
+                        else {
+                            temp.setDate(temp.getDate() - temp.getDay());
                             const dateStr = String(temp.getDate()).padStart(2, '0');
-                            cell.val("date"+parseDate(temp));
+                            cell.val("date" + parseDate(temp));
                             cell.text(dateStr);
-                            temp.setDate(temp.getDate()+1);
+                            temp.setDate(temp.getDate() + 1);
                         }
                         // 이번달이 아닌 경우
                         let tempB = new Date(temp);
-                        tempB.setDate(temp.getDate()-1);
-                        if(tempB.getMonth() > today.getMonth() || tempB.getMonth() < today.getMonth()){
+                        tempB.setDate(temp.getDate() - 1);
+                        if (tempB.getMonth() > today.getMonth() || tempB.getMonth() < today.getMonth()) {
                             cell.addClass("btn-outline-secondary opacity-50");
                         }
                         // 일요일
-                        else if(j == 0) {
+                        else if (j == 0) {
                             cell.addClass("btn-outline-danger");
                         }
                         // 토요일
-                        else if(j == 6) {
+                        else if (j == 6) {
                             cell.addClass("btn-outline-primary");
                         }
                         // 이번달 평일
-                        else{
+                        else {
                             cell.addClass("btn-outline-dark");
                         }
-                        if(cell.val().slice(4)<parseDate(new Date())){
-                            cell.attr("disabled","true");
+                        if (cell.val().slice(4) < parseDate(new Date())) {
+                            cell.attr("disabled", "true");
                             cell.parent().addClass("bg-secondary bg-opacity-10");
-                        } else{
+                        } else {
                             cell.removeAttr("disabled");
                         }
                     }
                 }
-                let todayCell = $('button[value="date'+ parseDate(new Date()) +'"]');
+                let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.removeClass();
                 todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active");
             }
 
             // Date 객체의 시,분,초,밀리초를 0으로 초기화시켜주는 함수
-            function initDate (date) {
-                date.setHours(0,0,0,0);
+            function initDate(date) {
+                date.setHours(0, 0, 0, 0);
                 return date;
             }
 
             // date를 yyyyMMdd로 변환, padStart는 2자리수, 첫째자리가 비었으면 0으로 채우는 문자열로 변환하는 함수
-            function parseDate (date) {
+            function parseDate(date) {
                 const returnDate = String(date.getFullYear()) +
                     String(date.getMonth() + 1).padStart(2, '0') +
                     String(date.getDate()).padStart(2, '0');
@@ -154,7 +169,7 @@
             function getAllTable(title, date) {
                 $(".timeTable li").remove();
                 $("p.load").text("로딩 중...");
-                $("p.load").css('display','block');
+                $("p.load").css('display', 'block');
                 getTable('cgv', title, date);
                 getTable('megaBox', title, date);
                 getTable('lotteCinema', title, date);
@@ -162,7 +177,7 @@
 
             // 시간표를 지워주는 함수
             function removeTable(site) {
-                $("ul#"+site+"Ul li").remove();
+                $("ul#" + site + "Ul li").remove();
             }
 
             // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
@@ -215,56 +230,120 @@
                     },
                     // 통신 실패 시 동작하는 콜백함수
                     error: function () {
-                        alert("ajax 통신 중 오류 발생")
+                        // alert("ajax 통신 중 오류 발생")
                     }
                 });
             };
 
-            $(".timeTableBtn").on("click",function(){
+            $(".timeTableBtn").on("click", function () {
                 $(".timeTable").addClass("d-none");
                 const id = $(this).val();
-                $("#"+id).removeClass("d-none");
+                $("#" + id).removeClass("d-none");
                 $(".timeTableBtn").removeClass("active");
                 $(this).addClass("active");
             });
 
-            function drawDetailInfo(movieName){
-                let movieId = 0;
-                return new Promise(function(resolve, reject) {
+            // 포스터, 줄거리만 추가
+            function posterReleasePlot(movieName) {
+                return new Promise(function (resolve, reject) {
+                    const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName;
                     $.ajax({
-                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName,
+                        url: urlStr,
                         type: "GET",
                         data: {},
                         success: function (data) {
+                            console.log(urlStr);
                             const MovieDetailList = data.results;
                             const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
                             if (MovieDetailList.length > 0) {
                                 const result = MovieDetailList[0];
-
-                                const infoDiv = $("#movieInfo");
-
-                                const imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
-                                const overView = result.overview;
-                                const releaseDate = result.release_date;
-                                movieId = result.id;
-                                console.log(result.id);
-
-                                const posterDiv = infoDiv.children("#moviePosterSpace");
-                                const storyDiv = infoDiv.find("#movieStorySpace");
-                                const dateDiv = infoDiv.find("#movieDateSpace");
-
-                                posterDiv.append("<img class='moviePoster w-100' src='" + imgSrc + "'>");
-                                storyDiv.append("<p>" + overView + "</p>");
-                                dateDiv.append("<span>" + releaseDate + "</span>");
-
+                                imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
+                                overview = result.overview;
+                                releaseDate = result.release_date;
+                                resolve(true);
                             }
+                        },
+                        error: function () {
+                            reject("에러 발생");
                         }
                     });
-                    // 비동기 실행이 정상 실행 시 실행
-                    resolve(data);
-                    // 비동기 실행에 오류가 있을 경우 실행
-                    reject("에러 발생");
                 });
+            }
+
+            function getInfo(pk) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: "/detail/getInfo/" + pk,
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            movieTitle = data.movieTitle;
+                            movieLikeCnt = data.movieLikeCnt;
+                            genres = data.genres;
+                            nation = data.nation;
+                            gradeAge = data.gradeAge;
+                            runningTime = data.runningTime;
+                            audience = data.audience.toLocaleString();
+                            boxOfficeRank = data.boxOfficeRank;
+                            casts = data.casts;
+
+                            // 비동기 실행이 정상 실행 시 실행
+                            resolve(true);
+                        },
+                        error: function () {
+                            // 비동기 실행에 오류가 있을 경우 실행
+                            reject("에러 발생");
+                        }
+                    });
+                });
+            }
+
+            function drawInfo() {
+
+                $("#movieTitle").append("<span>" + movieTitle + "</span>");
+                $("#releaseDate").append("<span>" + releaseDate + "</span>");
+                $("#audience").append("<span>" + putComma(audience) + " 명</span>");
+                $("#boxOfficeRank").append("<span>" + boxOfficeRank + " 위</span>");
+                $("#nation").append("<span>" + nation + "</span>");
+                $("#gradeAge").append("<span>" + gradeAge + "</span>");
+                $("#runningTime").append("<span>" + runningTime + " 분</span>");
+                $("#overview").append("<p>" + overview + "</p>");
+                $("#poster").append("<img src='" + imgSrc + "' alt='" + movieTitle + " 포스터'/>");
+
+                if(boxOfficeRank == "null"){
+                    $("#boxOfficeRank").remove();
+                    $("#ticketing").remove();
+                }
+                else {
+                    $("#ticketing").removeClass("d-none");
+                }
+
+                for (let i = 0; i < genres.length; i++) {
+                    if (i < genres.length - 1) {
+                        $("#genres").append("<span>" + genres[i] + ",&nbsp&nbsp</span>");
+                    } else {
+                        $("#genres").append("<span>" + genres[i] + "</span>");
+                    }
+                }
+
+                for (let i = 0; i < casts.length; i++) {
+                    if (i < casts.length - 1) {
+                        $("#casts").append("<span>" + casts[i] + ",&nbsp&nbsp</span>");
+                    } else {
+                        $("#casts").append("<span>" + casts[i] + "</span>");
+                    }
+                }
+            }
+
+            function putComma(n) {
+                let result = "";
+                let num = parseInt(n);
+                while (parseInt(num / 1000) > 0) {
+                    result = "," + String(num % 1000).padStart(3, '0') + result;
+                    num = parseInt(num / 1000);
+                }
+                result = String(num) + result;
+                return result;
             }
         });
     </script>
@@ -275,62 +354,73 @@
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
 
-    <div class="row" id="movieInfo">
-        <div class="col-4" id="moviePosterSpace"></div>
+    <div class="row mb-5" id="movieInfo">
 
+        <div class="col-4" id="poster"></div>
+
+        <!--        포스터 우측에 표시되는 정보-->
         <div class="col-8">
-            <div class="d-flex justify-content-between row">
-                <div id="movieInfoSpace" class="col">
-                    <h1 th:text="${movie.movieTitle}"></h1>
-                    <div class="row h4">
+            <div class="d-flex justify-content-between row mb-0">
+
+                <div class="col p-0">
+
+                    <h1 id="movieTitle"></h1>
+                    <div class="h5">
+                        <div id="genres" class="infoItem"><span>장르 : </span></div>
+                    </div>
+                    <div class="row h5 my-0">
                         <div class="col">
-                            <div class="infoItem" id="movieDateSpace"><span>개봉일: </span></div>
-                            <div class="infoItem"><span>누적관객: </span></div>
-                            <div class="infoItem"><span>박스오피스: </span></div>
+                            <div class="infoItem mt-0" id="releaseDate"><span>개봉일 : </span></div>
+                            <div class="infoItem" id="runningTime"><span>상영시간 : </span></div>
+                            <div class="infoItem" id="audience"><span>누적관객 : </span></div>
                         </div>
                         <div class="col">
-                            <div class="infoItem"><span>국가: </span></div>
-                            <div class="infoItem"><span>등급: </span></div>
-                            <div class="infoItem"><span>러닝타임: </span></div>
+                            <div class="infoItem mt-0" id="nation"><span>국가 : </span></div>
+                            <div class="infoItem" id="gradeAge"><span>등급 : </span></div>
+                            <div class="infoItem" id="boxOfficeRank"><span>박스오피스 : </span></div>
                         </div>
                     </div>
+
                 </div>
+
                 <div class="col-2 d-flex justify-content-end">
                     <span>관심영화</span>
                 </div>
+
+
             </div>
 
-            <div>
-                <div id="movieStorySpace">
-                    <div style="height: 1px" class="w-25 bg-secondary bg-opacity-50 my-3"></div>
-                </div>
+            <div id="casts" class="mb-3 mt-4">
+                <p class="h5">출연/제작</p>
+            </div>
 
+            <div id="overview" class="mb-3 mt-5">
+                <p class="h5">줄거리</p>
             </div>
 
         </div>
 
-
-        <p>movie_pk</p>
-        <p th:text="${movie.moviePk}"></p>
-        <p>movie_title</p>
-        <p id="title" th:text="${movie.movieTitle}"></p>
-        <p>movie_like_cnt</p>
-        <p th:text="${movie.movieLikeCnt}"></p>
     </div>
 
 
-    <hr>
-    <div class="row">
+
+    <div id="ticketing" class="row d-none">
+        <hr class="mb-4">
+        <p class="h5 mb-4">상영 시간표</p>
         <div class="col-3">
             <table class="Calendar table w-auto">
                 <thead>
                 <tr>
-                    <td><button type="button" id="prev" class="btn btn-sm btn-secondary opacity-50"><</button></td>
+                    <td>
+                        <button type="button" id="prev" class="btn btn-sm btn-secondary opacity-50"><</button>
+                    </td>
                     <td colspan="5" class="text-center h4">
                         <span id="calYear"></span><span>년</span>
                         <span id="calMonth"></span><span>월</span>
                     </td>
-                    <td><button type="button" id="next" class="btn btn-sm btn-secondary opacity-50">></button></td>
+                    <td>
+                        <button type="button" id="next" class="btn btn-sm btn-secondary opacity-50">></button>
+                    </td>
                 </tr>
                 <tr>
                     <td>일</td>
@@ -383,7 +473,6 @@
         </div>
 
     </div>
-
 
 
     <hr>
