@@ -300,13 +300,14 @@
 
             function drawInfo() {
 
+
                 $("#movieTitle").append("<span>" + movieTitle + "</span>");
                 $("#releaseDate").append("<span>" + releaseDate + "</span>");
-                $("#audience").append("<span>" + putComma(audience) + " 명</span>");
+                $("#audience").append("<span>" + noneOr(putComma(audience)," 명") + "</span>");
                 $("#boxOfficeRank").append("<span>" + boxOfficeRank + " 위</span>");
                 $("#nation").append("<span>" + nation + "</span>");
-                $("#gradeAge").append("<span>" + gradeAge + "</span>");
-                $("#runningTime").append("<span>" + runningTime + " 분</span>");
+                $("#gradeAge").append("<span>" + noneOr(gradeAge,"") + "</span>");
+                $("#runningTime").append("<span>" + noneOr(runningTime, " 분") + "</span>");
                 $("#overview").append("<p>" + overview + "</p>");
                 $("#poster").append("<img src='" + imgSrc + "' alt='" + movieTitle + " 포스터'/>");
 
@@ -317,6 +318,10 @@
                 else {
                     $("#ticketing").removeClass("d-none");
                 }
+
+                // if(audience == "null"){
+                //     $("#audience").remove();
+                // }
 
                 for (let i = 0; i < genres.length; i++) {
                     if (i < genres.length - 1) {
@@ -344,6 +349,14 @@
                 }
                 result = String(num) + result;
                 return result;
+            }
+            function noneOr(str, unit){
+                if(str == null || str == "null" || str == "NaN"){
+                    return "정보 없음";
+                }
+                else{
+                    return str + unit;
+                }
             }
         });
     </script>
