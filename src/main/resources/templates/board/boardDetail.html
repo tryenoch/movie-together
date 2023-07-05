@@ -13,7 +13,19 @@
           integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
           crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script></script>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      $('#btn-delete').on("click", function () {
+        const board = [[${board}]];
+        const boardPk = parseInt(board.boardPk);
+
+        if(window.confirm("게시글을 삭제하시겠습니까?")){
+          location.href = "/board/delete/" + boardPk;
+        }
+
+      });
+    });
+  </script>
 </head>
 <body>
 <!-- header 영역-->
@@ -67,8 +79,8 @@
       <div class="d-flex justify-content-between mt-2 mb-4">
         <a href="/board/list" class="btn btn-dark px-4">목록</a>
         <div>
-          <a href="/board/update" class="btn btn-dark px-3">수정</a>
-          <a href="/board/delete" class="btn btn-dark px-3">삭제</a>
+          <a href="/board/update/" th:attrappend="href=${board.boardPk}" class="btn btn-dark px-3">수정</a>
+          <button id="btn-delete" class="btn btn-dark px-3">삭제</button>
         </div>
       </div>
     </div>

@@ -14,6 +14,6 @@ public class MemberDaoImpl implements MemberDao {
 
     @Override
     public String loginCheck(MemberDto dto) {
-        return sqlSession.selectOne("member.login_check",dto);
+        return sqlSession.selectOne("member.login_check", dto);
     }
 }

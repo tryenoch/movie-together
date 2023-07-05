@@ -31,6 +31,7 @@ public class MoviesApiController {
     public String MovieTogetherView() throws Exception{
         return "MovieTogetherMain";
     }
+//    메인 화면 Controller
     @ResponseBody
     @PostMapping("/MovieTogetherMain")
     public Object MovieTogetherProcess(@RequestParam("targetDt")String targetDt)throws Exception{
@@ -39,6 +40,7 @@ public class MoviesApiController {
         List<DailyMovieDTO> dailyMovieDTOList = movieService.getDailyMovieList(url);
         return dailyMovieDTOList;
     }
+//    영화 검색 Controller
     @GetMapping("/MovieTogeherSearch")
     public String MTSearchView() throws Exception{
         return "MTResarch";
@@ -48,5 +50,9 @@ public class MoviesApiController {
         String url = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+movie_name;
         List<MovieDetailDTO> MovieResarchList = movieService.getMovieResarchList(url);
         return MovieResarchList;
+    }
+    @GetMapping("/MovieList")
+    public String MovieList() throws Exception{
+        return "MovieList20";
     }
         }
