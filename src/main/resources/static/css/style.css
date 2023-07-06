@@ -245,3 +245,8 @@ li.movie-search {
 h1.test {
     font-weight: bolder !important;
 }
+
+/* 영화 상세페이지 */
+#movieInfo .infoItem {
+    margin: 10px 10px;
+}
