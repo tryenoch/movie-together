@@ -58,6 +58,7 @@ public class MemberController {
             session.setAttribute("userGradle", member.getMemberGrade());
             session.setAttribute("userLikeList",member.getMemberLikeList()); // likeList가 필요해서 LikeList도 들고왔어요!
             System.out.println(member.getMemberLikeList());
+            session.setAttribute("userGrade", member.getMemberGrade());
             session.setMaxInactiveInterval(1800);
 
             // 세션에 가져온 사용자 정보 등록하기

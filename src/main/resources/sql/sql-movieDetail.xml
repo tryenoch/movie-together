@@ -32,5 +32,50 @@
         WHERE
             movie_pk = #{moviePk}
     </select>
+
+    <select id="getLikedList" parameterType="String" resultType="String">
+        SELECT
+            member_like_list
+        FROM
+            member
+        WHERE
+            member_id = #{id}
+    </select>
+
+    <select id="likeCnt" parameterType="int" resultType="int">
+        SELECT
+            movie_like_cnt
+        FROM
+            movie
+        WHERE
+            movie_pk = #{moviePk}
+    </select>
+
+    <update id="setLikedList" parameterType="String">
+        UPDATE
+            member
+        SET
+            member_like_list =#{likedList}
+        WHERE
+            member_id = #{id}
+    </update>
+
+    <update id="plusLikeCnt" parameterType="int">
+        UPDATE
+            movie
+        SET
+            movie_like_cnt = movie_like_cnt +1
+        WHERE
+            movie_pk = #{moviePk}
+    </update>
+
+    <update id="minusLikeCnt" parameterType="int">
+        UPDATE
+            movie
+        SET
+            movie_like_cnt = movie_like_cnt -1
+        WHERE
+            movie_pk = #{moviePk}
+    </update>
 </mapper>
 
