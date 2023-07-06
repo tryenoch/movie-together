@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.service;
 
 import com.bitc.full505_team2_project.common.FileUtils;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
+import com.bitc.full505_team2_project.dto.CategoryDto;
 import com.bitc.full505_team2_project.dto.QnaDto;
 import com.bitc.full505_team2_project.dto.QnaFileDto;
 import com.bitc.full505_team2_project.mapper.QnaMapper;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,6 +26,17 @@ public class QnaServiceImpl implements QnaService{
   @Override
   public List<QnaDto> selectQnaList() throws Exception {
     return qnaMapper.selectQnaList();
+  }
+
+  /* 카테고리 길이 */
+  public List<CategoryDto> categoryList() throws Exception{
+    return qnaMapper.categoryList();
+  }
+
+  /* 문의 게시글 카테고리별 목록 불러오기 */
+  @Override
+  public List<QnaDto> selectQnaCategoryList(int qnaCategory) throws Exception{
+    return qnaMapper.selectQnaCategoryList(qnaCategory);
   }
 
   /* 문의 게시글 상세 페이지 */

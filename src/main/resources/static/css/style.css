@@ -152,6 +152,37 @@ li.movie-search {
     width: 40%;
 }
 
+/* cate-list */
+.cate-list {}
+.cate-list li {
+    list-style: none;
+    margin: 0 8px;
+    padding-bottom: 20px;
+}
+
+.cate-list li button {
+    border-radius: 20px;
+    padding: 5px 15px;
+    border: hidden;
+    background-color: #fff;
+    /*border-bottom: 2px solid #666;*/
+}
+
+.cate-list li:hover button {
+    background-color: #fc6d8d;
+    color : #fff;
+    transition: background-color 0.5s;
+}
+
+.cate-list li + li::before {
+    content: "";
+    display: inline-block;
+    height: 15px;
+    width: 1px;
+    margin-right: 8px;
+    background-color: #666;
+}
+
 /* movie-table */
 
 .movie-table {

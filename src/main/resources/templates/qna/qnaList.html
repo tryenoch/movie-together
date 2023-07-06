@@ -13,7 +13,50 @@
           integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
           crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script></script>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      /*const qnaBoard = [[${qnaBoard}]];*/
+
+      let btn = $('button.cate-btn');
+
+
+      btn.on("click", function () {
+
+        let categoryPk = btn.val();
+        let categoryName = btn.text();
+
+        $.ajax({
+          type : 'GET',
+          url : '/qna/list/category',
+          data : 'categoryPk=' + categoryPk,
+          dataType : 'json',
+          success : function (qnaList) {
+            alert("통신에 성공했습니다!");
+
+            let tbody = "";
+
+            /* jquery 반복문으로 tbody 만들기*/
+            $(qnaList).each(function (index, qnaBoard) {
+                tbody = '<tr><td>' + qnaBoard.qnaPk + '</td>';
+                tbody = "<td class='title'><a href='/qna/" + qnaBoard.qnaPk +"'>";
+                tbody = "<span class='qna-cate'>";
+                tbody = "[<span>" + qnaBoard.qnaCategoryName +"</span>]";
+                tbody =  "<span>" + qnaBoard.qnaTitle + "</span></a></td>";
+                tbody = "<td>" + qnaBoard.qnaWriter + "</td>";
+                tbody = "<td>" + qnaBoard.qnaDate + "</td></tr>";
+            });
+
+            $('tbody.movie-board').append(tbody);
+
+          },
+          error : function () {
+            alert("ajax 통신 시 오류가 발생했습니다.");
+          }
+        });
+      });
+
+    });
+  </script>
 </head>
 <body>
 <!-- header 영역-->
@@ -35,6 +78,15 @@
           <input type="text" placeholder="제목을 입력해주세요." id="search-title" name="searchTitle">
           <button type="submit" class="btn btn-dark px-4">검색</button>
         </form>
+      </div>
+      <!-- 카테고리 리스트 -->
+      <div class="clearfix d-flex justify-content-center">
+        <ul class="cate-list">
+          <!-- 리스트 수에 따라 유동적으로 출력되도록 설정 -->
+          <li class="float-start" th:if="${#lists.size(cateList)} > 0" th:each="item : ${cateList}">
+            <button th:value="${item.categoryPk}" th:text="${item.categoryName}" class="cate-btn">카테고리</button>
+          </li>
+        </ul>
       </div>
       <!-- 리스트 테이블 -->
       <table class="table table-hover movie-table pt-3">

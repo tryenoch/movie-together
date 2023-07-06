@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,4 +18,7 @@ public class QnaDto {
   private String qnaDeleteYn;
 
   private List<BoardFileDto> fileList;
+
+  /* 카테고리 리스트 */
+  // private ArrayList<Integer> categoryPk;
 }

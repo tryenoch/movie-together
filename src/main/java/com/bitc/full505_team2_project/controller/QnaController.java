@@ -2,18 +2,18 @@ package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
+import com.bitc.full505_team2_project.dto.CategoryDto;
 import com.bitc.full505_team2_project.dto.QnaDto;
 import com.bitc.full505_team2_project.service.QnaService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,10 +28,21 @@ public class QnaController {
     ModelAndView mv = new ModelAndView("qna/qnaList");
 
     List<QnaDto> qnaList = qnaService.selectQnaList();
+    List<CategoryDto> cateList = qnaService.categoryList();
 
     mv.addObject("qnaList", qnaList);
+    mv.addObject("cateList", cateList);
 
     return mv;
+  }
+
+  /* qna 카테고리별 리스트 */
+  @ResponseBody
+  @RequestMapping(value = "/list/category", method = RequestMethod.GET)
+  public List<QnaDto> selectQnaCategoryList(@RequestParam("categoryPk") int categoryPk) throws Exception {
+    List<QnaDto> qnaList = qnaService.selectQnaCategoryList(categoryPk);
+
+    return qnaList;
   }
 
   /* qna 게시글 상세보기 */
