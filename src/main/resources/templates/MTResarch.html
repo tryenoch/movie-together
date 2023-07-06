@@ -25,7 +25,7 @@
                     const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
                     if(MovieDetailList.length >0) {
                         for (let i = 0; i < MovieDetailList.length; i++) {
-                            let tag = "<div class=\"card\" style=\"height: 20rem;\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieDetailList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
+                            let tag = "<div class=\"card\" style=\"max-height: max-content;\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieDetailList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
                             tag += "<div class=\"row g-0\">"
                             tag += "<div class=\"col-md-5\">"
                             tag += "<img src=\"" + imageBaseUrl + MovieDetailList[i].poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">"
