@@ -50,4 +50,10 @@ public class MemberServiceImpl implements MemberService{
     public int IdCheck(String Id1) {
        return memberMapper.IdCheck(Id1);
     }
+
+    @Override
+    public void Correction(MemberDto memberDto) {
+        memberMapper.Correction(memberDto);
+    }
+
 }
