@@ -400,6 +400,11 @@
                         }
                     });
                 }
+                // 비로그인이어서 id가 ""인경우
+                else{
+                    $("#likeBtn").attr("disabled","true");
+                    $("#likeBtn").addClass("text-dark");
+                }
             }
             // true면 좋아요, false면 좋아요취소
             function setLike(pk, id, type) {
