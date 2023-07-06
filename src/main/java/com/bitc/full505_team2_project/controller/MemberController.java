@@ -55,7 +55,7 @@ public class MemberController {
             session.setAttribute("userId", member.getMemberId());
             session.setAttribute("userName", member.getMemberName());
             session.setAttribute("userEmail", member.getMemberEmail());
-            session.setAttribute("userGradle", member.getMemberGrade());
+            session.setAttribute("userGrade", member.getMemberGrade());
             session.setMaxInactiveInterval(1800);
             // 세션에 가져온 사용자 정보 등록하기
 

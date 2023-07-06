@@ -12,6 +12,11 @@
 
     <script>
         $(document).ready(function () {
+            // 사용자정보 저장용 변수
+            let userId = "[[${userId}]]"
+
+            console.log(userId);
+            ifLiked(userId);
 
 
             let today = initDate(new Date());     // 페이지를 로드한 날짜를 저장
@@ -24,7 +29,7 @@
             let movieTitle;
             let movieLikeCnt;
             let genres;
-            let nation;
+            let nations;
             let gradeAge;
             let runningTime;
             let audience;
@@ -34,9 +39,9 @@
             let imgSrc;
             let overview;
 
-            let tmdbId;
             getInfo(moviePk)
                 .then(function () {
+                    writeLikeCnt(movieLikeCnt);
                     getAllTable(movieTitle, '20230704');
                     posterReleasePlot(movieTitle)
                         .then(function () {
@@ -48,6 +53,8 @@
                 .catch(function (err) {
                     tmbId = 0;
                 });
+
+
 
 
             // 캘린더의 버튼 클릭시 시간표 출력
@@ -73,6 +80,19 @@
                 $(".calBtn").removeClass("active");
                 let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.addClass("active")
+            });
+
+            // 관심영화 버튼 클릭시
+            $("#likeBtn").on("click", function () {
+                // 이미 눌려진 상태일때
+                if ($("#likeBtnImg").hasClass("clicked")) {
+                    $("#likeBtnImg").removeClass("clicked")
+                    setLike(moviePk,userId, false);
+                } else {
+                    // 안눌려진 상태일때
+                    $("#likeBtnImg").addClass("clicked")
+                    setLike(moviePk,userId,true);
+                }
             });
 
             // 캘린더 테이블의 td와 button태그를 그려주는 함수, 최초 1회 실행됨
@@ -137,6 +157,7 @@
                         else {
                             cell.addClass("btn-outline-dark");
                         }
+                        // 오늘보다 이전날짜인 경우 회색칠하기
                         if (cell.val().slice(4) < parseDate(new Date())) {
                             cell.attr("disabled", "true");
                             cell.parent().addClass("bg-secondary bg-opacity-10");
@@ -145,6 +166,7 @@
                         }
                     }
                 }
+                // 오늘 날짜
                 let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.removeClass();
                 todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active");
@@ -252,7 +274,6 @@
                         type: "GET",
                         data: {},
                         success: function (data) {
-                            console.log(urlStr);
                             const MovieDetailList = data.results;
                             const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
                             if (MovieDetailList.length > 0) {
@@ -280,7 +301,7 @@
                             movieTitle = data.movieTitle;
                             movieLikeCnt = data.movieLikeCnt;
                             genres = data.genres;
-                            nation = data.nation;
+                            nations = data.nations;
                             gradeAge = data.gradeAge;
                             runningTime = data.runningTime;
                             audience = data.audience.toLocaleString();
@@ -303,39 +324,31 @@
 
                 $("#movieTitle").append("<span>" + movieTitle + "</span>");
                 $("#releaseDate").append("<span>" + releaseDate + "</span>");
-                $("#audience").append("<span>" + noneOr(putComma(audience)," 명") + "</span>");
+                $("#audience").append("<span>" + noneOr(putComma(audience), " 명") + "</span>");
                 $("#boxOfficeRank").append("<span>" + boxOfficeRank + " 위</span>");
-                $("#nation").append("<span>" + nation + "</span>");
-                $("#gradeAge").append("<span>" + noneOr(gradeAge,"") + "</span>");
+                $("#gradeAge").append("<span>" + noneOr(gradeAge, "") + "</span>");
                 $("#runningTime").append("<span>" + noneOr(runningTime, " 분") + "</span>");
                 $("#overview").append("<p>" + overview + "</p>");
                 $("#poster").append("<img src='" + imgSrc + "' alt='" + movieTitle + " 포스터'/>");
 
-                if(boxOfficeRank == "null"){
+                if (boxOfficeRank == "null") {
                     $("#boxOfficeRank").remove();
                     $("#ticketing").remove();
-                }
-                else {
+                } else {
                     $("#ticketing").removeClass("d-none");
                 }
 
-                // if(audience == "null"){
-                //     $("#audience").remove();
-                // }
+                addArraySpan("nations", nations);
+                addArraySpan("genres", genres);
+                addArraySpan("casts", casts);
+            }
 
-                for (let i = 0; i < genres.length; i++) {
-                    if (i < genres.length - 1) {
-                        $("#genres").append("<span>" + genres[i] + ",&nbsp&nbsp</span>");
+            function addArraySpan(id, array) {
+                for (let i = 0; i < array.length; i++) {
+                    if (i < array.length - 1) {
+                        $("#" + id).append("<span>" + array[i] + ",&nbsp&nbsp</span>");
                     } else {
-                        $("#genres").append("<span>" + genres[i] + "</span>");
-                    }
-                }
-
-                for (let i = 0; i < casts.length; i++) {
-                    if (i < casts.length - 1) {
-                        $("#casts").append("<span>" + casts[i] + ",&nbsp&nbsp</span>");
-                    } else {
-                        $("#casts").append("<span>" + casts[i] + "</span>");
+                        $("#" + id).append("<span>" + array[i] + "</span>");
                     }
                 }
             }
@@ -350,13 +363,85 @@
                 result = String(num) + result;
                 return result;
             }
-            function noneOr(str, unit){
-                if(str == null || str == "null" || str == "NaN"){
+
+            function noneOr(str, unit) {
+                if (str == null || str == "null" || str == "NaN") {
                     return "정보 없음";
-                }
-                else{
+                } else {
                     return str + unit;
                 }
+            }
+
+            // 사용자 정보 가져오는 함수
+            function setUserInfo(){
+                if(sessionStorage.getItem("userId") != null){
+                    userId = sessionStorage.getItem("userId");
+                    userName = sessionStorage.getItem("userName");
+                    userGrade = sessionStorage.getItem("userGrade");
+                }
+            }
+
+            // 페이지로드시 좋아요를 눌렀는지 아닌지 확인해서 좋아요버튼 바꿔주는 함수
+            function ifLiked(id) {
+                if(id != ""){
+                    $.ajax({
+                        url: "/detail/getLikedList.do/" + id,
+                        type: "GET",
+                        data: {},
+                        success: function (listStr) {
+                            let list = listStr.split(",");
+                            localStorage.setItem("likedList", list);
+                            if(list.includes(moviePk)){
+                                $("#likeBtnImg").addClass("clicked")
+                            }
+                        },
+                        error: function () {
+                            console.log("좋아요리스트 불러오기 실패");
+                        }
+                    });
+                }
+            }
+            // true면 좋아요, false면 좋아요취소
+            function setLike(pk, id, type) {
+                if(id != ""){
+                    let listStr = localStorage.getItem("likedList");
+                    let list = listStr.split(",");
+                    if(type == true){
+                        list.push(pk);
+                        console.log(list);
+                    }
+                    else if(type == false){
+
+                        while(list.includes(pk)){
+                            let delIndex = list.indexOf(pk);
+                            list.splice(delIndex,1);
+                        }
+                        console.log(list);
+                    }
+
+                    while(list.includes("")){
+                        let delIndex = list.indexOf("");
+                        list.splice(delIndex,1);
+                    }
+                    localStorage.setItem("likedList",list);
+                    listStr = list.join();
+                    console.log(listStr);
+                    $.ajax({
+                        url: "/detail/setLikedList.do",
+                        type: "GET",
+                        data: {"id": id, "likedList": listStr, "pk": pk, "type": type},
+                        success: function (likeCnt) {
+                            writeLikeCnt(likeCnt);
+                        },
+                        error: function () {
+                            console.log("좋아요리스트 업데이트 실패");
+                        }
+                    });
+                }
+            }
+            function writeLikeCnt(likeCnt){
+                let pTag = $("#likeCnt");
+                pTag.text(likeCnt);
             }
         });
     </script>
@@ -388,7 +473,7 @@
                             <div class="infoItem" id="audience"><span>누적관객 : </span></div>
                         </div>
                         <div class="col">
-                            <div class="infoItem mt-0" id="nation"><span>국가 : </span></div>
+                            <div class="infoItem mt-0" id="nations"><span>국가 : </span></div>
                             <div class="infoItem" id="gradeAge"><span>등급 : </span></div>
                             <div class="infoItem" id="boxOfficeRank"><span>박스오피스 : </span></div>
                         </div>
@@ -396,8 +481,12 @@
 
                 </div>
 
-                <div class="col-2 d-flex justify-content-end">
-                    <span>관심영화</span>
+                <div class="col-2 text-center">
+                    <button id="likeBtn" type="button" class="border-0">
+                        <div id="likeBtnImg"></div>
+                        <p id="likeCnt" class="text-center"></p>
+                    </button>
+
                 </div>
 
 
@@ -414,7 +503,6 @@
         </div>
 
     </div>
-
 
 
     <div id="ticketing" class="row d-none">

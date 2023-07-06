@@ -3,6 +3,9 @@ package com.bitc.full505_team2_project.controller;
 import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
 import com.bitc.full505_team2_project.service.MovieDetailService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +19,10 @@ import java.util.List;
 public class MovieDetailController {
     @Autowired MovieDetailService mds;
 
-    @RequestMapping(value = "/list")
-    public String movieList() throws Exception {
-        return "movie/movieListEX";
-    }
-
     // db에서 영화제목에 해당하는 pk 가져오기/없으면 새로만들어서 가져오기
     // 가져온 pk값으로 디테일 페이지로 이동
     @RequestMapping(value = "/data/{movieTitle}", method = RequestMethod.GET)
-    public ModelAndView makeMovieData(@PathVariable String movieTitle) throws Exception {
+    public ModelAndView makeMovieData(@PathVariable String movieTitle, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("movie/detail");
 
         int pk=0;
@@ -36,6 +34,16 @@ public class MovieDetailController {
             pk = mds.getMoviePk(movieTitle);
         }
         mv.addObject("pk",pk);
+
+        // 로그인상태면
+        HttpSession session = request.getSession();
+        if(session.getAttribute("userId") != null){
+            mv.addObject("userId",session.getAttribute("userId"));
+//            mv.addObject("userName",session.getAttribute("userName"));
+//            mv.addObject("userEmail",session.getAttribute("userEmail"));
+//            mv.addObject("userGrade",session.getAttribute("userGrade"));
+        }
+
         return mv;
     }
 
@@ -61,7 +69,7 @@ public class MovieDetailController {
     public Object cgvAjax(@RequestParam String title, @RequestParam String date) throws Exception {
 
         List<MovieTimeTableDto> timeTableMB = mds.getCgvSchedule(title, date);
-        System.out.println(timeTableMB);
+//        System.out.println(timeTableMB);
         return timeTableMB;
     }
     @ResponseBody
@@ -69,7 +77,7 @@ public class MovieDetailController {
     public Object megaBoxAjax(@RequestParam String title, @RequestParam String date) throws Exception {
 
         List<MovieTimeTableDto> timeTableMB = mds.getMegaBoxSchedule(title, date);
-        System.out.println(timeTableMB);
+//        System.out.println(timeTableMB);
         return timeTableMB;
     }
     @ResponseBody
@@ -77,7 +85,25 @@ public class MovieDetailController {
     public Object lotteCinemaAjax(@RequestParam String title, @RequestParam String date) throws Exception {
 
         List<MovieTimeTableDto> timeTableMB = mds.getLotteCinemaSchedule(title, date);
-        System.out.println(timeTableMB);
+//        System.out.println(timeTableMB);
         return timeTableMB;
+    }
+
+    // id값을 가지고 DB에서 좋아요리스트를 n,m,k 형식의 String 그대로 return함
+    // 자바스크립트에서 let list = listStr.split(","); 으로 배열로 변환가능
+    @ResponseBody
+    @RequestMapping(value = "/getLikedList.do/{id}", method = RequestMethod.GET)
+    public Object getLikedList(@PathVariable String id) throws Exception {
+//        System.out.println(id+" 좋아요리스트 불러오기");
+        String likedList = mds.getLikedList(id);
+        return likedList;
+    }
+
+    // 전달된 id의 좋아요리스트 최신화
+    @ResponseBody
+    @RequestMapping(value = "/setLikedList.do", method = RequestMethod.GET)
+    public int setLikedList(@RequestParam String id, @RequestParam String likedList,@RequestParam String pk, @RequestParam boolean type) throws Exception {
+        int likeCnt = mds.setLikedList(id,likedList,pk,type);
+        return likeCnt;
     }
 }
