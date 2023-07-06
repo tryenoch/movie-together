@@ -15,7 +15,7 @@ public class MovieDTO {
 
     // 다음검색결과로 가져오는 데이터
     private ArrayList<String> genres;
-    private String nation;
+    private ArrayList<String> nations;
     private String gradeAge;
     private String runningTime;
     private String audience;

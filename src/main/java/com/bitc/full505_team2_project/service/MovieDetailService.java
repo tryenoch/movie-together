@@ -17,4 +17,6 @@ public interface MovieDetailService {
     List<MovieTimeTableDto> getLotteCinemaSchedule(String title, String date) throws Exception;
     String getDaumId(String title) throws Exception;
     MovieDTO addDaumInfo(MovieDTO dto, String daumId) throws Exception;
+    String getLikedList(String id) throws Exception;
+    int setLikedList(String id, String likedList, String pk, boolean type) throws Exception;
 }
