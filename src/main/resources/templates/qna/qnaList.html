@@ -58,7 +58,7 @@
         <tr th:if="${#lists.size(qnaList)} > 0" th:each="item : ${qnaList}">
           <td th:text="${item.qnaPk}">1</td>
           <td class="title"><a href="/qna/" th:attrappend="href=${item.qnaPk}">
-            <span>
+            <span class="qna-cate">
               [<span th:text="${item.qnaCategoryName}">카테고리 이름</span>]
             </span>
             <span th:text="${item.qnaTitle}">테스트 제목</span>
@@ -74,7 +74,7 @@
         </tbody>
       </table>
       <div class="d-flex justify-content-end mt-2" th:if="${session.userName}">
-        <a href="/qna/write" class="btn p-2 px-4 btn-pink">글쓰기</a>
+        <a href="/qna/write" class="btn p-2 px-4 btn-pink">문의 작성</a>
       </div>
     </div>
 

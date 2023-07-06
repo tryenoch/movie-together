@@ -32,13 +32,13 @@ public interface QnaMapper {
   void updateHitCount(@Param("qnaPk") int qnaPk) throws Exception;
 
   // 파일 목록 등록
-  void insertQnaFileList(List<QnaFileDto> fileList) throws Exception;
+  void insertQnaFileList(List<BoardFileDto> fileList) throws Exception;
 
   // 파일 목록 불러오기
-  List<QnaFileDto> selectQnaFileList(int qnaPk) throws Exception;
+  List<BoardFileDto> selectQnaFileList(int qnaPk) throws Exception;
 
   // 각 파일 정보 불러오기
-  QnaFileDto selectQnaFileInfo(@Param("qnaFileId") int qnaFileId, @Param("qnaPk") int qnaPk) throws Exception;
+  BoardFileDto selectQnaFileInfo(@Param("qnaFileId") int qnaFileId, @Param("qnaPk") int qnaPk) throws Exception;
 
 
 }

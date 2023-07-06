@@ -16,5 +16,5 @@ public class QnaDto {
   private String qnaCategoryName;
   private String qnaDeleteYn;
 
-  private List<QnaFileDto> fileList;
+  private List<BoardFileDto> fileList;
 }
