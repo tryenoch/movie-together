@@ -20,67 +20,78 @@
 <body>
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
-<ul class="pagination justify-content-center">
-    <li class="page-item disabled">
-        <a href="" tabindex="-1" aria-disabled="true">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#" value="1">1</a></li>
-    <li class="page-item"><a class="page-link" href="#"value="2">2</a></li>
-    <li class="page-item"><a class="page-link" href="#"value="3">3</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="4">4</a></li>
-    <li class="page-item"><a class="page-link" href="#"value="5">5</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="6">6</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="7">7</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="8">8</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="9">9</a></li>
-    <li class="page-item"><a class="page-link" href="#" value="10">10</a></li>
-    <li class="page-item">
-        <a class="page-link" href="">Next</a>
-    </li>
-</ul>
+    <button type="button" class="btn btn-primary" id="btn-recall">이전</button>
+
+        <button type="button" class="btn btn-primary" id="btn-next">다음</button>
+
+
+
+
     <script>
-        $(Document).ready(function () {
-            let PageNo = 1;
-            $("a.page-link").click(function (event){
-                event.preventDefault();// 링크 클릭 시 페이지 이동을 방지.
-                PageNo = parseInt($(this).value());
-            })
-            $.ajax({
-                url: "https://api.themoviedb.org/3/movie/now_playing?language=ko&page="+PageNo,
-                headers: {
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZDJmNzM5MGU0NTdkN2RjNzZlN2ZkYThkY2FlNzdiMiIsInN1YiI6IjY0YTIyNDc0YzM5MGM1MDEyZDE3MjI0OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AKhLoI3OcnRdvK3KNLBKIFzTJccVZv_WN40cgsMPjTY'
-                },
-                type: "GET",
-                data: {},
-                success: function (data) {
-                    const MovieList = data.results;
-                    const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
-                    if (MovieList.length > 0) {
-                        for (let i = 0; i < MovieList.length; i++) {
-                            let tag = "<div class=\"card\" style=\"height:750px;\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
-                            tag += "<div class=\"row g-0\">"
-                            tag += "<div class=\"col-md-5\">"
-                            tag += "<img src=\"" + imageBaseUrl + MovieList[i].poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">"
-                            tag += "</div>"
-                            tag += "<div class=\"col-7 \">"
-                            tag += "<div class=\"card-body\">"
-                            tag += "<h5 class=\"card-title\">" + MovieList[i].title + "</h5>"
-                            tag += "<p class=\"card-text\">" + MovieList[i].overview + "</p>"
-                            tag += "<p class=\"card-text\">" +"평점"+ MovieList[i].vote_average + "</p>"
-                            tag += "</div>"
-                            tag += "</div>"
-                            tag += "</div>"
-                            tag += "</a></div>"
-                            $("main").append(tag);
+        $(document).ready(function () {
+            function deleteElement(){
+                const element = document.getElementById('div_card');
+
+                element.remove();
+            }
+            var PageNo = 1;
+            function startajax(PageNo) { //ajax 사용하는 부분을 함수로 변환
+                const urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=ko&page=" + PageNo;
+                $.ajax({
+                    url: urlStr,
+                    headers: {
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZDJmNzM5MGU0NTdkN2RjNzZlN2ZkYThkY2FlNzdiMiIsInN1YiI6IjY0YTIyNDc0YzM5MGM1MDEyZDE3MjI0OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AKhLoI3OcnRdvK3KNLBKIFzTJccVZv_WN40cgsMPjTY'
+                    },
+                    type: "GET",
+                    data: {},
+                    success: function (data) {
+                        console.log(urlStr);
+                        const MovieList = data.results;
+                        const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
+                        if (MovieList.length > 0) {
+                            for (let i = 0; i < MovieList.length; i++) {
+                                let tag = "<div class=\"card\" style=\"height:750px;\" id=\"div_card\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
+                                tag += "<div class=\"row g-0\">"
+                                tag += "<div class=\"col-md-5\">"
+                                tag += "<img src=\"" + imageBaseUrl + MovieList[i].poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">"
+                                tag += "</div>"
+                                tag += "<div class=\"col-7 \">"
+                                tag += "<div class=\"card-body\">"
+                                tag += "<h5 class=\"card-title\">" + MovieList[i].title + "</h5>"
+                                tag += "<p class=\"card-text\">" + MovieList[i].overview + "</p>"
+                                tag += "<p class=\"card-text\">" + "평점" + MovieList[i].vote_average + "</p>"
+                                tag += "</div>"
+                                tag += "</div>"
+                                tag += "</div>"
+                                tag += "</a></div>"
+                                $("main").append(tag);
+
+                            }
+                        } else {
+                            alert("영화정보를 불러오는중 오류가 발생했습니다.")
+                            history.back();
                         }
-                    } else {
-                        alert("영화정보를 불러오는중 오류가 발생했습니다.")
-                        history.back();
                     }
+                })
+            }
+            startajax();
+            $("#btn-recall").on("click", function() { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+                if(PageNo >1) {
+                    PageNo = PageNo - 1
+                    console.log("Selected PageNo:", PageNo);
+                    deleteElement();
+                    startajax(PageNo)
+                }else{
+                    alert("첫 번째 페이지입니다! ")
                 }
             })
+            $("#btn-next").on("click", function() { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+                PageNo = PageNo + 1
+                console.log("Selected PageNo:", PageNo);
+                deleteElement()
+                startajax(PageNo)
+            })
         })
-
     </script>
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>

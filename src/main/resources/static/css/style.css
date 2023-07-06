@@ -275,3 +275,20 @@ h1.test {
 #movieInfo .infoItem {
     margin: 10px 10px;
 }
+
+
+#likeBtnImg {
+    background: url("img/heartBlank.png") center no-repeat;
+    background-size: contain;
+    width: 6em;
+    height: 6em;
+}
+
+#likeBtnImg.clicked {
+    background: url("img/heartRed.png") center no-repeat;
+    background-size: contain;
+}
+
+#likeBtn {
+    background: none;
+}
