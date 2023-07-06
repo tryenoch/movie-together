@@ -28,11 +28,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.Driver;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 public class MovieDetailServiceImpl implements MovieDetailService {
@@ -64,19 +67,20 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
     public static String WEB_DRIVER_PATH = "C:\\chromeDriver\\chromedriver.exe";
     @Override
-    public List<MovieTimeTableDto> getCgvSchedule(String title, String date) throws Exception {
-        try {
-            Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                System.out.println("크롬드라이버 강제 종료 성공");
-            } else {
-                System.out.println("크롬드라이버 강제 종료 실패");
-            }
-        } catch (IOException | InterruptedException e) {
-            System.out.println("크롬드라이버 강제 종료 실패");
-            e.printStackTrace();
-        }
+    public List<MovieTimeTableDto> getCgvSchedule(String title, String date) throws Exception{
+        // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
+//        try {
+//            Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+//            int exitCode = process.waitFor();
+////            if (exitCode == 0) {
+////                System.out.println("크롬드라이버 강제 종료 성공");
+////            } else {
+////                System.out.println("크롬드라이버 강제 종료 실패");
+////            }
+//        } catch (IOException | InterruptedException e) {
+////            System.out.println("크롬드라이버 강제 종료 실패");
+////            e.printStackTrace();
+//        }
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         // 지역: 부산/울산 지역, 굳이 극장이 있는 지역과 일치하지 않아도됨
@@ -84,7 +88,10 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         String areacode = "05%2C207";
         String theaterCode = "0005"; // 극장: cgv서면
         String url = String.format("http://www.cgv.co.kr/reserve/show-times?areacode=%s&theaterCode=%s&date=%s", areacode, theaterCode, date);
+        Timer timer = new Timer();
+
         try {
+
             // WebDriver 경로 설정
             System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
@@ -98,9 +105,11 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             options.addArguments("--disable-gpu");            //gpu 비활성화
             options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
 
+
+
+
             driver = new ChromeDriver(options);
             driver.get(url);
-
 
             // 대기시간 duration 객체 생성
             Duration duration = Duration.ofSeconds(5);
@@ -140,13 +149,18 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                         dtoList.add(hallAndtimeTable);
                     }
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            driver.close();
 
+            // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
+        try {
+            Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+            int exitCode = process.waitFor();
+        } catch (IOException | InterruptedException e2) {}
+
+        } finally {
+            driver.quit();
         }
 
         return dtoList;
@@ -424,8 +438,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 // JsonNode에서 원하는 값을 가져옵니다.
                 daumId = movieIdNode.asText();
 
-                // 가져온 값을 출력합니다.
-                System.out.println("Movie ID: " + daumId);
+//                // 가져온 값을 출력합니다.
+//                System.out.println("Movie ID: " + daumId);
 
             } else {
                 System.out.println("HTTP Error: " + responseCode);
@@ -482,7 +496,11 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                     genres.add(genre.asText());
                 }
                 dto.setGenres(genres);
-                dto.setNation(common.path("productionCountries").get(0).asText());
+                ArrayList<String> nations = new ArrayList<>();
+                for(JsonNode nation : common.path("productionCountries")){
+                    nations.add(nation.asText());
+                }
+                dto.setNations(nations);
 
                 for(JsonNode countryMovieInformation : common.path("countryMovieInformation")) {
                     if(countryMovieInformation.path("country").path("id").asText().equals("KR")) {
@@ -513,6 +531,24 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         return dto;
     }
 
+    @Override
+    public String getLikedList(String id) throws Exception {
+        String likedList = mdm.getLikedList(id);
+        return likedList;
+    }
+
+    @Override
+    public int setLikedList(String id, String likedList, String pk, boolean type) throws Exception {
+        mdm.setLikedList(id, likedList);
+        int moviePk = Integer.parseInt(pk);
+        if(type){
+            mdm.plusLikeCnt(moviePk);
+        } else {
+            mdm.minusLikeCnt(moviePk);
+        }
+        return mdm.likeCnt(moviePk);
+    }
+
     public String[] titleSplit(String title) {
         String[] str = new String[2];
 
@@ -534,4 +570,6 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         }
         return str;
     }
+
+
 }
