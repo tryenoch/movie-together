@@ -47,8 +47,6 @@ public class MovieDetailController {
 
         return mv;
     }
-
-    // movie/detail 페이지에서 ajax통신하여 json파일로 영화정보 보내주기
     @ResponseBody
     @RequestMapping(value = "/getInfo/{moviePk}", method = RequestMethod.GET)
     public Object getInfo(@PathVariable String moviePk) throws Exception {
@@ -63,6 +61,8 @@ public class MovieDetailController {
 
         return movie;
     }
+
+
 
     @ResponseBody
     @RequestMapping(value = "/cgv/getTimetable.do", method = RequestMethod.GET)
@@ -107,14 +107,39 @@ public class MovieDetailController {
         return likeCnt;
     }
 
+
     // 리뷰 리스트 보내주기
     @ResponseBody
     @RequestMapping(value = "/getReviewList.do", method = RequestMethod.GET)
-    public List<ReviewDto> getReviewList(@RequestParam("moviePk") String moviePkStr,@RequestParam("page") String pageStr,@RequestParam("num") String numStr) throws Exception {
-        int moviePk = Integer.parseInt(moviePkStr);
-        int page = Integer.parseInt(pageStr);
-        int num = Integer.parseInt(numStr);
-        List<ReviewDto> likeCnt = mds.getReviewList(moviePk,page,num);
-        return likeCnt;
+    public List<ReviewDto> getReviewList(@RequestParam("moviePk") int moviePk,@RequestParam("page") int page,@RequestParam("num") int num,@RequestParam("id") String id, @RequestParam("all") String all) throws Exception {
+
+        List<ReviewDto> list = mds.getReviewList(moviePk,page,num, id, all);
+        return list;
+    }
+
+    // 리뷰 쓰기
+    @ResponseBody
+    @RequestMapping(value = "/writeReview.do", method = RequestMethod.POST)
+    public void writeReview(ReviewDto dto) throws Exception {
+        System.out.println(dto);
+        mds.writeReview(dto);
+    }
+
+    // 리뷰 수정
+    @ResponseBody
+    @RequestMapping(value = "/editReview.do", method = RequestMethod.PUT)
+    public void editReview(ReviewDto dto) throws Exception {
+        System.out.println("리뷰수정");
+        System.out.println(dto);
+        mds.editReview(dto);
+    }
+
+    // 리뷰 삭제
+    @ResponseBody
+    @RequestMapping(value = "/delReview.do", method = RequestMethod.DELETE)
+    public void delReview(ReviewDto dto) throws Exception {
+
+        System.out.println("리뷰삭제");
+        mds.delReview(dto);
     }
 }

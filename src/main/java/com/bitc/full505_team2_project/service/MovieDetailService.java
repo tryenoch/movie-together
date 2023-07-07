@@ -20,5 +20,8 @@ public interface MovieDetailService {
     MovieDTO addDaumInfo(MovieDTO dto, String daumId) throws Exception;
     String getLikedList(String id) throws Exception;
     int setLikedList(String id, String likedList, String pk, boolean type) throws Exception;
-    List<ReviewDto> getReviewList(int moviePk,int page, int num) throws Exception;
+    List<ReviewDto> getReviewList(int moviePk,int page, int num, String id, String all) throws Exception;
+    void writeReview(ReviewDto dto) throws Exception;
+    void editReview(ReviewDto dto) throws Exception;
+    void delReview(ReviewDto dto) throws Exception;
 }

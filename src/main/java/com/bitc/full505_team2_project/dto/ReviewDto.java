@@ -12,8 +12,10 @@ public class ReviewDto {
   private String reviewContent;
   private String reviewDate;
   private int reviewLikeCnt;
+  private String reviewMoviePk;
+  private int reviewEdit;
 //  private String reviewDeleteYn;
-//  private String reviewMoviePk;
+
 
 //  private List<BoardFileDto> fileList;
 }

@@ -1,6 +1,7 @@
 package com.bitc.full505_team2_project.mapper;
 
 import com.bitc.full505_team2_project.dto.MovieDTO;
+import com.bitc.full505_team2_project.dto.ReviewCardDto;
 import com.bitc.full505_team2_project.dto.ReviewDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,6 +18,9 @@ public interface MovieDetailMapper {
     void plusLikeCnt(int moviePk);
     void minusLikeCnt(int moviePk);
     int likeCnt(int moviePk);
-
-    List<ReviewDto> getReviewList(Map<String, Integer> map);
+    List<ReviewDto> getAllReviewList(ReviewCardDto dto);
+    List<ReviewDto> getMyReviewList(ReviewCardDto dto);
+    void writeReview(ReviewDto dto);
+    void editReview(ReviewDto dto);
+    void delReview(ReviewDto dto);
 }

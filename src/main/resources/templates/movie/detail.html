@@ -11,14 +11,14 @@
 
 
     <script>
+        let userId;
         $(document).ready(function () {
             // 사용자정보 저장용 변수
-            let userId = "[[${userId}]]"
+            userId = "[[${userId}]]"
 
-            console.log(userId);
+
             ifLiked(userId);
-
-
+            loginChk(userId);
             let today = initDate(new Date());     // 페이지를 로드한 날짜를 저장
 
             buildCalendarFrame();
@@ -39,6 +39,10 @@
             let imgSrc;
             let overview;
 
+            // 한번에 보여줄 리뷰 개수와 현재 리뷰 페이지
+            let numOfReview = 2;
+            let reviewPage = 1;
+
             getInfo(moviePk)
                 .then(function () {
                     writeLikeCnt(movieLikeCnt);
@@ -53,7 +57,8 @@
                 .catch(function (err) {
                     tmbId = 0;
                 });
-
+            myReviewCardAll(userId);
+            // makeReviewCardAll(numOfReview,reviewPage);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click", function () {
@@ -92,6 +97,105 @@
                     setLike(moviePk, userId, true);
                 }
             });
+
+            // 리뷰쓰기
+            $("#submitBtn").on("click", function () {
+                let reviewWriter = userId;
+                let reviewTitle = $("#title").val();
+                let reviewContent = $("#content").val();
+                $.ajax({
+                    url: "/detail/writeReview.do",
+                    type: "POST",
+                    data: {
+                        "reviewWriter": reviewWriter,
+                        "reviewTitle": reviewTitle,
+                        "reviewContent": reviewContent,
+                        "reviewMoviePk": moviePk
+                    },
+                    success: function (data) {
+                        reviewPage = 1;
+                        $("#myReviewSpace .card").remove();
+                        $("#reviewSpace .card").remove();
+                        myReviewCardAll(userId);
+                    },
+                    error: function () {
+                        reject("에러 발생");
+                    }
+                });
+            });
+
+            // 리뷰수정모달확인버튼눌러서 리뷰 수정하기
+            $("#editSubmitBtn").on("click", function(){
+                let pk = $("#editPk").val();
+                let title = $("#titleEdit").val();
+                let content = $("#contentEdit").val();
+                $.ajax({
+                    url: "/detail/editReview.do",
+                    type: "PUT",
+                    data: {
+                        "reviewPk": pk,
+                        "reviewTitle": title,
+                        "reviewContent": content
+                    },
+                    success: function (data) {
+                        reviewPage = 1;
+                        $("#myReviewSpace .card").remove();
+                        $("#reviewSpace .card").remove();
+                        myReviewCardAll(userId);
+
+                    },
+                    error: function () {
+                        reject("에러 발생");
+                    }
+                });
+            });
+
+            // 리뷰수정모달삭제버튼눌러서 리뷰 삭제하기
+            // 삭제버튼 눌렀을때
+            $(document).on("click",".delBtn", function(){
+                let pk = $(this).attr("id").substring(3);
+                let id = userId;
+                console.log(pk + "  " + id);
+                $.ajax({
+                    url: "/detail/delReview.do",
+                    type: "DELETE",
+                    data: {
+                        "reviewPk": pk,
+                        "reviewWriter" : id
+                    },
+                    success: function (data) {
+                        reviewPage = 1;
+                        $("#myReviewSpace .card").remove();
+                        $("#reviewSpace .card").remove();
+                        myReviewCardAll(userId);
+                    },
+                    error: function () {
+                    }
+                });
+            });
+
+            // 스크롤위치가 페이지 최하단일때 리뷰를 불러옴
+            $(window).scroll(function () {
+                var scrT = $(window).scrollTop();
+                // console.log(scrT); //스크롤 값 확인용
+                if (scrT == $(document).height() - $(window).height()) {
+                    //스크롤이 끝에 도달했을때 실행될 이벤트
+                    makeReviewCardAll(reviewPage, numOfReview, userId);
+                } else {
+                    //아닐때 이벤트
+                }
+            })
+
+            // 로그인 체크하여 각종버튼 비활성화
+            function loginChk(id) {
+                // 비로그인시 각종버튼 disabled
+                console.log("id: " + id);
+                if (id == "") {
+                    $("#likeBtn").attr("disabled", "true");
+                    $("#likeBtn").addClass("text-dark");
+                    $("#writeReviewBtn").attr("disabled", "true");
+                }
+            };
 
             // 캘린더 테이블의 td와 button태그를 그려주는 함수, 최초 1회 실행됨
             function buildCalendarFrame() {
@@ -400,11 +504,7 @@
                         }
                     });
                 }
-                // 비로그인이어서 id가 ""인경우
-                else {
-                    $("#likeBtn").attr("disabled", "true");
-                    $("#likeBtn").addClass("text-dark");
-                }
+
             }
 
             // true면 좋아요, false면 좋아요취소
@@ -414,14 +514,12 @@
                     let list = listStr.split(",");
                     if (type == true) {
                         list.push(pk);
-                        console.log(list);
                     } else if (type == false) {
 
                         while (list.includes(pk)) {
                             let delIndex = list.indexOf(pk);
                             list.splice(delIndex, 1);
                         }
-                        console.log(list);
                     }
 
                     while (list.includes("")) {
@@ -430,7 +528,6 @@
                     }
                     localStorage.setItem("likedList", list);
                     listStr = list.join();
-                    console.log(listStr);
                     $.ajax({
                         url: "/detail/setLikedList.do",
                         type: "GET",
@@ -451,35 +548,114 @@
                 pTag.text(putComma(likeCnt));
             }
 
-            function writeReviews(page, num) {
+            // 모든 리뷰 불러와서 만들기
+            function makeReviewCardAll(page, num, id) {
                 $.ajax({
                     url: "/detail/getReviewList.do",
                     // + moviePk + "/" + page + "/" + num
                     type: "GET",
-                    data: {"moviePk": moviePk, "page": page, "num": num},
+                    data: {"moviePk": moviePk, "page": page, "num": num, "id":id, "all":"y"},
                     success: function (reviewList) {
-                        for (let i = 0; i < reviewList.length; i++) {
-                            let review = reviewList[i];
-                            makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate);
-                        }
+                        console.log(reviewList);
                         if (reviewList.length == 0) {
-                            console.log("없음")
+                            let space = $("#reviewSpace");
+                            $(".reviewMsg").remove();
+                            if (reviewPage == 1 && $("#myReviewSpace p").hasClass("d-none")) {
+                                space.append("<p class='reviewMsg'>등록된 리뷰가 없습니다.</p>")
+                            } else {
+                                space.append("<p class='reviewMsg'>마지막 리뷰입니다.</p>")
+                            }
+                        } else {
+                            for (let i = 0; i < reviewList.length; i++) {
+                                let review = reviewList[i];
+                                makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, "", review.reviewEdit);
+                            }
+                            reviewPage++;
                         }
                     },
                     error: function () {
                         // console.log("없음")
                     }
                 });
+
             };
-            function makeReviewCard(pk, title, name, content, time){
-                let space = $("#reviewSpace");
-                space.append("<div class='card' id='review"+pk+"'></div>");
-                let card = $("#review"+pk);
+
+            // 리뷰 카드 하나 만들기
+            function makeReviewCard(pk, title, name, content, time, id, edit) {
+                let dateTime = time.split(" ")
+                let date = dateTime[0];
+                let editChk = "";
+                let space;
+                if (id != "") {
+                    space = $("#myReviewSpace");
+                } else {
+                    space = $("#reviewSpace");
+                }
+                space.append("<div class='card' id='review" + pk + id + "'></div>");
+                let card = $("#review" + pk + id);
                 card.append("<div class='card-body'></div>")
+                let body = $("#review" + pk + id + " .card-body");
+                body.append("<div class='card-title'><p>" + title + "</p></div>");
+                body.append("<div class='card-text content'><p>" + content + "</p></div>");
+                if(edit == 1){editChk = "(수정됨)"}
+                body.append("<div class='card-text info'><p><span class='name'>" + name +"</span><span class='date'>"+date+"</span><span class='edit'>"+editChk+"</span></p></div>");
+
             }
-            writeReviews(1,3);
-            writeReviews(2,3);
+
+            //내가쓴리뷰 카드 만들기
+            function myReviewCardAll(id) {
+                if(id!=""){
+                    $.ajax({
+                        url: "/detail/getReviewList.do",
+                        type: "GET",
+                        data: {"moviePk": moviePk, "page": 1, "num": 100, "id": id, "all":"n"},
+                        success: function (reviewList) {
+
+                            if (reviewList.length == 0) {
+                                $("#myReviewSpace p").addClass("d-none")
+                            } else{
+                                $("#myReviewSpace p").removeClass("d-none")
+                                for (let i = 0; i < reviewList.length; i++) {
+                                    let review = reviewList[i];
+                                    makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, id, review.reviewEdit);
+                                    $("#review"+review.reviewPk+id+" .card-body")
+                                        .append(
+                                            "<button " +
+                                            "data-bs-toggle=\"modal\" " +
+                                            "data-bs-target=\"#editReview\" " +
+                                            "type='button' " +
+                                            "class='editBtn' " +
+                                            "value='edit"+ review.reviewPk+id+"' " +
+                                            "id='edit"+review.reviewPk+"'>" +
+                                            "수정" +
+                                            "</button>");
+                                    $("#review"+review.reviewPk+id+" .card-body").append("<button class='delBtn' id='del"+review.reviewPk+"'>삭제</button>")
+                                }
+                            }
+                        },
+                        error: function () {
+                            // console.log("없음")
+                        }
+                    });
+                }
+            }
+
         });
+
+        // 동적으로 추가된 버튼에 적용하는 코드
+        // 수정버튼 눌렀을 때
+        $(document).on("click",".editBtn", function(){
+            let pk = $(this).attr("id").substring(4);
+            console.log(pk);
+            let itemId =  $(this).val().substring(4);
+            let title = $("#review"+itemId+" .card-title p").text();
+            let content = $("#review"+itemId+" .content p").text();
+            $("#titleEdit").val(title);
+            $("#contentEdit").val(content);
+            $("#editPk").val(pk);
+        });
+
+
     </script>
 
 </head>
@@ -518,12 +694,11 @@
 
                 </div>
 
-                <div class="col-2 text-center">
+                <div class="col-2">
                     <button id="likeBtn" type="button" class="border-0">
                         <div id="likeBtnImg"></div>
                         <p id="likeCnt" class="text-center"></p>
                     </button>
-
                 </div>
 
 
@@ -582,7 +757,7 @@
             </table>
         </div>
 
-        <div class="">
+        <div class="w-100">
             <div class="my-2">
                 <button value="megaBox" class="timeTableBtn btn">메가박스</button>
                 <button value="lotteCinema" class="timeTableBtn btn">롯데시네마</button>
@@ -612,23 +787,58 @@
     <hr>
 
 
-    <div id="reviewSpace" class="clearfix">
-        <div class="card d-inline-block float-start" style="width: 300px">
-            <div class="card-body">
-                <div class="card-title"><p>리뷰제목</p></div>
-                <div class="card-text"><p>리뷰내용</p></div>
-            </div>
-        </div>
-        <div class="card d-inline-block float-start" style="width:  300px">
-            <div class="card-body">
-                <div class="card-title"><p>리뷰제목</p></div>
-                <div class="card-text"><p>리뷰내용</p></div>
-            </div>
-        </div>
-    </div>
     <div>
-        <button>더보기</button>
+        <div class="d-flex justify-content-end">
+            <button id="writeReviewBtn" type="button" data-bs-toggle="modal" data-bs-target="#writeReview">작성하기</button>
+
+        </div>
+        <div id="myReviewSpace">
+            <p class="h5 mb-4 mt-0">나의 리뷰</p>
+        </div>
+        <div id="reviewSpace">
+            <p class="h5 my-4 mt-0">전체 리뷰</p>
+        </div>
     </div>
+
+    <div class="modal" id="writeReview">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between"><span>리뷰 작성</span></div>
+                <div class="modal-body">
+                    <form id="review">
+                        <label for="title" class="form-label">제목</label>
+                        <input class="form-control" id="title" type="text" name="reviewTitle" required>
+                        <label for="content" class="form-label">내용</label>
+                        <textarea name="reviewContent" id="content" rows="5" class="form-control w-100"
+                                  required></textarea>
+                        <button type="button" id="submitBtn" data-bs-dismiss="modal">확인</button>
+                        <button type="reset">지우기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editReview">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between"><span>리뷰 수정</span></div>
+                <div class="modal-body">
+                    <form id="editreviewFrm">
+                        <input type="hidden" id="editPk">
+                        <label for="title" class="form-label">제목</label>
+                        <input class="form-control" id="titleEdit" type="text" name="reviewTitle" required>
+                        <label for="content" class="form-label">내용</label>
+                        <textarea name="reviewContent" id="contentEdit" rows="5" class="form-control w-100"
+                                  required></textarea>
+                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal">확인</button>
+                        <button type="reset">지우기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>

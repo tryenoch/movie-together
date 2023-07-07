@@ -78,17 +78,51 @@
             movie_pk = #{moviePk}
     </update>
 
-    <select id="getReviewList" parameterType="Map" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
+    <select id="getAllReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
         SELECT
-            review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt
+            review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt, review_edit
         FROM
             review
         WHERE
-            review_movie_pk = #{moviePk} AND review_delete_yn = 'N'
+            review_movie_pk = #{moviePk}
+            AND review_delete_yn = 'N'
+            AND review_writer NOT IN (SELECT member_name FROM member WHERE member_id = #{id})
         ORDER BY
             review_date DESC
         LIMIT
             #{firstPk}, #{num}
     </select>
+
+    <select id="getMyReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
+        SELECT
+        review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt, review_edit
+        FROM
+        review
+        WHERE
+        review_movie_pk = #{moviePk}
+        AND review_delete_yn = 'N'
+        AND review_writer IN (SELECT member_name FROM member WHERE member_id = #{id})
+        ORDER BY
+        review_date DESC
+        LIMIT
+        #{firstPk}, #{num}
+    </select>
+
+    <insert id="writeReview" parameterType="com.bitc.full505_team2_project.dto.ReviewDto">
+        INSERT INTO review
+        (`review_title`,`review_writer` , `review_content`, `review_date`, `review_movie_pk`)
+        VALUES (#{reviewTitle}, (SELECT member_name FROM member WHERE member_id = #{reviewWriter}), #{reviewContent}, NOW(),#{reviewMoviePk});
+    </insert>
+
+    <update id="editReview" parameterType="com.bitc.full505_team2_project.dto.ReviewDto">
+        UPDATE review
+        SET review_title = #{reviewTitle}, review_content = #{reviewContent}, review_Edit = 1
+        WHERE review_pk = #{reviewPk}
+    </update>
+
+    <delete id="delReview" parameterType="com.bitc.full505_team2_project.dto.ReviewDto">
+        DELETE FROM review
+        WHERE review_pk = #{reviewPk} AND review_writer IN (SELECT member_name FROM member WHERE member_id = #{reviewWriter})
+    </delete>
 </mapper>
 

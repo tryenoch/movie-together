@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.service;
 
 import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
+import com.bitc.full505_team2_project.dto.ReviewCardDto;
 import com.bitc.full505_team2_project.dto.ReviewDto;
 import com.bitc.full505_team2_project.mapper.MovieDetailMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +39,9 @@ import java.util.*;
 @Service
 public class MovieDetailServiceImpl implements MovieDetailService {
 
-    @Autowired MovieDetailMapper mdm;
+    @Autowired
+    MovieDetailMapper mdm;
+
     @Override
     public void makeData(String movieTitle) throws Exception {
         mdm.makeData(movieTitle);
@@ -49,6 +52,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         int pk = mdm.getMoviePk(movieTitle);
         return pk;
     }
+
     @Override
     public MovieDTO selectMovieInfo(int moviePk) throws Exception {
         MovieDTO movie = mdm.selectMovieInfo(moviePk);
@@ -64,8 +68,9 @@ public class MovieDetailServiceImpl implements MovieDetailService {
 
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
     public static String WEB_DRIVER_PATH = "C:\\chromeDriver\\chromedriver.exe";
+
     @Override
-    public List<MovieTimeTableDto> getCgvSchedule(String title, String date) throws Exception{
+    public List<MovieTimeTableDto> getCgvSchedule(String title, String date) throws Exception {
 
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
@@ -90,8 +95,6 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             options.addArguments("--lang=ko");
             options.addArguments("--disable-gpu");            //gpu 비활성화
             options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
-
-
 
 
             driver = new ChromeDriver(options);
@@ -124,12 +127,12 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                                         typeHall.findElement(By.cssSelector("li:first-child")).getText() // 상영종류(2d 등)
                         );
                         hallAndtimeTable.setTotalSeat(typeHall.findElement(By.cssSelector("li:nth-child(3)")).getText() // 상영관 총 좌석수
-                                .replace("총 ","").replace("석","")); // 숫자만 뽑기
+                                .replace("총 ", "").replace("석", "")); // 숫자만 뽑기
                         List<WebElement> timeTableList = typeHall.findElements(By.cssSelector("div.info-timetable li"));
 
                         for (WebElement timeTable : timeTableList) {
                             String time = timeTable.findElement(By.cssSelector("em")).getText();
-                            String seat = timeTable.findElement(By.cssSelector("span")).getText().replace("석","");
+                            String seat = timeTable.findElement(By.cssSelector("span")).getText().replace("석", "");
                             hallAndtimeTable.addTimeAndSeat(time, seat);
                         }
                         dtoList.add(hallAndtimeTable);
@@ -142,10 +145,11 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             dto.setHall("로딩 실패");
             dtoList.add(dto);
             // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
-        try {
-            Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
-            int exitCode = process.waitFor();
-        } catch (IOException | InterruptedException e2) {}
+            try {
+                Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+                int exitCode = process.waitFor();
+            } catch (IOException | InterruptedException e2) {
+            }
 
         } finally {
             driver.quit();
@@ -173,13 +177,13 @@ public class MovieDetailServiceImpl implements MovieDetailService {
 
             // POST 데이터 설정
             String postData = "{" +
-                    "\"brchNo\":\""+dataBrchNo+"\", " +
-                    "\"brchNo1\":\""+dataBrchNo+"\", " +
-                    "\"crtDe\":\""+date+"\", " +
+                    "\"brchNo\":\"" + dataBrchNo + "\", " +
+                    "\"brchNo1\":\"" + dataBrchNo + "\", " +
+                    "\"crtDe\":\"" + date + "\", " +
                     "\"detailType\":\"area\", " +
                     "\"firstAt\":\"N\", " +
                     "\"masterType\":\"brch\", " +
-                    "\"playDe\":\""+date+"\" " +
+                    "\"playDe\":\"" + date + "\" " +
                     "}";
 
             // POST 데이터 전송
@@ -217,23 +221,21 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                     String rpstMovieNm = movieNode.get("rpstMovieNm").asText();
                     String theabExpoNm = movieNode.get("theabExpoNm").asText(); // 상영관
                     String playKindNm = movieNode.get("playKindNm").asText(); // 상영종류 ex) 2d(자막)
-                    playKindNm = playKindNm.replace("&#40;","(").replace("&#41;",")");
+                    playKindNm = playKindNm.replace("&#40;", "(").replace("&#41;", ")");
                     String playStartTime = movieNode.get("playStartTime").asText();
                     String totSeatCnt = movieNode.get("totSeatCnt").asText();
                     String restSeatCnt = movieNode.get("restSeatCnt").asText();
                     String hall = theabExpoNm + "-" + playKindNm; // MovieTimeTableDto에 들어갈 hall값
                     String[] titleInPage = this.titleSplit(rpstMovieNm);
-                    if (titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])){
-                        if(dtoList.isEmpty()){
+                    if (titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])) {
+                        if (dtoList.isEmpty()) {
                             MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, totSeatCnt);
                             movieDto.addTimeAndSeat(playStartTime, restSeatCnt);
                             dtoList.add(movieDto);
-                        }
-                        else {
-                            if(dtoList.size()>dtoListIdx && dtoList.get(dtoListIdx).getHall().equals(hall)){
+                        } else {
+                            if (dtoList.size() > dtoListIdx && dtoList.get(dtoListIdx).getHall().equals(hall)) {
                                 dtoList.get(dtoListIdx).addTimeAndSeat(playStartTime, restSeatCnt);
-                            }
-                            else{
+                            } else {
                                 MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, totSeatCnt);
                                 movieDto.addTimeAndSeat(playStartTime, restSeatCnt);
                                 dtoList.add(movieDto);
@@ -260,7 +262,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     public List<MovieTimeTableDto> getLotteCinemaSchedule(String title, String date) throws Exception {
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
-        String url  = "https://www.lottecinema.co.kr/LCWS/Ticketing/TicketingData.aspx";
+        String url = "https://www.lottecinema.co.kr/LCWS/Ticketing/TicketingData.aspx";
 
         //  원하는 극장을 선택
         String cinemaID = "1|0101|2004"; // 극장코드 : 부산본점
@@ -274,8 +276,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 "\"channelType\":\"HO\"," +
                 "\"osType\":\"W\"," +
                 "\"osVersion\":\"\"," +
-                "\"playDate\":\""+formattedDate+"\"," +
-                "\"cinemaID\":\""+cinemaID+"\"," +
+                "\"playDate\":\"" + formattedDate + "\"," +
+                "\"cinemaID\":\"" + cinemaID + "\"," +
                 "\"representationMovieCode\":\"\"}";
 
         // 요청 바디 구성
@@ -318,13 +320,13 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 String MovieNameKR = movieNode.get("MovieNameKR").asText();
 
                 String IsBookingYN = null; // 영화관 정보인지 실제 시간표 정보인지
-                if(movieNode.get("IsBookingYN") != null){
+                if (movieNode.get("IsBookingYN") != null) {
                     IsBookingYN = movieNode.get("IsBookingYN").asText();
                 } else {
                     continue;
                 }
                 String TranslationDivisionCode = movieNode.get("TranslationDivisionCode").asText(); // 자막여부
-                if(TranslationDivisionCode.equals("100")) {
+                if (TranslationDivisionCode.equals("100")) {
                     TranslationDivisionCode = "자막";
                 } else if (TranslationDivisionCode.equals("50")) {
                     TranslationDivisionCode = "더빙";
@@ -334,17 +336,17 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 String ScreenNameKR = movieNode.get("ScreenNameKR").asText(); // 몇관인지
                 String FilmNameKR = movieNode.get("FilmNameKR").asText(); // 2d 3d
                 String ScreenDivisionNameKR = movieNode.get("ScreenDivisionNameKR").asText(); // 좌석분리
-                if(ScreenDivisionNameKR.equals("일반")) {
+                if (ScreenDivisionNameKR.equals("일반")) {
                     ScreenDivisionNameKR = "";
                 } else if (!TranslationDivisionCode.equals("")) {
                     ScreenDivisionNameKR = " " + ScreenDivisionNameKR;
                 }
                 // MovieTimeTableDto에 들어갈 hall값 ex) 3관-2D(자막)
                 String hall;
-                if((TranslationDivisionCode + ScreenDivisionNameKR).equals("")){
+                if ((TranslationDivisionCode + ScreenDivisionNameKR).equals("")) {
                     hall = ScreenNameKR;
                 } else {
-                    hall = ScreenNameKR + "-" + FilmNameKR +"("+TranslationDivisionCode + ScreenDivisionNameKR+")";
+                    hall = ScreenNameKR + "-" + FilmNameKR + "(" + TranslationDivisionCode + ScreenDivisionNameKR + ")";
                 }
 
                 String StartTime = movieNode.get("StartTime").asText();
@@ -352,19 +354,17 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 String BookingSeatCount = movieNode.get("BookingSeatCount").asText();
 
                 String[] titleInPage = titleSplit(MovieNameKR);
-                if(IsBookingYN != null && titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])){
-                    if(dtoList.isEmpty()){
+                if (IsBookingYN != null && titleInPage[0].equals(targetTitle[0]) && titleInPage[1].equals(targetTitle[1])) {
+                    if (dtoList.isEmpty()) {
                         MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, TotalSeatCount);
                         movieDto.addTimeAndSeat(StartTime, BookingSeatCount);
                         dtoList.add(movieDto);
-                    }
-                    else {
-                        for(int j = 0; j < dtoList.size(); j++){
-                            if(dtoList.get(j).getHall().equals(hall)){
+                    } else {
+                        for (int j = 0; j < dtoList.size(); j++) {
+                            if (dtoList.get(j).getHall().equals(hall)) {
                                 dtoList.get(j).addTimeAndSeat(StartTime, BookingSeatCount);
                                 break;
-                            }
-                            else if(j == dtoList.size()-1){
+                            } else if (j == dtoList.size() - 1) {
                                 MovieTimeTableDto movieDto = new MovieTimeTableDto(hall, TotalSeatCount);
                                 movieDto.addTimeAndSeat(StartTime, BookingSeatCount);
                                 dtoList.add(movieDto);
@@ -388,8 +388,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         String daumId = "";
 
         try {
-            String encodedTitle = URLEncoder.encode(title,"UTF-8");
-            String url = "https://movie.daum.net/api/search/all?q="+encodedTitle+"&size=1";
+            String encodedTitle = URLEncoder.encode(title, "UTF-8");
+            String url = "https://movie.daum.net/api/search/all?q=" + encodedTitle + "&size=1";
 
             // URL 객체 생성
             URL urlObj = new URL(url);
@@ -447,7 +447,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         String json = "";
 
         try {
-            String url = "https://movie.daum.net/api/movie/"+daumId+"/main";
+            String url = "https://movie.daum.net/api/movie/" + daumId + "/main";
 
             // URL 객체 생성
             URL urlObj = new URL(url);
@@ -480,18 +480,18 @@ public class MovieDetailServiceImpl implements MovieDetailService {
 //                // 원하는 값을 가져오기 위한 경로를 지정하여 JsonNode 객체를 찾습니다.
                 JsonNode common = rootNode.path("movieCommon");
                 ArrayList<String> genres = new ArrayList<>();
-                for(JsonNode genre : common.path("genres")) {
+                for (JsonNode genre : common.path("genres")) {
                     genres.add(genre.asText());
                 }
                 dto.setGenres(genres);
                 ArrayList<String> nations = new ArrayList<>();
-                for(JsonNode nation : common.path("productionCountries")){
+                for (JsonNode nation : common.path("productionCountries")) {
                     nations.add(nation.asText());
                 }
                 dto.setNations(nations);
 
-                for(JsonNode countryMovieInformation : common.path("countryMovieInformation")) {
-                    if(countryMovieInformation.path("country").path("id").asText().equals("KR")) {
+                for (JsonNode countryMovieInformation : common.path("countryMovieInformation")) {
+                    if (countryMovieInformation.path("country").path("id").asText().equals("KR")) {
                         dto.setGradeAge(countryMovieInformation.path("admissionCode").asText());
                         dto.setRunningTime(countryMovieInformation.path("duration").asText());
                         dto.setReleaseDate(countryMovieInformation.path("releaseDate").asText());
@@ -501,8 +501,8 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 dto.setBoxOfficeRank(common.path("reservationRank").asText());
 
                 ArrayList<String> casts = new ArrayList<>();
-                for(JsonNode cast : rootNode.path("casts")) {
-                    casts.add(cast.path("nameKorean").asText() + "(" + cast.path("movieJob").path("role").asText()+ ")");
+                for (JsonNode cast : rootNode.path("casts")) {
+                    casts.add(cast.path("nameKorean").asText() + "(" + cast.path("movieJob").path("role").asText() + ")");
                 }
                 dto.setCasts(casts);
 
@@ -529,7 +529,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     public int setLikedList(String id, String likedList, String pk, boolean type) throws Exception {
         mdm.setLikedList(id, likedList);
         int moviePk = Integer.parseInt(pk);
-        if(type){
+        if (type) {
             mdm.plusLikeCnt(moviePk);
         } else {
             mdm.minusLikeCnt(moviePk);
@@ -538,32 +538,56 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     }
 
     @Override
-    public List<ReviewDto> getReviewList(int moviePk,int page, int num) throws Exception {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("moviePk", moviePk);
-        map.put("firstPk", (page-1)*num);
-        map.put("num", num);
-        List<ReviewDto> reviewList = mdm.getReviewList(map);
-    return reviewList;
+    public List<ReviewDto> getReviewList(int moviePk, int page, int num, String id, String all) throws Exception {
+        ReviewCardDto dto = new ReviewCardDto();
+        dto.setMoviePk(moviePk);
+        dto.setFirstPk((page - 1) * num);
+        dto.setNum(num);
+        dto.setId(id);
+        System.out.println(all);
+        List<ReviewDto> reviewList = new ArrayList<>();
+        if (all.equals("y")) {
+            reviewList = mdm.getAllReviewList(dto);
+        } else if (all.equals("n")) {
+            reviewList = mdm.getMyReviewList(dto);
+        }
+
+
+        System.out.println(dto);
+
+        return reviewList;
+    }
+
+    @Override
+    public void writeReview(ReviewDto dto) throws Exception {
+        mdm.writeReview(dto);
+    }
+
+    @Override
+    public void editReview(ReviewDto dto) throws Exception {
+        mdm.editReview(dto);
+    }
+
+    @Override
+    public void delReview(ReviewDto dto) throws Exception {
+
+        mdm.delReview(dto);
     }
 
     public String[] titleSplit(String title) {
         String[] str = new String[2];
 
-        if(title.contains(":")){
-            str = title.split(":",2);
-        }
-        else if (title.contains("-")) {
-            str = title.split("-",2);
-        }
-        else if (title.contains("\"")) {
+        if (title.contains(":")) {
+            str = title.split(":", 2);
+        } else if (title.contains("-")) {
+            str = title.split("-", 2);
+        } else if (title.contains("\"")) {
             str = title.split("\"", 3);
-        }
-        else {
+        } else {
             str[0] = title;
             str[1] = "";
         }
-        for (int i = 0; i < str.length; i++){
+        for (int i = 0; i < str.length; i++) {
             str[i] = str[i].strip();
         }
         return str;
