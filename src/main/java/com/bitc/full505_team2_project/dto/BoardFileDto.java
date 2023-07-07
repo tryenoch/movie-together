@@ -10,4 +10,5 @@ public class BoardFileDto {
   private String boardSfileName;
   private long boardFileSize;
   private String boardCreatedDate;
+  private int boardSelect;
 }

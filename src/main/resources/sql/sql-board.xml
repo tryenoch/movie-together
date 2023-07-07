@@ -55,15 +55,15 @@
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
     format(ROUND(board_file_size/1024), 0) AS board_file_size
     FROM board_file
-    WHERE board_pk = #{boardPk}
+    WHERE board_pk = #{boardPk} AND board_select = 1
   </select>
 
   <!-- 첨부파일 정보 DB에 추가하기 -->
   <insert id="insertBoardFileList" parameterType="com.bitc.full505_team2_project.dto.BoardFileDto">
-    INSERT INTO board_file(board_pk, board_ofile_name, board_sfile_name, board_file_size, board_created_date)
+    INSERT INTO board_file(board_pk, board_ofile_name, board_sfile_name, board_file_size, board_created_date, board_select)
     VALUES
     <foreach collection="list" item="item" separator=",">
-      (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW())
+      (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW(), 1)
     </foreach>
   </insert>
 
