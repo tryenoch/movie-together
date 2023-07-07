@@ -16,4 +16,13 @@ public interface MemberService {
 
     public int IdCheck(String Id1);
 
+
+    public void Correction(MemberDto memberDto);
+
+////    주석처리 해야할수도 있는것
+//    boolean loginCheck(MemberDto memberDto);
+//
+//    public MemberDto findByMemberEmail(String loginEmail) {
+//        return memberReposio
+//    }
 }
