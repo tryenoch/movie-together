@@ -21,6 +21,11 @@ input {
     outline: none;
 }
 
+ul {
+    padding: 0;
+    margin: 0;
+}
+
 /* nav */
 
 .menu-list {
@@ -129,6 +134,7 @@ li.movie-search {
     color: #ef3668;
 }
 
+
 .board-search {
     width: 100%;
     border : 1px solid #ddd;
@@ -149,6 +155,40 @@ li.movie-search {
 
 .board-search input:last-of-type {
     width: 40%;
+}
+
+/* cate-list */
+.cate-list {
+    padding-left: 0;
+    margin-top: 12px;
+}
+.cate-list li {
+    list-style: none;
+    margin: 0 8px;
+    padding-bottom: 3px;
+}
+
+.cate-list li button {
+    border-radius: 20px;
+    padding: 5px 15px;
+    border: hidden;
+    background-color: #fff;
+    /*border-bottom: 2px solid #666;*/
+}
+
+.cate-list li:hover button {
+    background-color: #fc6d8d;
+    color : #fff;
+    transition: background-color 0.5s;
+}
+
+.cate-list li + li::before {
+    content: "";
+    display: inline-block;
+    height: 15px;
+    width: 1px;
+    margin-right: 12px;
+    background-color: #666;
 }
 
 /* movie-table */
@@ -172,9 +212,43 @@ li.movie-search {
     margin: 0 20px;
 }
 
+.movie-table .title {
+    text-align: start;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.movie-table .title a:hover {
+    color: #ef3668;
+    font-weight: 700;
+}
+
 #btn-search {
     /*visibility: hidden;
     display: none;*/
+}
+
+/* qna table */
+.qna-cate {
+    color: #fa5c88;
+    font-weight: 600;
+    padding-right: 5px;
+}
+
+/* qna select */
+.qna-select {
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+}
+
+.qna-select option {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.not-allow {
+    cursor: pointer;
 }
 
 /* board-detail */
@@ -190,7 +264,11 @@ li.movie-search {
 }
 
 .board-detail th, td {
-    padding: 20px 20px;
+    padding: 18px 20px;
+}
+
+.input-title {
+    width: 100%;
 }
 
 .board-info{
@@ -224,6 +302,7 @@ li.movie-search {
     border: none;
     resize: none;
 }
+
 .card-img-same{
     height:300px;
     object-fit: cover;
