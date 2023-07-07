@@ -5,11 +5,13 @@ import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.MemberDto;
 import com.bitc.full505_team2_project.service.Inject;
 import com.bitc.full505_team2_project.service.MemberService;
+import com.bitc.full505_team2_project.service.MemberServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -37,9 +39,46 @@ public class MemberController {
         return "member/login";
     }
 
+//    마이페이지
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
     public String Mypage() throws Exception {
         return "member/mypage";
+    }
+
+// 수정
+    @RequestMapping(value = {"/correction"},method = RequestMethod.GET)
+    public String Correction() throws Exception {
+        return "member/correction";
+    }
+    
+    
+//// 주석 처리 해야될수도 있는것
+//    @PostMapping("/login")
+//    public String loginForm(@ModelAttribute MemberDto memberDto,
+//                            HttpSession session) {
+//        boolean loginResult = memberService.loginCheck(memberDto);
+//        if (loginResult) {
+//            session.setAttribute("loginEmail",memberDto.getMemberEmail());
+//            return "main";
+//        } else{
+//            return "login";
+//        }
+//    }
+
+//    //수정 화면 요청
+//    @GetMapping("/correction")
+//    public String Update(HttpSession session, Model model) {
+//            // 세션에 저장된 나의 이메일 가져오기
+//        String loginEmail = (String) session.getAttribute("loginEmail");
+//        MemberDto memberDto = memberService.findByMemberEmail(loginEmail);
+//        model.addAttribute("member",memberDto);
+//        return "correction";
+//    }
+
+    @RequestMapping(value = "/correction",method = RequestMethod.POST)
+    public String Correction(MemberDto memberDto) {
+        memberService.Correction(memberDto);
+        return "redirect:/member/mypage";
     }
 
 

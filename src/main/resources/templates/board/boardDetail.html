@@ -78,7 +78,8 @@
       </table>
       <div class="d-flex justify-content-between mt-2 mb-4">
         <a href="/board/list" class="btn btn-dark px-4">목록</a>
-        <div>
+        <!-- 세션 정보의 유저 이름과 작성자가 같거나 관리자일 때 버튼이 보이게함 -->
+        <div th:if="${#strings.equals(session.userName, board.boardWriter)} or ${session.userGradle} == 1">
           <a href="/board/update/" th:attrappend="href=${board.boardPk}" class="btn btn-dark px-3">수정</a>
           <button id="btn-delete" class="btn btn-dark px-3">삭제</button>
         </div>

@@ -172,6 +172,17 @@ li.movie-search {
     margin: 0 20px;
 }
 
+.movie-table .title {
+    text-align: start;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.movie-table .title a:hover {
+    color: #ef3668;
+    font-weight: 700;
+}
+
 #btn-search {
     /*visibility: hidden;
     display: none;*/
