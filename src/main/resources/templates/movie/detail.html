@@ -459,7 +459,8 @@
                     data: {"moviePk": moviePk, "page": page, "num": num},
                     success: function (reviewList) {
                         for (let i = 0; i < reviewList.length; i++) {
-                            console.log(reviewList[i]);
+                            let review = reviewList[i];
+                            makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate);
                         }
                         if (reviewList.length == 0) {
                             console.log("없음")
@@ -470,9 +471,14 @@
                     }
                 });
             };
-            function makeReviewCard(){
-                
+            function makeReviewCard(pk, title, name, content, time){
+                let space = $("#reviewSpace");
+                space.append("<div class='card' id='review"+pk+"'></div>");
+                let card = $("#review"+pk);
+                card.append("<div class='card-body'></div>")
             }
+            writeReviews(1,3);
+            writeReviews(2,3);
         });
     </script>
 
