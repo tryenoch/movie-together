@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
+import com.bitc.full505_team2_project.dto.ReviewDto;
 import com.bitc.full505_team2_project.service.MovieDetailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,7 +60,6 @@ public class MovieDetailController {
         // 다음에서 검색한 영화정보를 추가함
         String daumId = mds.getDaumId(movie.getMovieTitle());
         movie = mds.addDaumInfo(movie, daumId);
-        System.out.println(movie);
 
         return movie;
     }
@@ -104,6 +104,17 @@ public class MovieDetailController {
     @RequestMapping(value = "/setLikedList.do", method = RequestMethod.GET)
     public int setLikedList(@RequestParam String id, @RequestParam String likedList,@RequestParam String pk, @RequestParam boolean type) throws Exception {
         int likeCnt = mds.setLikedList(id,likedList,pk,type);
+        return likeCnt;
+    }
+
+    // 리뷰 리스트 보내주기
+    @ResponseBody
+    @RequestMapping(value = "/getReviewList.do", method = RequestMethod.GET)
+    public List<ReviewDto> getReviewList(@RequestParam("moviePk") String moviePkStr,@RequestParam("page") String pageStr,@RequestParam("num") String numStr) throws Exception {
+        int moviePk = Integer.parseInt(moviePkStr);
+        int page = Integer.parseInt(pageStr);
+        int num = Integer.parseInt(numStr);
+        List<ReviewDto> likeCnt = mds.getReviewList(moviePk,page,num);
         return likeCnt;
     }
 }

@@ -1,7 +1,11 @@
 package com.bitc.full505_team2_project.mapper;
 
 import com.bitc.full505_team2_project.dto.MovieDTO;
+import com.bitc.full505_team2_project.dto.ReviewDto;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MovieDetailMapper {
@@ -13,4 +17,6 @@ public interface MovieDetailMapper {
     void plusLikeCnt(int moviePk);
     void minusLikeCnt(int moviePk);
     int likeCnt(int moviePk);
+
+    List<ReviewDto> getReviewList(Map<String, Integer> map);
 }

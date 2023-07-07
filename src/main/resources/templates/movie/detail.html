@@ -42,7 +42,7 @@
             getInfo(moviePk)
                 .then(function () {
                     writeLikeCnt(movieLikeCnt);
-                    getAllTable(movieTitle, '20230704');
+                    getAllTable(movieTitle, '20230704')
                     posterReleasePlot(movieTitle)
                         .then(function () {
                             drawInfo();
@@ -55,12 +55,10 @@
                 });
 
 
-
-
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click", function () {
-                getAllTable(movieTitle, $(this).val().slice(4));
                 $(".calBtn").removeClass("active");
+                getAllTable(movieTitle, $(this).val().slice(4))
                 $(this).addClass("active");
             });
 
@@ -87,11 +85,11 @@
                 // 이미 눌려진 상태일때
                 if ($("#likeBtnImg").hasClass("clicked")) {
                     $("#likeBtnImg").removeClass("clicked")
-                    setLike(moviePk,userId, false);
+                    setLike(moviePk, userId, false);
                 } else {
                     // 안눌려진 상태일때
                     $("#likeBtnImg").addClass("clicked")
-                    setLike(moviePk,userId,true);
+                    setLike(moviePk, userId, true);
                 }
             });
 
@@ -163,13 +161,14 @@
                             cell.parent().addClass("bg-secondary bg-opacity-10");
                         } else {
                             cell.removeAttr("disabled");
+                            cell.addClass("clickable")
                         }
                     }
                 }
                 // 오늘 날짜
                 let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.removeClass();
-                todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active");
+                todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active clickable");
             }
 
             // Date 객체의 시,분,초,밀리초를 0으로 초기화시켜주는 함수
@@ -192,7 +191,8 @@
                 $(".timeTable li").remove();
                 $("p.load").text("로딩 중...");
                 $("p.load").css('display', 'block');
-                getTable('cgv', title, date);
+                let doneList = [false, false, false];
+                getTable('cgv', title, date)
                 getTable('megaBox', title, date);
                 getTable('lotteCinema', title, date);
             }
@@ -204,7 +204,6 @@
 
             // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
             function getTable(site, movieTitle, date) {
-
                 $.ajax({
                     // 접속할 서버의 주소 입력
                     url: "/detail/" + site + "/getTimetable.do",
@@ -304,7 +303,7 @@
                             nations = data.nations;
                             gradeAge = data.gradeAge;
                             runningTime = data.runningTime;
-                            audience = data.audience.toLocaleString();
+                            audience = data.audience;
                             boxOfficeRank = data.boxOfficeRank;
                             casts = data.casts;
 
@@ -353,6 +352,7 @@
                 }
             }
 
+            // 콤마 집어넣기
             function putComma(n) {
                 let result = "";
                 let num = parseInt(n);
@@ -373,8 +373,8 @@
             }
 
             // 사용자 정보 가져오는 함수
-            function setUserInfo(){
-                if(sessionStorage.getItem("userId") != null){
+            function setUserInfo() {
+                if (sessionStorage.getItem("userId") != null) {
                     userId = sessionStorage.getItem("userId");
                     userName = sessionStorage.getItem("userName");
                     userGrade = sessionStorage.getItem("userGrade");
@@ -383,7 +383,7 @@
 
             // 페이지로드시 좋아요를 눌렀는지 아닌지 확인해서 좋아요버튼 바꿔주는 함수
             function ifLiked(id) {
-                if(id != ""){
+                if (id != "") {
                     $.ajax({
                         url: "/detail/getLikedList.do/" + id,
                         type: "GET",
@@ -391,7 +391,7 @@
                         success: function (listStr) {
                             let list = listStr.split(",");
                             localStorage.setItem("likedList", list);
-                            if(list.includes(moviePk)){
+                            if (list.includes(moviePk)) {
                                 $("#likeBtnImg").addClass("clicked")
                             }
                         },
@@ -401,34 +401,34 @@
                     });
                 }
                 // 비로그인이어서 id가 ""인경우
-                else{
-                    $("#likeBtn").attr("disabled","true");
+                else {
+                    $("#likeBtn").attr("disabled", "true");
                     $("#likeBtn").addClass("text-dark");
                 }
             }
+
             // true면 좋아요, false면 좋아요취소
             function setLike(pk, id, type) {
-                if(id != ""){
+                if (id != "") {
                     let listStr = localStorage.getItem("likedList");
                     let list = listStr.split(",");
-                    if(type == true){
+                    if (type == true) {
                         list.push(pk);
                         console.log(list);
-                    }
-                    else if(type == false){
+                    } else if (type == false) {
 
-                        while(list.includes(pk)){
+                        while (list.includes(pk)) {
                             let delIndex = list.indexOf(pk);
-                            list.splice(delIndex,1);
+                            list.splice(delIndex, 1);
                         }
                         console.log(list);
                     }
 
-                    while(list.includes("")){
+                    while (list.includes("")) {
                         let delIndex = list.indexOf("");
-                        list.splice(delIndex,1);
+                        list.splice(delIndex, 1);
                     }
-                    localStorage.setItem("likedList",list);
+                    localStorage.setItem("likedList", list);
                     listStr = list.join();
                     console.log(listStr);
                     $.ajax({
@@ -444,10 +444,33 @@
                     });
                 }
             }
-            function writeLikeCnt(likeCnt){
+
+            // likeCnt 숫자 써넣기
+            function writeLikeCnt(likeCnt) {
                 let pTag = $("#likeCnt");
-                pTag.text(likeCnt);
+                pTag.text(putComma(likeCnt));
             }
+
+            function writeReviews(page, num) {
+                $.ajax({
+                    url: "/detail/getReviewList.do",
+                    // + moviePk + "/" + page + "/" + num
+                    type: "GET",
+                    data: {"moviePk": moviePk, "page": page, "num": num},
+                    success: function (reviewList) {
+                        for (let i = 0; i < reviewList.length; i++) {
+                            console.log(reviewList[i]);
+                        }
+                        if (reviewList.length == 0) {
+                            console.log("없음")
+                        }
+                    },
+                    error: function () {
+                        // console.log("없음")
+                    }
+                });
+            };
+            function makeReviewCardJJJuuljlJLKfdf
         });
     </script>
 
@@ -480,7 +503,8 @@
                         <div class="col">
                             <div class="infoItem mt-0" id="nations"><span>국가 : </span></div>
                             <div class="infoItem" id="gradeAge"><span>등급 : </span></div>
-                            <div class="infoItem" id="boxOfficeRank"><span>주간 박스오피스 : </span></div> <!-- 주간으로 변경했습니다! kdu -->
+                            <div class="infoItem" id="boxOfficeRank"><span>주간 박스오피스 : </span></div>
+                            <!-- 주간으로 변경했습니다! kdu -->
                         </div>
                     </div>
 
@@ -510,11 +534,12 @@
     </div>
 
 
-    <div id="ticketing" class="row d-none">
+    <div id="ticketing" class="d-flex">
         <hr class="mb-4">
-        <p class="h5 mb-4">상영 시간표</p>
-        <div class="col-3">
-            <table class="Calendar table w-auto">
+
+        <div class="">
+            <p class="h5 mb-4">상영 시간표</p>
+            <table class="Calendar table w-100">
                 <thead>
                 <tr>
                     <td>
@@ -549,28 +574,23 @@
             </table>
         </div>
 
-        <div class="col-9">
+        <div class="">
             <div class="my-2">
                 <button value="megaBox" class="timeTableBtn btn">메가박스</button>
                 <button value="lotteCinema" class="timeTableBtn btn">롯데시네마</button>
                 <button value="cgv" class="timeTableBtn btn">CGV</button>
             </div>
 
-
             <div id="megaBox" class="timeTable d-none">
                 <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
                 <p id="megaBoxLoad" class="load">로딩 중..</p>
                 <ul id="megaBoxUl"></ul>
             </div>
-
-
             <div id="lotteCinema" class="timeTable d-none">
                 <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
                 <p id="lotteCinemaLoad" class="load">로딩 중..</p>
                 <ul id="lotteCinemaUl"></ul>
             </div>
-
-
             <div id="cgv" class="timeTable d-none">
                 <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
                 <p id="cgvLoad" class="load">로딩 중..</p>
@@ -583,6 +603,24 @@
 
     <hr>
 
+
+    <div id="reviewSpace" class="clearfix">
+        <div class="card d-inline-block float-start" style="width: 300px">
+            <div class="card-body">
+                <div class="card-title"><p>리뷰제목</p></div>
+                <div class="card-text"><p>리뷰내용</p></div>
+            </div>
+        </div>
+        <div class="card d-inline-block float-start" style="width:  300px">
+            <div class="card-body">
+                <div class="card-title"><p>리뷰제목</p></div>
+                <div class="card-text"><p>리뷰내용</p></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button>더보기</button>
+    </div>
 
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>

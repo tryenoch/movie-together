@@ -77,5 +77,18 @@
         WHERE
             movie_pk = #{moviePk}
     </update>
+
+    <select id="getReviewList" parameterType="Map" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
+        SELECT
+            review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt
+        FROM
+            review
+        WHERE
+            review_movie_pk = #{moviePk} AND review_delete_yn = 'N'
+        ORDER BY
+            review_date DESC
+        LIMIT
+            #{firstPk}, #{num}
+    </select>
 </mapper>
 

@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.service;
 
 import com.bitc.full505_team2_project.dto.MovieDTO;
 import com.bitc.full505_team2_project.dto.MovieTimeTableDto;
+import com.bitc.full505_team2_project.dto.ReviewDto;
 import com.bitc.full505_team2_project.mapper.MovieDetailMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +33,7 @@ import java.sql.Driver;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Service
 public class MovieDetailServiceImpl implements MovieDetailService {
@@ -68,19 +66,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     public static String WEB_DRIVER_PATH = "C:\\chromeDriver\\chromedriver.exe";
     @Override
     public List<MovieTimeTableDto> getCgvSchedule(String title, String date) throws Exception{
-        // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
-//        try {
-//            Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
-//            int exitCode = process.waitFor();
-////            if (exitCode == 0) {
-////                System.out.println("크롬드라이버 강제 종료 성공");
-////            } else {
-////                System.out.println("크롬드라이버 강제 종료 실패");
-////            }
-//        } catch (IOException | InterruptedException e) {
-////            System.out.println("크롬드라이버 강제 종료 실패");
-////            e.printStackTrace();
-//        }
+
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         // 지역: 부산/울산 지역, 굳이 극장이 있는 지역과 일치하지 않아도됨
@@ -152,7 +138,9 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-
+            MovieTimeTableDto dto = new MovieTimeTableDto();
+            dto.setHall("로딩 실패");
+            dtoList.add(dto);
             // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
         try {
             Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
@@ -547,6 +535,16 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             mdm.minusLikeCnt(moviePk);
         }
         return mdm.likeCnt(moviePk);
+    }
+
+    @Override
+    public List<ReviewDto> getReviewList(int moviePk,int page, int num) throws Exception {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("moviePk", moviePk);
+        map.put("firstPk", (page-1)*num);
+        map.put("num", num);
+        List<ReviewDto> reviewList = mdm.getReviewList(map);
+    return reviewList;
     }
 
     public String[] titleSplit(String title) {
