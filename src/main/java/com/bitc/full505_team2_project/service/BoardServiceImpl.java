@@ -60,7 +60,8 @@ public class BoardServiceImpl implements BoardService{
 
     boardMapper.insertBoard(board);
 
-    List<BoardFileDto> fileList = fileUtils.parseFileInfo(board.getBoardPk(), uploadFiles);
+    // 게시판 번호도 추가 , 1: 자유게시판
+    List<BoardFileDto> fileList = fileUtils.parseFileInfo(board.getBoardPk(), 1, uploadFiles);
 
     // CollectionUtils : 스프링 프레임워크에서 제공하는 클래스
     if(CollectionUtils.isEmpty(fileList) == false){

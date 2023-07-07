@@ -12,59 +12,81 @@
       qna_title, qna_content, qna_writer, date_format(qna_date, '%Y-%m-%d') AS qna_date, qna_cnt
     FROM qna
     WHERE qna_delete_yn = 'N'
+    ORDER BY qna_pk desc
+  </select>
+
+  <!-- 카테고리 리스트 불러오기 -->
+  <select id="categoryList" resultType="com.bitc.full505_team2_project.dto.CategoryDto">
+    SELECT category_pk, category_name
+    FROM category;
+  </select>
+
+  <!-- 카테고리 별 정보 불러오기 -->
+  <select id="selectQnaCategoryList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.QnaDto">
+    SELECT
+      qna_pk,
+      (SELECT category_name FROM category WHERE category_pk = qna_category) AS qna_category_name,
+      qna_title, qna_content, qna_writer,
+      date_format(qna_date, '%Y-%m-%d') AS qna_date, qna_cnt
+    FROM qna
+    WHERE qna_delete_yn = 'N'
+    AND qna_category = #{qnaCategory}
     ORDER BY qna_pk desc;
   </select>
 
   <!-- 문의글 상세 페이지 -->
   <select id="selectQnaDetail" resultType="com.bitc.full505_team2_project.dto.QnaDto" parameterType="int">
-    SELECT board_pk, board_title, board_writer, board_content, date_format(board_date, '%Y-%m-%d') AS board_date,
-    board_visit_cnt
-    FROM board
-    WHERE board_pk = #{boardPk}
+    SELECT
+      qna_pk,
+      (SELECT category_name FROM category WHERE category_pk = qna_category) AS qna_category_name,
+      qna_title, qna_content, qna_writer, date_format(qna_date, '%Y-%m-%d') AS qna_date, qna_cnt
+    FROM qna
+    WHERE qna_pk = #{qnaPk}
   </select>
 
   <!-- 문의글 조회수 업데이트 -->
   <update id="updateHitCount" parameterType="int">
-    UPDATE board
-    SET board_visit_cnt = board_visit_cnt +1
-    WHERE board_pk = #{boardPk}
+    UPDATE qna
+    SET qna_cnt = qna_cnt +1
+    WHERE qna_pk = #{qnaPk}
   </update>
 
   <!-- 문의글 등록 -->
-  <insert id="insertQna" parameterType="com.bitc.full505_team2_project.dto.QnaDto" useGeneratedKeys="true" keyProperty="boardPk">
-    INSERT INTO board (board_title, board_writer, board_content, board_date)
-    VALUES (#{boardTitle}, #{boardWriter}, #{boardContent}, NOW())
+  <insert id="insertQna" parameterType="com.bitc.full505_team2_project.dto.QnaDto" useGeneratedKeys="true" keyProperty="qnaPk">
+    INSERT INTO qna (qna_title, qna_writer, qna_content, qna_date, qna_category)
+    VALUES (#{qnaTitle}, #{qnaWriter}, #{qnaContent}, NOW(), #{qnaCategory})
   </insert>
 
   <!-- 문의글 수정 -->
   <update id="updateQna" parameterType="com.bitc.full505_team2_project.dto.QnaDto">
-    UPDATE board
-    SET board_title = #{boardTitle},
-        board_content = #{boardContent}
-    WHERE board_pk = #{boardPk}
+    UPDATE qna
+    SET qna_title = #{qnaTitle},
+        qna_content = #{qnaContent},
+        qna_category = #{qnaCategory}
+    WHERE qna_pk = #{qnaPk}
   </update>
 
   <!-- 문의글 삭제 -->
   <update id="deleteQna" parameterType="int">
-    UPDATE board
-    SET board_delete_yn = 'Y'
-    WHERE board_pk = #{boardPk}
+    UPDATE qna
+    SET qna_delete_yn = 'Y'
+    WHERE qna_pk = #{qnaPk}
   </update>
 
   <!-- 지정한 문의글의 첨부 파일 목록보기 -->
-  <select id="selectQnaFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.QnaFileDto">
+  <select id="selectQnaFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
     format(ROUND(board_file_size/1024), 0) AS board_file_size
     FROM board_file
-    WHERE board_pk = #{boardPk}
+    WHERE board_pk = #{qnaPk} AND board_select = 2
   </select>
 
   <!-- 문의글 첨부파일 정보 DB에 추가하기 -->
-  <insert id="insertQnaFileList" parameterType="com.bitc.full505_team2_project.dto.QnaFileDto">
-    INSERT INTO board_file(board_pk, board_ofile_name, board_sfile_name, board_file_size, board_created_date)
+  <insert id="insertQnaFileList" parameterType="com.bitc.full505_team2_project.dto.BoardFileDto">
+    INSERT INTO board_file(board_pk, board_ofile_name, board_sfile_name, board_file_size, board_created_date, board_select)
     VALUES
     <foreach collection="list" item="item" separator=",">
-      (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW())
+      (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW(), 2)
     </foreach>
   </insert>
 

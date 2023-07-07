@@ -1,12 +1,10 @@
 package com.bitc.full505_team2_project.mapper;
 
-import com.bitc.full505_team2_project.dto.BoardDto;
-import com.bitc.full505_team2_project.dto.BoardFileDto;
-import com.bitc.full505_team2_project.dto.QnaDto;
-import com.bitc.full505_team2_project.dto.QnaFileDto;
+import com.bitc.full505_team2_project.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // 데이터 베이스의 SQL 문과 연동하기 위한 인터페이스
@@ -15,6 +13,12 @@ import java.util.List;
 public interface QnaMapper {
   // 게시판 글 목록
   List<QnaDto> selectQnaList() throws Exception;
+
+  // 카테고리 길이
+  List<CategoryDto> categoryList() throws Exception;
+
+  // 카테고리별 글 목록
+  List<QnaDto> selectQnaCategoryList(int qnaCategory) throws Exception;
 
   // 게시판 상세 글 확인
   QnaDto selectQnaDetail(int qnaPk) throws Exception;
@@ -32,13 +36,13 @@ public interface QnaMapper {
   void updateHitCount(@Param("qnaPk") int qnaPk) throws Exception;
 
   // 파일 목록 등록
-  void insertQnaFileList(List<QnaFileDto> fileList) throws Exception;
+  void insertQnaFileList(List<BoardFileDto> fileList) throws Exception;
 
   // 파일 목록 불러오기
-  List<QnaFileDto> selectQnaFileList(int qnaPk) throws Exception;
+  List<BoardFileDto> selectQnaFileList(int qnaPk) throws Exception;
 
   // 각 파일 정보 불러오기
-  QnaFileDto selectQnaFileInfo(@Param("qnaFileId") int qnaFileId, @Param("qnaPk") int qnaPk) throws Exception;
+  BoardFileDto selectQnaFileInfo(@Param("qnaFileId") int qnaFileId, @Param("qnaPk") int qnaPk) throws Exception;
 
 
 }
