@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+//View를 반환하기 위해 사용
 @Controller
 @RequestMapping("/member")
 public class MemberController {
@@ -28,24 +29,26 @@ public class MemberController {
     private MemberService memberService;
 
 
-    //회원가입 페이지 출력 요청
+    //회원가입 페이지 출력
     @RequestMapping(value = {"/join"}, method = RequestMethod.GET)
     public String join() throws Exception {
         return "member/join";
     }
-
+    
+    
+    //로그인 페이지 출력
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public String Login() throws Exception {
         return "member/login";
     }
 
-//    마이페이지
+//  마이페이지 출력
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
     public String Mypage() throws Exception {
         return "member/mypage";
     }
 
-// 수정
+//  수정페이지 출력
     @RequestMapping(value = {"/correction"},method = RequestMethod.GET)
     public String Correction() throws Exception {
         return "member/correction";
