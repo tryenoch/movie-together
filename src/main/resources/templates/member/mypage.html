@@ -17,66 +17,97 @@
 
     <style></style>
     <script th:inline="javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             let movieTitle // 영화 제목
             let userLikeList; // 영화 좋아요(String 형식)
             let movieTitleList = []; // 영화 제목을 배열 형식으로 변경
-            let moviename;
             userLikeList = [[${session.userLikeList}]];
             let userLikeListArray = userLikeList.split(",") // String 형식의 pk값을 ,을 기준으로 구별
             let userLikeListInt = userLikeListArray.map(Number); // STring 형식의 pk값을 Int로 변경
 
-            function getInfo() { // int값인 userListListInt를 가지고 ajax활용하여 movieTitleList의 배열로 저장함
+            function getInfo() {
                 return new Promise(function (resolve, reject) {
+                    let promises = []
                     for (let i = 0; i < userLikeListInt.length; i++) {
-                        $.ajax({
-                            url: "/detail/getInfo/" + userLikeListInt[i],
-                            type: "GET",
-                            data: {},
-                            success: function (data) {
-                                movieTitle = data.movieTitle;
-                                movieTitleList[i] = movieTitle
-                            },
-                            error: function () {
-                                // 비동기 실행에 오류가 있을 경우 실행
-                                reject("에러 발생");
-                            }
-                        });
+                        promises.push(
+                            new Promise(function (innerResolve, innerReject) {
+                                $.ajax({
+                                    url: "/detail/getInfo/" + userLikeListInt[i],
+                                    type: "GET",
+                                    data: {},
+                                    success: function (data) {
+                                        movieTitle = data.movieTitle;
+                                        movieTitleList[i] = movieTitle;
+                                        innerResolve();
+                                    },
+                                    error: function () {
+                                        innerReject("에러 발생");
+                                    },
+                                });
+                            })
+                        );
                     }
-                    resolve(movieTitleList)
+                    Promise.all(promises)
+                        .then(function () {
+                            resolve(movieTitleList);
+                        })
+                        .catch(function (error) {
+                            reject(error);
+                        });
                 });
             }
-            getInfo()
-            console.log(movieTitleList)
-            function movieDetail(moviename) {
-                $.ajax({
-                    url:"https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+moviename,
-                    type:"GET",
-                    data:{},
-                    success: function (data){
-                        const MovieDetailList = data.results;
-                        const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
-                        if(movieTitleList > 0){
-                            let tag = "<div class=\"card\">"
-                            tag += "<div class=\"row g-0\">"
-                            tag += "<div class=\"col-md-7\">"
-                            tag += "<img src=\"\" alt=\"\" class=\"rounded-start\">"
-                            tag += "</div>"
-                            tag += "<div class=\"col-5\">"
-                            tag += " <h3 class=\"card-title\"></h3>"
-                            tag += " </div>"
-                            tag += " </div>"
-                            tag += " </div>"
-                        }
-                        }
-                    })
-            }
-            console.log(movieTitleList)
-            for(i = 0; i< movieTitleList.length; i++){
-                moviename = movieTitleList[i];
-                movieDetail(moviename)
-            }
 
+            getInfo()
+                .then(function (result) {
+                    console.log(result);
+                    let promises = [];
+
+                    for (let i = 0; i < movieTitleList.length; i++) {
+                        const moviename = movieTitleList[i];
+                        promises.push(movieDetail(moviename))
+                        console.log(promises)
+                    }
+                    return Promise.all(promises);
+                })
+                .then(function () {
+                    console.log("모든 영화 정보 가져옴")
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            function movieDetail(moviename) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + moviename,
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            console.log(data)
+                            const MovieDetailList = data.results;
+                            const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+                            if (movieTitleList.length > 0) {
+                                let tag = "<div class=\"card bg-secondary \">";
+                                tag += "<div class=\"row g-0\">";
+                                tag += "<div class=\"col-md-7\">";
+                                tag += "<img src =\""+imageBaseUrl+ MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"img-fluid rounded-start\">";
+                                tag += "</div>";
+                                tag += "<div class=\"col-5\">";
+                                tag += " <h3 class=\"card-title\">"+MovieDetailList[0].title + "</h3>";
+                                tag += "<p>"+MovieDetailList[0].overview+"</p>"
+                                tag += " </div>";
+                                tag += " </div>";
+                                tag += " </div>";
+                                $("#div-likelist").append(tag);
+                            }
+                            resolve();
+                        },
+                        error: function () {
+                            reject("에러 발생")
+                        },
+                    });
+                });
+            }
         })
     </script>
 </head>
@@ -96,19 +127,8 @@
         <div class="row p-4 mb-4 mt-5 bg-primary text-white">
             <p>회원정보 수정</p>
         </div>
-        <div class="row p-4 mb-4 mt-5 bg-secondary text-white" id="div-likelist">
+        <div class="" id="div-likelist">
             <p>자기가 누른 좋아요 리스트</p>
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-7">
-                        <img src="" alt="" class="rounded-start">
-                    </div>
-                    <div class="col-5">
-                        <h3 class="card-title"></h3>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
