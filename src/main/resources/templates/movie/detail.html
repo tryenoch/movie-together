@@ -98,30 +98,74 @@
                 }
             });
 
+            $("#title").on("propertychange change paste input", function() {
+                let reviewTitle = $("#title").val();
+                let reviewContent = $("#content").val();
+                if(reviewTitle == "" && reviewContent==""){$("#submitBtn").attr("disabled","true")}
+                else if(reviewTitle != "" && reviewContent !=""){$("#submitBtn").removeAttr("disabled")}
+            });
+
+            $("#content").on("propertychange change paste input", function() {
+                let reviewContent = $("#content").val();
+                let reviewTitle = $("#title").val();
+                if(reviewContent == "" && reviewTitle == ""){$("#submitBtn").attr("disabled","true")}
+                else if(reviewTitle != "" && reviewContent !=""){$("#submitBtn").removeAttr("disabled")}
+            });
+
+            $("#titleEdit").on("propertychange change paste input", function() {
+                let reviewTitleEdit = $("#titleEdit").val();
+                let reviewContentEdit = $("#contentEdit").val();
+                if(reviewTitleEdit == "" && reviewContentEdit==""){$("#editSubmitBtn").attr("disabled","true")}
+                else if(reviewTitleEdit != "" && reviewContentEdit !=""){$("#editSubmitBtn").removeAttr("disabled")}
+            });
+
+            $("#contentEdit").on("propertychange change paste input", function() {
+                let reviewContentEdit = $("#contentEdit").val();
+                let reviewTitleEdit = $("#titleEdit").val();
+                if(reviewTitleEdit == "" && reviewContentEdit == ""){$("#editSubmitBtn").attr("disabled","true")}
+                else if(reviewTitleEdit != "" && reviewContentEdit !=""){$("#editSubmitBtn").removeAttr("disabled")}
+            });
+
             // 리뷰쓰기
             $("#submitBtn").on("click", function () {
                 let reviewWriter = userId;
                 let reviewTitle = $("#title").val();
                 let reviewContent = $("#content").val();
-                $.ajax({
-                    url: "/detail/writeReview.do",
-                    type: "POST",
-                    data: {
-                        "reviewWriter": reviewWriter,
-                        "reviewTitle": reviewTitle,
-                        "reviewContent": reviewContent,
-                        "reviewMoviePk": moviePk
-                    },
-                    success: function (data) {
-                        reviewPage = 1;
-                        $("#myReviewSpace .card").remove();
-                        $("#reviewSpace .card").remove();
-                        myReviewCardAll(userId);
-                    },
-                    error: function () {
-                        reject("에러 발생");
-                    }
-                });
+
+
+                if(reviewContent!="" && reviewTitle != ""){
+                    reviewTitle = $("#title").val();
+                    reviewContent = $("#content").val();
+                    $.ajax({
+                        url: "/detail/writeReview.do",
+                        type: "POST",
+                        data: {
+                            "reviewWriter": reviewWriter,
+                            "reviewTitle": reviewTitle,
+                            "reviewContent": reviewContent,
+                            "reviewMoviePk": moviePk
+                        },
+                        success: function (data) {
+                            reviewPage = 1;
+                            $("#myReviewSpace .card").remove();
+                            $("#reviewSpace .card").remove();
+                            myReviewCardAll(userId);
+                        },
+                        error: function () {
+                            reject("에러 발생");
+                        }
+                    });
+                }
+            });
+
+            // 지우기버튼
+            $("#erase").on("click",function(){
+                $("#submitBtn").attr("disabled", "true");
+            });
+
+            // 수정 지우기버튼
+            $("#eraseEdit").on("click",function(){
+                $("#editSubmitBtn").attr("disabled", "true");
             });
 
             // 리뷰수정모달확인버튼눌러서 리뷰 수정하기
@@ -637,6 +681,8 @@
                             // console.log("없음")
                         }
                     });
+                } else{
+                    $("#myReviewSpace p").addClass("d-none");
                 }
             }
 
@@ -811,8 +857,8 @@
                         <label for="content" class="form-label">내용</label>
                         <textarea name="reviewContent" id="content" rows="5" class="form-control w-100"
                                   required></textarea>
-                        <button type="button" id="submitBtn" data-bs-dismiss="modal">확인</button>
-                        <button type="reset">지우기</button>
+                        <button type="button" id="submitBtn" data-bs-dismiss="modal" disabled>확인</button>
+                        <button type="reset" id="erase">지우기</button>
                     </form>
                 </div>
             </div>
@@ -831,8 +877,8 @@
                         <label for="content" class="form-label">내용</label>
                         <textarea name="reviewContent" id="contentEdit" rows="5" class="form-control w-100"
                                   required></textarea>
-                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal">확인</button>
-                        <button type="reset">지우기</button>
+                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal" >확인</button>
+                        <button type="reset" id="eraseEdit">지우기</button>
                     </form>
                 </div>
             </div>
