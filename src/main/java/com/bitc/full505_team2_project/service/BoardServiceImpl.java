@@ -79,8 +79,9 @@ public class BoardServiceImpl implements BoardService{
     boardMapper.deleteBoard(boardPk);
   }
 
+  // 다운로드할 파일 정보 불러오기
   @Override
   public BoardFileDto selectBoardFileInfo(int boardFileId, int boardPk) throws Exception {
-    return null;
+    return boardMapper.selectBoardFileInfo(boardFileId, boardPk);
   }
 }

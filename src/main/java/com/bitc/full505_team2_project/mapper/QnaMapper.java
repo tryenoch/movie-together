@@ -35,6 +35,19 @@ public interface QnaMapper {
   // 조회수 업데이트
   void updateHitCount(@Param("qnaPk") int qnaPk) throws Exception;
 
+  /* 코멘트 관련 메소드 */
+
+  // 코멘트 등록
+  void insertComment(CommentDto comment) throws Exception;
+
+  // 코멘트 리스트 불러오기
+  List<CommentDto> selectQnaCommentList (@Param("commentQnaNum") int qnaPk) throws Exception;
+
+  // 코멘트 삭제
+  void deleteComment(@Param("commentQnaNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception;
+
+
+  /* 파일 관련 메소드 */
   // 파일 목록 등록
   void insertQnaFileList(List<BoardFileDto> fileList) throws Exception;
 
@@ -42,7 +55,7 @@ public interface QnaMapper {
   List<BoardFileDto> selectQnaFileList(int qnaPk) throws Exception;
 
   // 각 파일 정보 불러오기
-  BoardFileDto selectQnaFileInfo(@Param("qnaFileId") int qnaFileId, @Param("qnaPk") int qnaPk) throws Exception;
+  BoardFileDto selectQnaFileInfo(@Param("boardFileId") int qnaFileId, @Param("boardPk") int qnaPk) throws Exception;
 
 
 }

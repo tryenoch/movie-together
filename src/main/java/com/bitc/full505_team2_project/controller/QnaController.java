@@ -2,20 +2,25 @@ package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
+import com.bitc.full505_team2_project.dto.BoardFileDto;
 import com.bitc.full505_team2_project.dto.CategoryDto;
 import com.bitc.full505_team2_project.dto.QnaDto;
 import com.bitc.full505_team2_project.service.QnaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +111,28 @@ public class QnaController {
 public void qnaDeleteProcess(@PathVariable("qnaPk") int qnaPk, HttpServletResponse response) throws Exception {
     qnaService.deleteQna(qnaPk);
     ScriptUtils.alertAndMovePage(response, "삭제 되었습니다.", "/qna/list");
+  }
+
+  // 게시물 다운로드 기능
+  @RequestMapping(value = "/downloadQnaFile", method = RequestMethod.GET)
+  public void downloadBoardFile(
+    // 매개변수 목록
+    @RequestParam("qnaFileId") int qnaFileId,
+    @RequestParam("qnaPk") int qnaPk,
+    HttpServletResponse resp
+  ) throws Exception{
+    BoardFileDto qnaFile = qnaService.selectQnaFileInfo(qnaFileId, qnaPk);
+    if(ObjectUtils.isEmpty(qnaFileId) == false){
+      String fileName = qnaFile.getBoardOfileName();
+      byte[] files = FileUtils.readFileToByteArray(new File(qnaFile.getBoardSfileName()));
+
+      resp.setContentType("applicaton/octet-stream");
+      resp.setContentLength(files.length);
+      resp.setHeader("Content-Disposition", "attachment;fileName=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
+      resp.getOutputStream().write(files);
+      resp.getOutputStream().flush();
+      resp.getOutputStream().close();
+    }
   }
 
 }

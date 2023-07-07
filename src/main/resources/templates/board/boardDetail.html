@@ -71,7 +71,7 @@
           <tr class="board-info">
             <td class="py-3">
               <span class="ps-2  fw-bold">첨부파일</span>
-              <a href="" th:if="${#lists.size(board.fileList)} > 0" th:each="list : ${board.fileList}" th:text="${list.boardOfileName}">파일명</a>
+              <a href="" th:if="${#lists.size(board.fileList)} > 0" th:each="list : ${board.fileList}" th:text="${list.boardOfileName}" th:href="@{/board/downloadBoardFile(boardFileId=${list.boardFileId}, boardPk=${list.boardPk})}" class="me-3">파일명</a>
             </td>
           </tr>
         </tbody>
@@ -85,7 +85,9 @@
         </div>
       </div>
     </div>
+    <div>
 
+    </div>
   </div>
 </main>
 
