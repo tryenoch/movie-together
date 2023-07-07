@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link href="/css/style.css" rel="stylesheet">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <style>
+    </style>
+    <script>
+//이메일 입력값을 가져옴
+//입력 값을 서버로 전송하고 똑같은 이메일이 있는지 체크 한 후
+//사용 가능 여부를 이메일 입력창 아래에 표시
+
+
+
+        $(document).ready(function () {
+            $("#btn-submit").on("click",function (){
+                // 1번 두개의 패스워드 값이 동일한지 확인
+                // 2번 서버로 전송
+
+                const mId = $("#memberId").val();
+                const pwd1 = $("#pwd1").val();
+                const pwd2 = $("#pwd2").val();
+                const mname = $("#mname").val();
+                let mIdCheck = false;
+                let pwdCheck = false;
+                let mnameCheck = false;
+
+
+                if(mId.trim() == "" || mId == null) {
+                    alert("아이디입력은 필수입력란입니다.");
+                } else{
+                    mIdCheck = true;
+                }
+
+                if(pwd1.trim() == "" || pwd1 == null) {
+                    alert("비밀번호 필수입력란입니다.");
+                } else{
+                    if (pwd1 == pwd2) {
+                        pwdCheck = true;
+                    } else{
+                        alert("비밀번호가 다릅니다.");
+                    }
+                }
+
+
+                if(mname.trim() == "" || mname == null) {
+                    alert("이름은 필수 입력란입니다.");
+                } else{
+                    mnameCheck = true;
+                }
+
+                if(mIdCheck == true && pwdCheck == true && mnameCheck == true) {
+                    const form = $("#form-t")[0];
+                    form.submit();
+                }
+            });
+
+            $("#memberId").on("blur", function () {
+                const mId = $("#memberId").val();
+
+                if(mId.trim() == "" || mId == null) {
+                    alert("필수 입력란 입니다.");
+                } else{
+                    $.ajax({
+                        url:"/member/IdCheck",
+                        type:"POST",
+                        data:{userId: mId},
+                        success: function (data) {
+                            if (data == "true") {
+                                alert("사용 할수있는 계정입니다.")
+                            }
+                            else{
+                                alert("이미 존재하는 계정입니다.");
+                            }
+                        },
+                        error: function (){
+                            alert("오류가 발생하였습니다.")
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<!-- header 영역-->
+<header th:replace="~{layout/header :: header-basic}"></header>
+
+<!-- main 영역 -->
+<main class="container-md my-4">
+        <div class="container p-3">
+            <div class="text-center">
+                <h1>회원가입 페이지</h1>
+            </div>
+        </div>
+
+
+<!--    action 속성: form에 작성한 데이터를 어디로 보낼지 지정-->
+    <div class="row">
+        <div class="col-sm-4 mx-auto">
+            <!--      파일 업로드를 위해서 form 태그에 enctype="multipart/form-data" 속성 추가-->
+            <form id="form-t"  action="/member/join" method="post">
+
+                <div class="my-4">
+                    <label class="form-label">아이디 : </label>
+                    <!--          input 태그의 name 속성값을 DTO 클래스의 필드명으로 설정해야 함-->
+                    <!--          name속성 :서버로 전송할 때 변수 이름의 역할 -->
+                    <input type="text" class="form-control" name="memberId" id="memberId" placeholder="ID" >
+                </div>
+
+                <div class="my-4">
+                    <label class="form-label">비밀번호 : </label>
+                    <input type="password" class="form-control" id="pwd1" name="memberPw"  placeholder="PASSWORD" style="color: #000;" >
+                </div>
+
+                <div class="my-4">
+                    <label class="form-label">비밀번호 확인 : </label>
+                    <input type="password" class="form-control" id="pwd2" name="joinPwd" placeholder="Confirm PASSWORD" style="color: #000;"  >
+                </div>
+
+                <div class="my-4">
+                    <label class="form-label">이름 : </label>
+                    <input type="text" class="form-control" id="mname" name="memberName" placeholder="Name" >
+                </div>
+
+                <div class="my-4">
+                    <label class="form-label">생년월일 : </label>
+                    <input type="text" class="form-control" name="memberBirth" placeholder="ex) 19990101" >
+                </div>
+
+                <div class="my-4">
+                    <label  class="form-label">이메일 주소 : </label>
+                    <input type="email" class="form-control" name="memberEmail" placeholder="E-mail" >
+                </div>
+                <!--        첨부 파일을 위한 input 태그 추가-->
+                <div class="my-4 d-grid gap-3">
+                    <button type="button" id="btn-submit" class="btn btn-primary">가입완료</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!--footer 영역-->
+<footer th:replace="~{layout/footer :: footer-basic}"></footer>
+</body>
+</html>

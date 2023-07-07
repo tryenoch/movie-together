@@ -13,44 +13,86 @@
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
             integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-
     <script>
-        $(document).ready(function (){
+        $(document).ready(function () {
             let today = new Date();
             let year = today.getFullYear();
-            let month = today.getMonth()+1;
-            let day = today.getDate()-1;
-            let targetDate = year.toString().padStart(4,'0')+month.toString().padStart(2,'0')+day.toString().padStart(2,'0');
-            $.ajax({
-                url:"http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=0cef8373c2ef480da57a59e3967ca38f&targetDt="+targetDate,
-                type:"GET",
-                data:{},
-                success: function (data){
-                    const boxOfficeResult = data.boxOfficeResult;
-                    const dailyBoxOfficeList = boxOfficeResult.dailyBoxOfficeList;
-                    const card = $("div.row");
-                    for(let i = 0; i<dailyBoxOfficeList.length; i++){
-                        let tag = "<div class=\"col-sm-3\"> <a class='text-decoration-none text-black' href='/detail/data/"+dailyBoxOfficeList[i].movieNm+"'>" // 디테일 페이지로 이동하기위한 링크 추가
-                        tag +="<div class=\"card\" style=\"width: 18rem;\">"
-                        tag +="<img src=\"\" alt=\"아직은 빈 공간\" class=\"card-img-top\">"
-                        tag +="<div class=\"card-img-overlay\">"
-                        tag +="<p>"+dailyBoxOfficeList[i].rank+"</p>"
-                        tag +="</div>"
-                        tag +="<div class=\"card-body\">"
-                        tag +="<h4 class=\"card-title\">"+dailyBoxOfficeList[i].movieNm +"</h4>"
-                        tag +="<p class=\"card-text\">"+"평점?"+"총 관람객:"+dailyBoxOfficeList[i].audiAcc+"<br>"+"상영시작날짜"+dailyBoxOfficeList[i].openDt+"</p>"
-                        tag +="</div>"
-                        tag +="</div>"
-                        tag +="</a></div>"
-                        card.append(tag);
-                    }
-                },
-                error: function (){
-                    alert("서버 통신 중 오류 발생")
+            let month = today.getMonth() + 1;
+            let day = today.getDate() - 1;
+            let targetDate = year.toString().padStart(4, '0') + month.toString().padStart(2, '0') + day.toString().padStart(2, '0')
 
-                }
-            })
-        });
+            function getBoxOfficeList() {
+                return new Promise(function (resolve, reject) {
+
+                    $.ajax({
+                        url: "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=0cef8373c2ef480da57a59e3967ca38f&targetDt=" + targetDate,
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            const boxOfficeResult = data.boxOfficeResult;
+                            const dailyBoxOfficeList = boxOfficeResult.dailyBoxOfficeList;
+                            resolve(dailyBoxOfficeList);
+                        },
+                        error: function () {
+                            reject("ajax 통신중 오류 발생");
+                        }
+                    });
+                });
+            }
+
+            function getMovieDetails(movieName) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName,
+                        type: "GET",
+                        success: function (data) {
+                            const movieDetails = data.results[0];
+                            resolve(movieDetails);
+                        },
+                        error: function () {
+                            reject("서버 통신 중 오류 발생");
+                        }
+                    });
+                })
+            }
+
+            getBoxOfficeList()
+                .then(function (dailyBoxOfficeList) {
+                    const card = $("div.row");
+                    const promises = [];
+
+                    for (let i = 0; i < dailyBoxOfficeList.length; i++) {
+                        const movieName = dailyBoxOfficeList[i].movieNm;
+                        const promise = getMovieDetails(movieName);
+                        promises.push(promise);
+                    }
+                    Promise.all(promises)
+                        .then(function (results) {
+                            for (let i = 0; i < results.length; i++) {
+                                const movieDetails = results[i];
+                                const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
+                                let tag = "<div class=\"col-sm-3\">";
+                                tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
+                                tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
+                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
+                                tag += "<div class=\"card-img-overlay\">";
+                                tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
+                                tag += "</div>";
+                                tag += "<div class=\"card-body\">";
+                                tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
+                                tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
+                                tag += "</div>";
+                                tag += "</div>";
+                                tag += "</a></div>";
+
+                                card.append(tag);
+                            }
+                        })
+                        .catch(function (error) {
+                            alert(error);
+                        });
+                })
+        })
     </script>
     <style>
 
@@ -59,9 +101,9 @@
 <body>
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
-    <h1>테스트 페이지입니다.</h1>
-        <div class="row">
-        </div>
+    <h1 class="text-center">박스오피스 순위</h1>
+    <div class="row">
+    </div>
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>

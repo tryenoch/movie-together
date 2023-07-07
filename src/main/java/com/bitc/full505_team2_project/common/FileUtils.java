@@ -1,6 +1,7 @@
 package com.bitc.full505_team2_project.common;
 
 import com.bitc.full505_team2_project.dto.BoardDto;
+import com.bitc.full505_team2_project.dto.BoardFileDto;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,20 +17,29 @@ import java.util.List;
 // * @Component : 사용자가 직접 생성한 라이브러리
 @Component
 public class FileUtils {
-  public List<BoardDto> parseFileInfo(int boardPk, MultipartHttpServletRequest uploadFiles) throws Exception {
+  public List<BoardFileDto> parseFileInfo(int boardPk, int boardSelect, MultipartHttpServletRequest uploadFiles) throws Exception {
     /* 스프링 프레임워크가 제공하는 ObjectUtils를 사용하여 업로드 된 파일이 있는지 확인, 없으면 true*/
     if (ObjectUtils.isEmpty(uploadFiles)) {
       return null;
     }
 
     // 업로드 된 파일 정보가 있을 경우 목록 저장
-    List<BoardDto> fileList = new ArrayList<>();
+    List<BoardFileDto> fileList = new ArrayList<>();
 
     // 시간 정보 패턴 생성
     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     ZonedDateTime current = ZonedDateTime.now();
 
-    String path = "C:/upload/" + current.format(format);
+    /* 게시판 별 다른 폴더에 파일 넣기 */
+    String cateName = "";
+
+    if(boardSelect == 1){
+      cateName = "board"; // 1번이면 자유게시판 폴더
+    } else if (boardSelect == 2) {
+      cateName = "qna"; // 2번이면 문의게시판 폴더
+    }
+
+    String path = "C:/upload/" + cateName + "/" + current.format(format);
 
     // 자바의 File 클래스, 객체 생성, 위에서 생성한 경로로
     File file = new File(path);
@@ -74,16 +84,17 @@ public class FileUtils {
           newFileName = Long.toString(System.nanoTime()) + originalFileExtension;
 
           // DB에 저장하기 위한 BoardDto 클래스 타입의 객체에 파일 정보 데이터 추가
-          BoardDto boardFile = new BoardDto();
+          BoardFileDto boardFile = new BoardFileDto();
 
           boardFile.setBoardPk(boardPk); // 게시물 번호
+          boardFile.setBoardSelect(boardSelect); // 게시판 번호 저장 (1: 자유게시판, 2:문의게시판)
           boardFile.setBoardFileSize(multipartFile.getSize()); // 파일 크기
-          boardFile.setBoardOfile(multipartFile.getOriginalFilename());
+          boardFile.setBoardOfileName(multipartFile.getOriginalFilename());
 
           // 원본 파일명
           // 서버에 저장되는 파일 이름, 위에서 생성한 파일 저장 경로와 nanoTime()을 이용하여 생성한 파일 이름을 합하여 파일을 저장할 전체 경로를 생성함
 
-          boardFile.setBoardSfile(path + "/" + newFileName);
+          boardFile.setBoardSfileName(path + "/" + newFileName);
 
           // 위에서 생성한 List<BoardFileDto> 타입의 변수에 데이터 추가
           fileList.add(boardFile);
