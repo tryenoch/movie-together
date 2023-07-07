@@ -5,9 +5,12 @@ import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.CategoryDto;
 import com.bitc.full505_team2_project.dto.QnaDto;
 import com.bitc.full505_team2_project.service.QnaService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -24,14 +27,20 @@ public class QnaController {
 
   /* qna 게시글 리스트 */
   @RequestMapping(value = {"/list", "/" }, method = RequestMethod.GET)
-  public ModelAndView qnaList() throws Exception {
+  public ModelAndView qnaList(HttpServletRequest req) throws Exception {
     ModelAndView mv = new ModelAndView("qna/qnaList");
 
     List<QnaDto> qnaList = qnaService.selectQnaList();
     List<CategoryDto> cateList = qnaService.categoryList();
 
+    /* null 값을 반환할 경우 디폴트 값 지정 (안하면 nullPointException 발생) */
+    String userName = (req.getSession().getAttribute("userName") == null) ? "" : (String) req.getSession().getAttribute("userName");
+    int userGrade = (req.getSession().getAttribute("userGradle") == null) ? 0 :(Integer) req.getSession().getAttribute("userGradle");
+
     mv.addObject("qnaList", qnaList);
     mv.addObject("cateList", cateList);
+    mv.addObject("userName", userName);
+    mv.addObject("userGrade", userGrade);
 
     return mv;
   }

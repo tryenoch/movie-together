@@ -21,6 +21,11 @@ input {
     outline: none;
 }
 
+ul {
+    padding: 0;
+    margin: 0;
+}
+
 /* nav */
 
 .menu-list {
@@ -153,11 +158,14 @@ li.movie-search {
 }
 
 /* cate-list */
-.cate-list {}
+.cate-list {
+    padding-left: 0;
+    margin-top: 12px;
+}
 .cate-list li {
     list-style: none;
     margin: 0 8px;
-    padding-bottom: 20px;
+    padding-bottom: 3px;
 }
 
 .cate-list li button {
@@ -179,7 +187,7 @@ li.movie-search {
     display: inline-block;
     height: 15px;
     width: 1px;
-    margin-right: 8px;
+    margin-right: 12px;
     background-color: #666;
 }
 
@@ -224,6 +232,7 @@ li.movie-search {
 .qna-cate {
     color: #fa5c88;
     font-weight: 600;
+    padding-right: 5px;
 }
 
 /* qna select */
@@ -238,6 +247,9 @@ li.movie-search {
     padding-bottom: 5px;
 }
 
+.not-allow {
+    cursor: pointer;
+}
 
 /* board-detail */
 
