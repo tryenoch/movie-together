@@ -58,7 +58,7 @@
                     tmbId = 0;
                 });
             myReviewCardAll(userId);
-            // makeReviewCardAll(numOfReview,reviewPage);
+            makeReviewCardAll(numOfReview,reviewPage);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click", function () {
@@ -631,11 +631,13 @@
                 let editChk = "";
                 let space;
                 if (id != "") {
-                    space = $("#myReviewSpace");
+                    space = "#myReviewSpace";
                 } else {
-                    space = $("#reviewSpace");
+                    space = "#reviewSpace";
                 }
-                space.append("<div class='card' id='review" + pk + id + "'></div>");
+                $(space + " .card#review" + pk + id).remove();
+                let spaceItem = $(space);
+                spaceItem.append("<div class='card' id='review" + pk + id + "'></div>");
                 let card = $("#review" + pk + id);
                 card.append("<div class='card-body'></div>")
                 let body = $("#review" + pk + id + " .card-body");
