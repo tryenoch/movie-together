@@ -33,6 +33,24 @@
             movie_pk = #{moviePk}
     </select>
 
+    <select id="getAreas" parameterType="String" resultType="String">
+        SELECT
+            area
+        FROM
+            theater
+        WHERE
+            type = #{type}
+    </select>
+
+    <select id="getTheaters" parameterType="String" resultType="com.bitc.full505_team2_project.dto.TheaterDto">
+        SELECT
+            theater_code, theater_name
+        FROM
+            theater
+        WHERE
+            type = #{type} AND area = #{area}
+    </select>
+
     <select id="getLikedList" parameterType="String" resultType="String">
         SELECT
             member_like_list

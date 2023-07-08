@@ -43,10 +43,19 @@
             let numOfReview = 2;
             let reviewPage = 1;
 
+            // 영화시간표를 얻어오기 위해 사용되는 영화관 코드, 전역 변수
+            // getAllTable에서 사용됨 , getAllTable은 페이지 로드시 최초1회, 캘린더 날짜 선택시 사용됨
+            let cgvCode = localStorage.getItem("cgvCode");
+            let megaBoxCode = localStorage.getItem("megaBoxCode");
+            let lotteCinemaCode = localStorage.getItem("lotteCinemaCode");
+            let cgvArea = localStorage.getItem("cgvArea");
+            let megaBoxArea = localStorage.getItem("megaBoxArea");
+            let lotteCinemaArea = localStorage.getItem("lotteCinemaArea");
+
             getInfo(moviePk)
                 .then(function () {
                     writeLikeCnt(movieLikeCnt);
-                    getAllTable(movieTitle, '20230704')
+                    getAllTable(movieTitle, parseDate(today));
                     posterReleasePlot(movieTitle)
                         .then(function () {
                             drawInfo();
@@ -58,7 +67,7 @@
                     tmbId = 0;
                 });
             myReviewCardAll(userId);
-            makeReviewCardAll(numOfReview,reviewPage);
+            makeReviewCardAll(reviewPage,numOfReview, userId);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click", function () {
@@ -97,33 +106,135 @@
                     setLike(moviePk, userId, true);
                 }
             });
+            getAreas("cgv");
+            getAreas("lotteCinema");
+            getAreas("megaBox");
+            getTheaters("cgv",localStorage.getItem("cgvArea"));
+            getTheaters("lotteCinema",localStorage.getItem("lotteCinemaArea"));
+            getTheaters("megaBox",localStorage.getItem("megaBoxArea"));
+            $("#cgvArea").val(localStorage.getItem("cgvArea")).prop("selected",true);
 
+            // cgv, 롯데시네마, 메가박스 버튼을 누르면 시간표가 나오는 div를 보여주고 나머지애들은 d-none 처리하는 함수
+            $(".timeTableBtn").on("click", function () {
+                // 모든 시간표를 안보이게만듦
+                $(".timeTable").addClass("d-none");
+                // 누른 버튼의 value (lotteCinema 등)
+                const id = $(this).val();
+
+                // localStorage에 지역, 영화관코드가 저장되어있다면 저장된 값으로 option을 선택함
+                $("#"+id+"Area").val(localStorage.getItem(id+"Area")).prop("selected", true);
+                $("#"+id+"Theater").val(localStorage.getItem(id+"Code")).prop("selected", true);
+
+                // 선택한 영화관회사의 시간표만 보이게만듦
+                $("#" + id).removeClass("d-none");
+                $(".timeTableBtn").removeClass("active");
+                $(this).addClass("active");
+            });
+
+            // 지역을 선택하면 영화관이 나오게 하기
+            $(".sel1").on("change",function(){
+                // selectBox의 id(lotteCinemaArea 등)
+                const area = $(this).attr("id");
+                // selectBox아래 선택된 option요소의 value(경남/부산/울산 등)
+                const selArea = $("#" + area + " option:selected").val();
+                const type = area.substring(0,area.length-4);
+                // $("#"+id+"load").removeClass("d-none");
+                // $("#"+id+"load").text("로딩 중...");
+                getTheaters(type, selArea);
+
+                // ~~Area 전역변수와 locatStroage에 지역을 저장(영화관회사(메가박스 등)을 바꿔서 선택해도
+                // select가 이미 선택되어있도록)
+                switch(area) {
+                    case "megaBoxArea":
+                        megaBoxArea = selArea;
+                        localStorage.setItem("megaBoxArea", selArea);
+                        if(selArea==""){
+                            megaBoxCode = "";
+                            localStorage.setItem("megaBoxCode","");
+                        }
+                        break;
+                    case "lotteCinemaArea":
+                        lotteCinemaArea = selArea;
+                        localStorage.setItem("lotteCinemaArea", selArea);
+                        if(selArea==""){
+                            lotteCinemaCode = "";
+                            localStorage.setItem("lotteCinemaCode","");
+                        }
+                        break;
+                    case "cgvArea":
+                        cgvArea = selArea;
+                        localStorage.setItem("cgvArea", selArea);
+                        if(selArea==""){
+                            cgvCode = "";
+                            localStorage.setItem("cgvCode","");
+                        }
+                        break;
+                }
+            });
+
+            // 영화관 이름을 선택하면 테이블 불러옴과 동시에 전역변수 ~~Code에 값 저장, localStorage에 ~~Code 저장
+            // 이러면 나중에 캘린더 날짜 변경시 전역변수를 이용하여 테이블을 불러올수있음, detail 페이지 로드시에도 사용됨
+            $(".sel2").on("change",function(){
+                const code = $(this).val();
+                // 누른 버튼의 id값(lotteCinema 등)
+                let type = $(this).attr("id");
+                type = type.substring(0,type.length-7);
+                const date = $(".calBtn.active").val().slice(4)
+
+                // 코드를 선택하세요 를 제외한 옵션을 선택시 테이블을 가져오고, 아니면 테이블영역을 그냥 둠
+                if(code != ""){
+                    getTable(type, movieTitle, date, code);
+                }
+
+                // 영화관코드 전역변수와 로컬스토리지에 선택한 코드를 저장함(달력날짜를 바꿀때 전역변수를 사용해서)
+                switch(type) {
+                    case "megaBox":
+                        megaBoxCode = code;
+                        localStorage.setItem("megaBoxCode", code);
+                        break;
+                    case "lotteCinema":
+                        lotteCinemaCode = code;
+                        localStorage.setItem("lotteCinemaCode", code);
+                        break;
+                    case "cgv":
+                        cgvCode = code;
+                        localStorage.setItem("cgvCode", code);
+                        break;
+                }
+            });
+
+            // 아래는 리뷰작성할때 제목, 내용 칸이 비어있으면 제출버튼 disabled로 바꾸는 함수
+            let reviewTitle;
+            let reviewContent;
             $("#title").on("propertychange change paste input", function() {
-                let reviewTitle = $("#title").val();
-                let reviewContent = $("#content").val();
-                if(reviewTitle == "" && reviewContent==""){$("#submitBtn").attr("disabled","true")}
-                else if(reviewTitle != "" && reviewContent !=""){$("#submitBtn").removeAttr("disabled")}
+                reviewTitle = $("#title").val();
+                reviewContent = $("#content").val();
+                if(reviewTitle == "" || reviewContent==""){$("#submitBtn").attr("disabled","true")}
+                else {$("#submitBtn").removeAttr("disabled")}
             });
 
             $("#content").on("propertychange change paste input", function() {
-                let reviewContent = $("#content").val();
-                let reviewTitle = $("#title").val();
-                if(reviewContent == "" && reviewTitle == ""){$("#submitBtn").attr("disabled","true")}
-                else if(reviewTitle != "" && reviewContent !=""){$("#submitBtn").removeAttr("disabled")}
+                reviewContent = $("#content").val();
+                reviewTitle = $("#title").val();
+                if(reviewContent == "" || reviewTitle == ""){$("#submitBtn").attr("disabled","true")}
+                else{$("#submitBtn").removeAttr("disabled")}
             });
 
+            // 아래는 리뷰수정할때 제목, 내용 칸이 비어있으면 제출버튼 disabled로 바꾸는 함수
+            let reviewTitleEdit;
+            let reviewContentEdit;
             $("#titleEdit").on("propertychange change paste input", function() {
                 let reviewTitleEdit = $("#titleEdit").val();
                 let reviewContentEdit = $("#contentEdit").val();
-                if(reviewTitleEdit == "" && reviewContentEdit==""){$("#editSubmitBtn").attr("disabled","true")}
-                else if(reviewTitleEdit != "" && reviewContentEdit !=""){$("#editSubmitBtn").removeAttr("disabled")}
+                if(reviewTitleEdit == "" || reviewContentEdit==""){$("#editSubmitBtn").attr("disabled","true")}
+                else{$("#editSubmitBtn").removeAttr("disabled")}
             });
 
             $("#contentEdit").on("propertychange change paste input", function() {
                 let reviewContentEdit = $("#contentEdit").val();
                 let reviewTitleEdit = $("#titleEdit").val();
-                if(reviewTitleEdit == "" && reviewContentEdit == ""){$("#editSubmitBtn").attr("disabled","true")}
-                else if(reviewTitleEdit != "" && reviewContentEdit !=""){$("#editSubmitBtn").removeAttr("disabled")}
+                if(reviewTitleEdit == "" || reviewContentEdit == ""){$("#editSubmitBtn").attr("disabled","true")}
+                else{$("#editSubmitBtn").removeAttr("disabled")}
             });
 
             // 리뷰쓰기
@@ -133,7 +244,7 @@
                 let reviewContent = $("#content").val();
 
 
-                if(reviewContent!="" && reviewTitle != ""){
+                if(reviewWriter !="" && reviewContent!="" && reviewTitle != ""){
                     reviewTitle = $("#title").val();
                     reviewContent = $("#content").val();
                     $.ajax({
@@ -152,9 +263,13 @@
                             myReviewCardAll(userId);
                         },
                         error: function () {
-                            reject("에러 발생");
+                            alert("에러발생")
                         }
                     });
+                } else if(reviewWriter == ""){
+                    alert("로그인하세요");
+                } else{
+                    alert("내용을 입력하세요");
                 }
             });
 
@@ -335,14 +450,15 @@
             }
 
             // 모든 시간표를 그리는 함수
+            // 영화관 코드는 전역변수로 저장된 ~~Code를 사용
             function getAllTable(title, date) {
+
                 $(".timeTable li").remove();
-                $("p.load").text("로딩 중...");
-                $("p.load").css('display', 'block');
-                let doneList = [false, false, false];
-                getTable('cgv', title, date)
-                getTable('megaBox', title, date);
-                getTable('lotteCinema', title, date);
+
+                // let doneList = [false, false, false];
+                getTable('cgv', title, date, cgvCode)
+                getTable('megaBox', title, date, megaBoxCode);
+                getTable('lotteCinema', title, date, lotteCinemaCode);
             }
 
             // 시간표를 지워주는 함수
@@ -351,7 +467,9 @@
             }
 
             // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
-            function getTable(site, movieTitle, date) {
+            function getTable(site, movieTitle, date, code) {
+                $("p.load").text("로딩 중...");
+                $("p.load").css('display', 'block');
                 $.ajax({
                     // 접속할 서버의 주소 입력
                     url: "/detail/" + site + "/getTimetable.do",
@@ -359,7 +477,7 @@
                     type: "GET",
                     // 서버로 전송할 매개변수, JSON 방식으로 전송, 자바의 hashmap 타입과 비슷
                     // controller에서 RequestParam의 설정값과 동일해야함
-                    data: {title: movieTitle, date: date},
+                    data: {title: movieTitle, date: date, code: code},
                     // 통신 성공 시 전달받을 데이터의 타입 설정, json/text/html
                     dataType: "json",
                     // 통신 성공 시 동작하는 콜백함수
@@ -404,13 +522,47 @@
                 });
             };
 
-            $(".timeTableBtn").on("click", function () {
-                $(".timeTable").addClass("d-none");
-                const id = $(this).val();
-                $("#" + id).removeClass("d-none");
-                $(".timeTableBtn").removeClass("active");
-                $(this).addClass("active");
-            });
+            // select에 포함될 지역을 가져와서 그려주는 함수
+            function getAreas(type){
+                $.ajax({
+                    url: "/detail/getAreas.do",
+                    type: "GET",
+                    data: {"type": type},
+                    success: function(data){
+                        const select = "#"+type+"Area";
+                        $(select+" option").remove();
+                        $(select).append("<option value=''>지역을 선택하세요</option>");
+                        for(let i = 0; i<data.length; i++){
+                            $(select).append("<option value='"+data[i]+"'>"+data[i]+"</option>");
+                        }
+                    },
+                    error: function(){
+                        console.log("failed to get areas: " + type);
+                    }
+                });
+            }
+
+            // select에 포함될 영화관 이름을 가져와서 그려주는 함수
+            function getTheaters(type, area){
+                const select = "#"+type+"Theater";
+                $(select+" option").remove();
+                $(select).append("<option value=''>영화관을 선택하세요</option>");
+                if(area != ""){
+                    $.ajax({
+                        url: "/detail/getTheaters.do",
+                        type: "GET",
+                        data: {"type": type, "area": area},
+                        success: function(data){
+                            for(let i = 0; i<data.length; i++){
+                                $(select).append("<option value='"+data[i].theaterCode+"'>"+data[i].theaterName+"</option>");
+                            }
+                        },
+                        error: function(){
+                            console.log("failed to get areas: " + type);
+                        }
+                    });
+                }
+            }
 
             // 포스터, 줄거리만 추가
             function posterReleasePlot(movieName) {
@@ -438,6 +590,7 @@
                 });
             }
 
+            // 다음영화 서버를 이용하여 영화정보를 불러오는 함수, detail페이지가 열릴때 저장되어있던 movie테이블의 영화pk를 사용
             function getInfo(pk) {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
@@ -466,9 +619,8 @@
                 });
             }
 
+            // 영화 정보를 써넣어주는 함수, 각 정보들은 전역변수로 저장되어 있어야함(매개변수로 받지 않음)
             function drawInfo() {
-
-
                 $("#movieTitle").append("<span>" + movieTitle + "</span>");
                 $("#releaseDate").append("<span>" + releaseDate + "</span>");
                 $("#audience").append("<span>" + noneOr(putComma(audience), " 명") + "</span>");
@@ -490,6 +642,7 @@
                 addArraySpan("casts", casts);
             }
 
+            // 배우, 장르를 표시할때 사용됨,id와 배열값을 받고 id요소안에 값1,  값2,  값3 을 span으로 넣어줌 표시해줌
             function addArraySpan(id, array) {
                 for (let i = 0; i < array.length; i++) {
                     if (i < array.length - 1) {
@@ -512,6 +665,7 @@
                 return result;
             }
 
+            // 영화 정보를 가져왔을때 사용됨, 값이 없으면 정보없음, 값이 있으면 값 + 단위("100 명" 등) 문자열 반환
             function noneOr(str, unit) {
                 if (str == null || str == "null" || str == "NaN") {
                     return "정보 없음";
@@ -596,7 +750,6 @@
             function makeReviewCardAll(page, num, id) {
                 $.ajax({
                     url: "/detail/getReviewList.do",
-                    // + moviePk + "/" + page + "/" + num
                     type: "GET",
                     data: {"moviePk": moviePk, "page": page, "num": num, "id":id, "all":"y"},
                     success: function (reviewList) {
@@ -813,16 +966,22 @@
             </div>
 
             <div id="megaBox" class="timeTable d-none">
+                <select class="sel1" id="megaBoxArea"><option value="">지역을 선택하세요</option></select>
+                <select class="sel2" id="megaBoxTheater"><option>영화관을 선택하세요</option></select>
                 <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
                 <p id="megaBoxLoad" class="load">로딩 중..</p>
                 <ul id="megaBoxUl"></ul>
             </div>
             <div id="lotteCinema" class="timeTable d-none">
+                <select class="sel1" id="lotteCinemaArea"><option value="">지역을 선택하세요</option></select>
+                <select class="sel2" id="lotteCinemaTheater"><option>영화관을 선택하세요</option></select>
                 <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
                 <p id="lotteCinemaLoad" class="load">로딩 중..</p>
                 <ul id="lotteCinemaUl"></ul>
             </div>
             <div id="cgv" class="timeTable d-none">
+                <select class="sel1" id="cgvArea"><option value="">지역을 선택하세요</option></select>
+                <select class="sel2" id="cgvTheater"><option>영화관을 선택하세요</option></select>
                 <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
                 <p id="cgvLoad" class="load">로딩 중..</p>
                 <ul id="cgvUl"></ul>
