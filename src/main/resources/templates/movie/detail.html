@@ -106,12 +106,18 @@
                     setLike(moviePk, userId, true);
                 }
             });
+
+            // 모든 영화관 회사의 지역을 불러와서 지역 select에 option 채워넣기
             getAreas("cgv");
             getAreas("lotteCinema");
             getAreas("megaBox");
+
+            // localStorage에 저장된 area 데이터를 가져와서 영화관 select option 채워넣기(없으면 ""으로 인식함)
             getTheaters("cgv",localStorage.getItem("cgvArea"));
             getTheaters("lotteCinema",localStorage.getItem("lotteCinemaArea"));
             getTheaters("megaBox",localStorage.getItem("megaBoxArea"));
+
+
             $("#cgvArea").val(localStorage.getItem("cgvArea")).prop("selected",true);
 
             // cgv, 롯데시네마, 메가박스 버튼을 누르면 시간표가 나오는 div를 보여주고 나머지애들은 d-none 처리하는 함수
@@ -485,9 +491,10 @@
                         removeTable(site);
                         // 시간표결과가 없으면 정보없다고뜨고 있으면 로딩중... 이라는 p태그 지우기
                         if (data.length == 0) {
+                            $("#" + site + "Load").removeClass("d-none");
                             $("#" + site + "Load").text("상영 정보가 없습니다.");
                         } else {
-                            $("#" + site + "Load").hide();
+                            $("#" + site + "Load").addClass("d-none");
                         }
 
                         // MovieTimeTableDto 리스트 for문 돌리기

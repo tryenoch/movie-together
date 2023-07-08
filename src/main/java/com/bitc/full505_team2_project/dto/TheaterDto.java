@@ -6,4 +6,5 @@ import lombok.Data;
 public class TheaterDto {
     String theaterCode;
     String theaterName;
+    String area;
 }
