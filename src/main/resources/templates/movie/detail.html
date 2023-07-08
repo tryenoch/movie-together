@@ -474,8 +474,8 @@
 
             // 시간표를 그려주는 함수, 영화예매 사이트와 영화제목, 날짜를 매개변수로 받음
             function getTable(site, movieTitle, date, code) {
-                $("p.load").text("로딩 중...");
-                $("p.load").css('display', 'block');
+                $("#" + site + "Load").removeClass("d-none");
+                $("#" + site + "Load").text("로딩 중..");
                 $.ajax({
                     // 접속할 서버의 주소 입력
                     url: "/detail/" + site + "/getTimetable.do",
