@@ -7,4 +7,5 @@ public class TheaterDto {
     String theaterCode;
     String theaterName;
     String area;
+    String type;
 }

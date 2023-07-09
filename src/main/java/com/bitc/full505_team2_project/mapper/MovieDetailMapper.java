@@ -26,4 +26,7 @@ public interface MovieDetailMapper {
     void writeReview(ReviewDto dto);
     void editReview(ReviewDto dto);
     void delReview(ReviewDto dto);
+    void delTheater(TheaterDto dto);
+    List<TheaterDto> getTheater(String type);
+    void addTheater(TheaterDto dto);
 }

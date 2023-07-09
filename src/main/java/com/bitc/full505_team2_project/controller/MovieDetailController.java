@@ -107,7 +107,6 @@ public class MovieDetailController {
     public Object getTheatersAjax(@RequestParam String type, @RequestParam String area) throws Exception {
 
         List<TheaterDto> theaters = mds.getTheaters(type, area);
-        System.out.println(theaters);
         return theaters;
     }
 
@@ -143,7 +142,6 @@ public class MovieDetailController {
     @ResponseBody
     @RequestMapping(value = "/writeReview.do", method = RequestMethod.POST)
     public void writeReview(ReviewDto dto) throws Exception {
-        System.out.println(dto);
         mds.writeReview(dto);
     }
 
@@ -151,8 +149,6 @@ public class MovieDetailController {
     @ResponseBody
     @RequestMapping(value = "/editReview.do", method = RequestMethod.PUT)
     public void editReview(ReviewDto dto) throws Exception {
-        System.out.println("리뷰수정");
-        System.out.println(dto);
         mds.editReview(dto);
     }
 
@@ -161,7 +157,23 @@ public class MovieDetailController {
     @RequestMapping(value = "/delReview.do", method = RequestMethod.DELETE)
     public void delReview(ReviewDto dto) throws Exception {
 
-        System.out.println("리뷰삭제");
         mds.delReview(dto);
+    }
+
+    // 영화관 정보 업데이트
+    @ResponseBody
+    @RequestMapping(value = "/updateTheater.do", method = RequestMethod.GET)
+    public void updateCgvTheater(@RequestParam String type) throws Exception {
+        switch(type) {
+            case "cgv":
+                mds.updateCgvTheater();
+                break;
+            case "megaBox":
+                mds.updateMegaBoxTheater();
+                break;
+            case "lotteCinema":
+                mds.updateLotteCinemaTheater();
+                break;
+        }
     }
 }

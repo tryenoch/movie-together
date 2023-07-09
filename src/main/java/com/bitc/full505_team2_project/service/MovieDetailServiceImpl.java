@@ -67,7 +67,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     public static String WEB_DRIVER_PATH = "C:\\chromeDriver\\chromedriver.exe";
 
     @Override
-    public List<MovieTimeTableDto> getCgvSchedule(String title, String date,String code) throws Exception {
+    public List<MovieTimeTableDto> getCgvSchedule(String title, String date, String code) throws Exception {
 
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
@@ -78,7 +78,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         String url = String.format("http://www.cgv.co.kr/reserve/show-times?&theaterCode=%s&date=%s", theaterCode, date);
         Timer timer = new Timer();
 
-        if(!code.equals("")){
+        if (!code.equals("")) {
             try {
 
                 // WebDriver 경로 설정
@@ -146,6 +146,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 try {
                     Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
                     int exitCode = process.waitFor();
+                    System.out.println("크롬드라이버 강제 종료: 셀레니움으로 크롬드라이버 연속 실행시 오류발생");
                 } catch (IOException | InterruptedException e2) {
                 }
 
@@ -159,7 +160,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     }
 
     @Override
-    public List<MovieTimeTableDto> getMegaBoxSchedule(String title, String date,String code) throws Exception {
+    public List<MovieTimeTableDto> getMegaBoxSchedule(String title, String date, String code) throws Exception {
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String urlString = "https://www.megabox.co.kr/on/oh/ohc/Brch/schedulePage.do";
@@ -168,7 +169,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         String dataAreaCode = "55"; // 지역코드 : 부산/대구/경상, 사용하지는 않음
         String dataBrchNo = code; // 극장코드 : 부산극장
 
-        if(!code.equals("")) {
+        if (!code.equals("")) {
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -260,7 +261,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     }
 
     @Override
-    public List<MovieTimeTableDto> getLotteCinemaSchedule(String title, String date,String code) throws Exception {
+    public List<MovieTimeTableDto> getLotteCinemaSchedule(String title, String date, String code) throws Exception {
         String[] targetTitle = this.titleSplit(title);
         List<MovieTimeTableDto> dtoList = new ArrayList<>();
         String url = "https://www.lottecinema.co.kr/LCWS/Ticketing/TicketingData.aspx";
@@ -297,7 +298,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                 .header("Content-Type", contentTypeHeader)
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
-        if(!code.equals("")) {
+        if (!code.equals("")) {
             try {
                 // HTTP 클라이언트 생성 및 요청 전송
                 HttpClient client = HttpClient.newHttpClient();
@@ -382,6 +383,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         }
         return dtoList;
     }
+
     @Override
     public List<String> getAreas(String type) throws Exception {
         List<String> areas = mdm.getAreas(type);
@@ -393,6 +395,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         List<TheaterDto> theaters = mdm.getTheaters(type, area);
         return theaters;
     }
+
     @Override
     public String getDaumId(String title) throws Exception {
 
@@ -558,16 +561,12 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         dto.setFirstPk((page - 1) * num);
         dto.setNum(num);
         dto.setId(id);
-        System.out.println(all);
         List<ReviewDto> reviewList = new ArrayList<>();
         if (all.equals("y")) {
             reviewList = mdm.getAllReviewList(dto);
         } else if (all.equals("n")) {
             reviewList = mdm.getMyReviewList(dto);
         }
-
-
-        System.out.println(dto);
 
         return reviewList;
     }
@@ -605,6 +604,386 @@ public class MovieDetailServiceImpl implements MovieDetailService {
             str[i] = str[i].strip();
         }
         return str;
+    }
+
+    public void updateCgvTheater() throws Exception {
+        List<TheaterDto> dtoListNew = new ArrayList<>();
+        String url = "http://www.cgv.co.kr/theaters/";
+        List<TheaterDto> dtoListOld;
+
+        try {
+            // db에 저장된 영화관코드와 이름, 지역이름 리스트 불러오기
+            dtoListOld = mdm.getTheater("cgv");
+            // WebDriver 경로 설정
+            System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+
+            // WebDriver 옵션 설정
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-popup-blocking"); // 팝업 안띄움
+            options.addArguments("--disable-gpu");            //gpu 비활성화
+            options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
+
+            // 크롬드라이버 실행
+            driver = new ChromeDriver(options);
+            driver.get(url);
+
+            // 대기시간 duration 객체 생성
+            Duration duration = Duration.ofSeconds(60);
+            // WebDriverWait 객체 생성 : 페이지가 열릴때까지 duration만큼 기다림
+            WebDriverWait wait = new WebDriverWait(driver, duration);
+
+            // 크롬창을 열어서 div.sect-city가 로딩될 때까지 대기
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div.sect-city")));
+            System.out.println("found div.sect-city in cgv");
+
+            // 지역 리스트 불러오기
+            List<WebElement> areas = driver.findElements(By.cssSelector("div.sect-city > ul > li"));
+            // 지역 리스트 하나하나 for문돌리기
+            for (WebElement areaLi : areas) {
+                WebElement areaA = areaLi.findElement(By.cssSelector("a")); // 지역이름을 가지는 a태그
+                String areaName = areaA.getText(); // 지역이름 가져오기
+
+                // 지역을 선택하면 나오는 영화관 li태그내의 a태그 리스트
+                List<WebElement> theatersA = areaLi.findElements(By.cssSelector("div.area > ul > li > a"));
+                // 영화관 a태그 리스트 for문 돌리기
+                for (WebElement theater : theatersA) {
+
+                    TheaterDto dto = new TheaterDto();
+
+                    String href = theater.getAttribute("href");
+                    String code;
+
+                    // href 문자열에서 theaterCode= || theatercode= 가 위치하는 index + "theatercode="의 글자수 12
+                    int idxTheaterCode;
+                    if (href.indexOf("theaterCode=") != -1) {
+                        idxTheaterCode = href.indexOf("theaterCode=") + 12;
+                    } else {
+                        idxTheaterCode = href.indexOf("theatercode=") + 12;
+                    }
+                    // "theatercode=" 뒷부분부터 끝까지 href를 잘라서 code에 집어넣기
+                    code = href.substring(idxTheaterCode);
+
+                    // code 문자열에서 &값이 있으면 idxEnd에 넣고, 없으면 그냥 끝까지 value를 자르기
+                    int idxEnd;
+                    if (code.indexOf("&") != -1) {
+                        idxEnd = code.indexOf("&");
+                        code = code.substring(0, idxEnd);
+                    } else {
+                        code = code.substring(0);
+                    }
+
+                    String theaterName = theater.getAttribute("title");
+
+                    dto.setArea(areaName);
+                    dto.setTheaterName(theaterName);
+                    dto.setTheaterCode(code);
+                    dto.setType("cgv");
+
+                    // TheaterDto 리스트에 현재 for문의 지역, 영화관이름, 영화관코드, 영화관회사 dto 추가하기
+                    dtoListNew.add(dto);
+                }
+
+                // db에서 불러온 TheaterDto리스트에 새로 불러온 TheaterDto 리스트에 없는 영화관 정보만 남기기(삭제할거라서)
+                // 크롬창에서 불러온 TheaterDto리스트 for문 돌리기
+                for (TheaterDto dtoNew : dtoListNew) {
+                    // 기존 리스트가 새로 불러온 리스트의 정보를 가지고있다면 그것을 삭제
+                    while (dtoListOld.contains(dtoNew)) {
+                        dtoListOld.remove(dtoNew);
+                    }
+                }
+            }
+
+            // 그니까 db에만 있고 크롬창에서 불러온 리스트에는 없는 데이터 for문돌려서 db에서 삭제
+            for (TheaterDto dto : dtoListOld) {
+                System.out.println("기존 정보 삭제: " + dto);
+                mdm.delTheater(dto);
+            }
+
+            // 새로운 데이터 db에 추가
+            for (TheaterDto dto : dtoListNew) {
+                try {
+                    mdm.addTheater(dto);
+                    System.out.println("새로운 영화관 추가: " + dto);
+                } catch (Exception e) {
+                }
+            }
+            System.out.println("cgv 영화관 데이터 업데이트 완료");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
+            try {
+                Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+                int exitCode = process.waitFor();
+            } catch (IOException | InterruptedException e2) {
+            }
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Override
+    public void updateMegaBoxTheater() throws Exception {
+        List<TheaterDto> dtoListNew = new ArrayList<>();
+        String url = "https://www.megabox.co.kr/theater/list";
+        List<TheaterDto> dtoListOld;
+
+        try {
+            // db에 저장된 영화관코드와 이름, 지역이름 리스트 불러오기
+            dtoListOld = mdm.getTheater("megaBox");
+            // WebDriver 경로 설정
+            System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+
+            // WebDriver 옵션 설정
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-popup-blocking"); // 팝업 안띄움
+            options.addArguments("--disable-gpu");            //gpu 비활성화
+            options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
+
+            // 크롬드라이버 실행
+            driver = new ChromeDriver(options);
+            driver.get(url);
+
+            // 대기시간 duration 객체 생성
+            Duration duration = Duration.ofSeconds(60);
+            // WebDriverWait 객체 생성 : 페이지가 열릴때까지 duration만큼 기다림
+            WebDriverWait wait = new WebDriverWait(driver, duration);
+
+            // 크롬창을 열어서 div.sect-city가 로딩될 때까지 대기
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div.theater-box")));
+            System.out.println("found div.theater-box in megaBox");
+
+            // 지역 리스트 불러오기
+            List<WebElement> areas = driver.findElements(By.cssSelector("div.theater-box > div.theater-place > ul > li"));
+            // 지역 리스트 하나하나 for문돌리기
+            for (WebElement areaLi : areas) {
+                WebElement areaButton = areaLi.findElement(By.cssSelector("button")); // 지역이름을 가지는 button태그
+                String areaName = areaButton.getText(); // 지역이름 가져오기
+
+                // 지역을 선택하면 나오는 영화관 li태그 리스트
+                List<WebElement> theatersA = areaLi.findElements(By.cssSelector("div.theater-list > ul > li > a"));
+                // 영화관 a태그 리스트 for문 돌리기
+                for (WebElement theaterA : theatersA) {
+
+                    TheaterDto dto = new TheaterDto();
+
+                    String href = theaterA.getAttribute("href");
+                    // a태그의 텍스트를 영화관 이름으로 선택
+                    String theaterName = theaterA.getAttribute("innerText");
+                    String code;
+
+                    // href 문자열에서 brchNo= 가 위치하는 index + "brchNo="의 글자수 7
+                    int idxBrchNo = href.indexOf("brchNo=") + 7;
+                    // "brchNo=" 뒷부분부터 끝까지 href를 잘라서 code에 집어넣기
+                    code = href.substring(idxBrchNo);
+
+                    // code 문자열에서 &값이 있으면 idxEnd에 넣고, 없으면 그냥 끝까지 value를 자르기
+                    int idxEnd;
+                    if (code.indexOf("&") != -1) {
+                        idxEnd = code.indexOf("&");
+                        code = code.substring(0, idxEnd);
+                    } else {
+                        code = code.substring(0);
+                    }
+
+                    dto.setArea(areaName);
+                    dto.setTheaterName(theaterName);
+                    dto.setTheaterCode(code);
+                    dto.setType("megaBox");
+
+                    // TheaterDto 리스트에 현재 for문의 지역, 영화관이름, 영화관코드, 영화관회사 dto 추가하기
+                    dtoListNew.add(dto);
+                }
+
+                // db에서 불러온 TheaterDto리스트에 새로 불러온 TheaterDto 리스트에 없는 영화관 정보만 남기기(삭제할거라서)
+                // 크롬창에서 불러온 TheaterDto리스트 for문 돌리기
+                for (TheaterDto dtoNew : dtoListNew) {
+                    // 기존 리스트가 새로 불러온 리스트의 정보를 가지고있다면 그것을 삭제
+                    while (dtoListOld.contains(dtoNew)) {
+                        dtoListOld.remove(dtoNew);
+                    }
+                }
+            }
+
+            // 그니까 db에만 있고 크롬창에서 불러온 리스트에는 없는 데이터 for문돌려서 db에서 삭제
+            for (TheaterDto dto : dtoListOld) {
+                System.out.println("기존 정보 삭제: " + dto);
+                mdm.delTheater(dto);
+            }
+
+            // 새로운 데이터 db에 추가
+            for (TheaterDto dto : dtoListNew) {
+                try {
+                    mdm.addTheater(dto);
+                    System.out.println("새로운 영화관 추가: " + dto);
+                } catch (Exception e) {
+                }
+            }
+            System.out.println("megaBox 영화관 데이터 업데이트 완료");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
+            try {
+                Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+                int exitCode = process.waitFor();
+            } catch (IOException | InterruptedException e2) {
+            }
+
+        } finally {
+            driver.quit();
+        }
+    }
+
+    @Override
+    public void updateLotteCinemaTheater() throws Exception {
+        List<TheaterDto> dtoListNew = new ArrayList<>();
+        String url = "https://www.lottecinema.co.kr/NLCHS";
+        List<TheaterDto> dtoListOld;
+
+        try {
+            // db에 저장된 영화관코드와 이름, 지역이름 리스트 불러오기
+            dtoListOld = mdm.getTheater("lotteCinema");
+            // WebDriver 경로 설정
+            System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+
+            // WebDriver 옵션 설정
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-popup-blocking"); // 팝업 안띄움
+            options.addArguments("--disable-gpu");            //gpu 비활성화
+            options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
+
+            // 크롬드라이버 실행
+            driver = new ChromeDriver(options);
+            driver.get(url);
+
+            // 대기시간 duration 객체 생성
+            Duration duration = Duration.ofSeconds(60);
+            // WebDriverWait 객체 생성 : 페이지가 열릴때까지 duration만큼 기다림
+            WebDriverWait wait = new WebDriverWait(driver, duration);
+
+            // 크롬창을 열어서 div.area__gnbmovingbar가 로딩될 때까지 대기
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div.area__gnbmovingbar")));
+            System.out.println("found div.area__gnbmovingbar in lotteCinema");
+//            System.out.println(driver.findElement(By.cssSelector("div.area__gnbmovingbar")));
+            // 지역 리스트 불러오기 : 롯데시네마 홈페이지에서 상단 3번째탭 "영화관"에 커서를 올리면 나오는 리스트들
+            List<WebElement> areas = driver.findElements(By.cssSelector("div.area__gnbmovingbar > ul > li:nth-child(3) > div > ul > li"));
+            // 지역 리스트 2번째부터(첫번째는 무슨 스페셜관 뭐시기임 지역이아니라) 하나하나 for문돌리기
+            for (int i = 1; i < areas.size(); i++) {
+                WebElement areaLi = areas.get(i);
+                WebElement areaA = areaLi.findElement(By.cssSelector("a")); // 지역이름을 가지는 a태그
+                String areaName = areaA.getAttribute("innerText"); // 지역이름 가져오기
+                // 지역 li를 선택하면 그안에 또 li가 있는데 이게 영화관 이름을 가지고있음
+                List<WebElement> areaLiList = areaLi.findElements(By.cssSelector("div > ul > li"));
+                for (WebElement areaLiLi : areaLiList) {
+                    // 지역을 선택하면 나오는 영화관 a태그 리스트
+                    List<WebElement> theatersA = areaLiLi.findElements(By.cssSelector("div > ul > li > a"));
+                    // 영화관 a태그 리스트 for문 돌리기
+                    for (WebElement theaterA : theatersA) {
+
+                        TheaterDto dto = new TheaterDto();
+
+                        String href = theaterA.getAttribute("href");
+                        // a태그의 텍스트를 영화관 이름으로 선택
+                        String theaterName = theaterA.getAttribute("innerText");
+                        String cinemaId = "";
+                        String divisionCode = "";
+                        String detailDivisionCode = "";
+
+                        // cinemaID 구하기
+                        // href 문자열에서 cimemaID= 가 위치하는 index + "cimemaID="의 글자수 9
+                        int idxCinemaID = href.indexOf("cinemaID=") + 9;
+                        // "cimemaID=" 뒷부분부터 끝까지 href를 잘라서 code에 집어넣기
+                        cinemaId = href.substring(idxCinemaID);
+
+                        // cinemaId 문자열에서 &값이 있으면 idxEnd에 넣고, 없으면 그냥 끝까지 cinemaId 자르기
+                        int idx1End;
+                        if (cinemaId.indexOf("&") != -1) {
+                            idx1End = cinemaId.indexOf("&");
+                            cinemaId = cinemaId.substring(0, idx1End);
+                        } else {
+                            cinemaId = cinemaId.substring(0);
+                        }
+
+                        // divisonCode 구하기
+                        // href 문자열에서 divisionCode= 가 위치하는 index + "divisionCode="의 글자수 13
+                        int idxDivisionCode = href.indexOf("divisionCode=") + 13;
+                        // "divisionCode=" 뒷부분부터 끝까지 href를 잘라서 code에 집어넣기
+                        divisionCode = href.substring(idxDivisionCode);
+
+                        // divisionCode 문자열에서 &값이 있으면 idx2End에 넣고, 없으면 그냥 끝까지 divisionCode 자르기
+                        int idx2End;
+                        if (divisionCode.indexOf("&") != -1) {
+                            idx2End = divisionCode.indexOf("&");
+                            divisionCode = divisionCode.substring(0, idx2End);
+                        } else {
+                            divisionCode = divisionCode.substring(0);
+                        }
+
+                        // detailDivisionCode 구하기
+                        // href 문자열에서 divisionCode= 가 위치하는 index + "detailDivisionCode="의 글자수 19
+                        int idxDetailDivisionCode = href.indexOf("detailDivisionCode=") + 19;
+                        // "divisionCode=" 뒷부분부터 끝까지 href를 잘라서 code에 집어넣기
+                        detailDivisionCode = href.substring(idxDetailDivisionCode);
+
+                        // detailDivisionCode 문자열에서 &값이 있으면 idx2End에 넣고, 없으면 그냥 끝까지 divisionCode 자르기
+                        int idx3End;
+                        if (detailDivisionCode.indexOf("&") != -1) {
+                            idx3End = detailDivisionCode.indexOf("&");
+                            detailDivisionCode = detailDivisionCode.substring(0, idx3End);
+                        } else {
+                            detailDivisionCode = detailDivisionCode.substring(0);
+                        }
+
+                        dto.setArea(areaName);
+                        dto.setTheaterName(theaterName);
+                        dto.setTheaterCode(divisionCode + "|" + detailDivisionCode + "|" + cinemaId);
+                        dto.setType("lotteCinema");
+
+                        // TheaterDto 리스트에 현재 for문의 지역, 영화관이름, 영화관코드, 영화관회사 dto 추가하기
+                        dtoListNew.add(dto);
+                    }
+                }
+
+                // db에서 불러온 TheaterDto리스트에 새로 불러온 TheaterDto 리스트에 없는 영화관 정보만 남기기(삭제할거라서)
+                // 크롬창에서 불러온 TheaterDto리스트 for문 돌리기
+                for (TheaterDto dtoNew : dtoListNew) {
+                    // 기존 리스트가 새로 불러온 리스트의 정보를 가지고있다면 그것을 삭제
+                    while (dtoListOld.contains(dtoNew)) {
+                        dtoListOld.remove(dtoNew);
+                    }
+                }
+            }
+
+            // 그니까 db에만 있고 크롬창에서 불러온 리스트에는 없는 데이터 for문돌려서 db에서 삭제
+            for (TheaterDto dto : dtoListOld) {
+                System.out.println("기존 정보 삭제: " + dto);
+                mdm.delTheater(dto);
+            }
+
+            // 새로운 데이터 db에 추가
+            for (TheaterDto dto : dtoListNew) {
+                try {
+                    mdm.addTheater(dto);
+                    System.out.println("새로운 영화관 추가: " + dto);
+                } catch (Exception e) {
+                }
+            }
+            System.out.println("lotteCinema 영화관 데이터 업데이트 완료");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 이미 켜져있던 크롬드라이버를 강제종료하는 트라이캐치문
+            try {
+                Process process = Runtime.getRuntime().exec("taskkill /f /im chromedriver.exe /t");
+                int exitCode = process.waitFor();
+            } catch (IOException | InterruptedException e2) {
+            }
+
+        } finally {
+            driver.quit();
+        }
     }
 
 

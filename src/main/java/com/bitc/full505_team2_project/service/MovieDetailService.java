@@ -27,4 +27,7 @@ public interface MovieDetailService {
     void writeReview(ReviewDto dto) throws Exception;
     void editReview(ReviewDto dto) throws Exception;
     void delReview(ReviewDto dto) throws Exception;
+    void updateCgvTheater() throws Exception;
+    void updateMegaBoxTheater() throws Exception;
+    void updateLotteCinemaTheater() throws Exception;
 }

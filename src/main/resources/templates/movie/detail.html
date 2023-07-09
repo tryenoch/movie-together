@@ -11,8 +11,10 @@
 
 
     <script>
+
         let userId;
         $(document).ready(function () {
+
             // 사용자정보 저장용 변수
             userId = "[[${userId}]]"
 
@@ -871,6 +873,57 @@
 
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
+
+    <div class="updateTheaterBtns" id="이 div를 통째로 관리자페이지에 옮겨주세요">
+        <script>
+            $(document).ready(function(){
+                $("#updateCgvTheater").on("click",function(){
+                    $.ajax({
+                        url:"/detail/updateTheater.do",
+                        data:{"type":"cgv"},
+                        type:"GET",
+                        success:function(){
+                            console.log("update success");
+                        },
+                        error:function(){
+                            console.log("update error")
+                        }
+                    });
+                });
+
+                $("#updateMegaBoxTheater").on("click",function(){
+                    $.ajax({
+                        url:"/detail/updateTheater.do",
+                        data:{"type":"megaBox"},
+                        type:"GET",
+                        success:function(){
+                            console.log("update success");
+                        },
+                        error:function(){
+                            console.log("update error")
+                        }
+                    });
+                });
+
+                $("#updateLotteCinemaTheater").on("click",function(){
+                    $.ajax({
+                        url:"/detail/updateTheater.do",
+                        data:{"type":"lotteCinema"},
+                        type:"GET",
+                        success:function(){
+                            console.log("update success");
+                        },
+                        error:function(){
+                            console.log("update error")
+                        }
+                    });
+                });
+            });
+        </script>
+        <button type="button" id="updateCgvTheater">cgv 영화관 업데이트</button>
+        <button type="button" id="updateMegaBoxTheater">megaBox 영화관 업데이트</button>
+        <button type="button" id="updateLotteCinemaTheater">lotteCinema 영화관 업데이트</button>
+    </div>
 
     <div class="row mb-5" id="movieInfo">
 
