@@ -555,6 +555,18 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     }
 
     @Override
+    public int setReviewLikedList(String id, String likedList, String pk, boolean type) throws Exception{
+        mdm.setReviewLikedList(id, likedList);
+        int reviewPk = Integer.parseInt(pk);
+        if(type){
+            mdm.plusReviewLikeCnt(reviewPk);
+        } else{
+            mdm.minusReviewLikeCnt(reviewPk);
+        }
+        return mdm.reviewLikeCnt(reviewPk);
+    }
+
+    @Override
     public List<ReviewDto> getReviewList(int moviePk, int page, int num, String id, String all) throws Exception {
         ReviewCardDto dto = new ReviewCardDto();
         dto.setMoviePk(moviePk);
@@ -571,6 +583,11 @@ public class MovieDetailServiceImpl implements MovieDetailService {
         return reviewList;
     }
 
+    @Override
+    public String getReviewLike(String id) throws Exception{
+
+        return mdm.getReviewLike(id);
+    }
     @Override
     public void writeReview(ReviewDto dto) throws Exception {
         mdm.writeReview(dto);

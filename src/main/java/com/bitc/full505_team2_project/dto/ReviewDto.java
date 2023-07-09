@@ -14,6 +14,7 @@ public class ReviewDto {
   private int reviewLikeCnt;
   private String reviewMoviePk;
   private int reviewEdit;
+  private String reviewLikedId;
 //  private String reviewDeleteYn;
 
 
