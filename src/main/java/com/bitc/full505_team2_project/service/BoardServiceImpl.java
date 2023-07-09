@@ -4,6 +4,7 @@ import com.bitc.full505_team2_project.common.FileUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
 import com.bitc.full505_team2_project.mapper.BoardMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +23,8 @@ public class BoardServiceImpl implements BoardService{
 
   // 게시글 리스트 불러오기
   @Override
-  public List<BoardDto> selectBoardList() throws Exception {
+  public List<BoardDto> selectBoardList(int pageNum) throws Exception {
+    PageHelper.startPage(pageNum, 10);
     return boardMapper.selectBoardList();
   }
 

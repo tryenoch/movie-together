@@ -26,7 +26,7 @@
       자유게시판
     </h1>
   </div>
-  <div class="d-flex justify-content-center ">
+  <div class="d-flex justify-content-center">
     <div class="movie-board">
       <!-- 자유게시판 검색 -->
       <div class="board-search text-center">
@@ -55,7 +55,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:if="${#lists.size(boardList)} > 0" th:each="item : ${boardList}">
+        <tr th:if="${#lists.size(boardList.getList())} > 0" th:each="item : ${boardList.getList()}">
           <td th:text="${item.boardPk}">1</td>
           <td class="title"><a href="/board/" th:attrappend="href=${item.boardPk}" th:text="${item.boardTitle}">테스트 제목</a></td>
           <td th:text="${item.boardWriter}">테스트 작성자</td>
@@ -63,17 +63,39 @@
           <td th:text="${item.boardVisitCnt}">조회수</td>
         </tr>
         <!-- 데이터가 없을 경우 -->
-        <tr th:unless="${#lists.size(boardList)} > 0">조회된 결과가 없습니다.</tr>
+        <tr th:unless="${#lists.size(boardList.getList())} > 0">조회된 결과가 없습니다.</tr>
         </tbody>
       </table>
+
+      <!-- 페이지 버튼 -->
+      <div class="d-flex justify-content-center mt-2">
+        <ul class="pagination justify-content-center">
+          <!-- 이전 페이지 버튼 -->
+          <li class="page-item" th:classappend="${boardList.getPrePage() == 0} ? 'disabled'">
+            <a class="page-link" href="#" th:href="@{/board/list(pageNum=${boardList.getPrePage()})}"> &laquo; </a>
+          </li>
+
+          <!-- 네비게이션 버튼 -->
+          <!-- th:each 를 사용하여 페이지네이션 버튼을 생성 -->
+          <!-- PageInfo 클래스에서 제공하는 navigationFirstPage(), navigateLastPage()를 사용하여 숫자 배열을 생성, 해당 값을 하나씩 꺼내어 사용 -->
+          <li class="page-item" th:each="page : ${#numbers.sequence(boardList.getNavigateFirstPage(), boardList.getNavigateLastPage())}" th:classappend="${page == boardList.getPageNum()} ? 'active'">
+            <a class="page-link" href="#" th:text="${page}" th:href="@{/board/list(pageNum=${page})}">1</a>
+          </li>
+
+          <!-- 다음 페이지 버튼 -->
+          <!-- getNextPage() : 다음 페이지 번호 출력, 다음 페이지가 없으면 0 출력 -->
+          <li class="page-item" th:classappend="${boardList.getNextPage() == 0} ? 'disabled'">
+            <a class="page-link" href="#" th:href="@{/board/list(pageNum=${boardList.getNextPage()})}"> &raquo; </a>
+          </li>
+        </ul>
+      </div>
+
       <div class="d-flex justify-content-end mt-2" th:if="${session.userName}">
         <a href="/board/write" class="btn p-2 px-4 btn-pink">글쓰기</a>
       </div>
     </div>
 
   </div>
-
-
 </main>
 
 <!--footer 영역-->

@@ -4,6 +4,7 @@ import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
 import com.bitc.full505_team2_project.service.BoardService;
+import com.github.pagehelper.PageInfo;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,12 @@ public class BoardController {
 
   /* 게시글 리스트 */
   @RequestMapping(value = {"/list", "/" }, method = RequestMethod.GET)
-  public ModelAndView boardList() throws Exception {
+  public ModelAndView boardList(@RequestParam(required = false, defaultValue = "1") int pageNum) throws Exception {
     ModelAndView mv = new ModelAndView("board/boardList");
 
-    List<BoardDto> boardList = boardService.selectBoardList();
+    PageInfo<BoardDto> boardList = new PageInfo<>(boardService.selectBoardList(pageNum), 5);
+
+    // List<BoardDto> boardList = boardService.selectBoardList();
 
     mv.addObject("boardList", boardList);
 
