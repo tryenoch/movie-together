@@ -33,6 +33,24 @@
             movie_pk = #{moviePk}
     </select>
 
+    <select id="getAreas" parameterType="String" resultType="String">
+        SELECT DISTINCT
+            area
+        FROM
+            theater
+        WHERE
+            type = #{type}
+    </select>
+
+    <select id="getTheaters" parameterType="String" resultType="com.bitc.full505_team2_project.dto.TheaterDto">
+        SELECT
+            theater_code, theater_name
+        FROM
+            theater
+        WHERE
+            type = #{type} AND area = #{area}
+    </select>
+
     <select id="getLikedList" parameterType="String" resultType="String">
         SELECT
             member_like_list
@@ -124,5 +142,23 @@
         DELETE FROM review
         WHERE review_pk = #{reviewPk} AND review_writer IN (SELECT member_name FROM member WHERE member_id = #{reviewWriter})
     </delete>
+
+    <delete id="delTheater" parameterType="com.bitc.full505_team2_project.dto.TheaterDto">
+        DELETE FROM theater
+        WHERE type = #{type} AND theater_code = #{theaterCode} AND area = #{area} AND theater_name = #{theaterName}
+    </delete>
+
+    <select id="getTheater" parameterType="String" resultType="com.bitc.full505_team2_project.dto.TheaterDto">
+        SELECT *
+        FROM theater
+        WHERE type = #{type}
+    </select>
+
+    <insert id="addTheater" parameterType="com.bitc.full505_team2_project.dto.TheaterDto">
+        INSERT INTO theater
+            (`theater_code`, `area`,`theater_name`,`type`)
+        VALUES
+            (#{theaterCode},#{area},#{theaterName},#{type})
+    </insert>
 </mapper>
 
