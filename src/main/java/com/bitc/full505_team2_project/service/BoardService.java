@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface BoardService {
   // 게시글 목록
-  List<BoardDto> selectBoardList() throws Exception;
+  List<BoardDto> selectBoardList(int pageNum) throws Exception;
 
   // 게시글 상세보기
   BoardDto selectBoardDetail(int boardPk) throws Exception;

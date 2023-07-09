@@ -90,6 +90,17 @@
     </foreach>
   </insert>
 
+  <!-- 다운로드할 첨부파일 정보 가져오기 -->
+  <!-- 매개 변수를 두개 사용해야 해서 parameterType을 map으로 설정(더 많으면 dto 타입) -->
+  <select id="selectQnaFileInfo" parameterType="map" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
+    SELECT
+    board_ofile_name, board_sfile_name, board_file_size
+    FROM board_file
+    WHERE board_file_id = #{boardFileId}
+    AND board_pk = #{boardPk}
+    AND board_select = 2
+  </select>
+
 
 </mapper>
 

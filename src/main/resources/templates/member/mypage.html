@@ -90,6 +90,7 @@
                                 let tag = "<div class=\"card bg-secondary \">";
                                 tag += "<div class=\"row g-0\">";
                                 tag += "<div class=\"col-md-7\">";
+                                tag += "<a class='text-decoreaion-none text-black' href='/detail/data/"+MovieDetailList[0].title+"'>";
                                 tag += "<img src =\""+imageBaseUrl+ MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"img-fluid rounded-start\">";
                                 tag += "</div>";
                                 tag += "<div class=\"col-5\">";
@@ -97,7 +98,7 @@
                                 tag += "<p>"+MovieDetailList[0].overview+"</p>"
                                 tag += " </div>";
                                 tag += " </div>";
-                                tag += " </div>";
+                                tag += "</a></div>";
                                 $("#div-likelist").append(tag);
                             }
                             resolve();
