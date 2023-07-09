@@ -84,7 +84,7 @@
   <!-- 해당 게시글 댓글 리스트 출력 -->
   <select id="selectCommentList" parameterType="int">
     SELECT
-    comment_pk, comment_num, comment_id, comment_content, comment_date
+    comment_pk, comment_num, comment_id, comment_content, date_format(comment_date, '%Y-%m-%d') AS comment_date
     FROM qna_comment
     WHERE comment_delete_yn = 'N'
     AND comment_num = #{commentNum}

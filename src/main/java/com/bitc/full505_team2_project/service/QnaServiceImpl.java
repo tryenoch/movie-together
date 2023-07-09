@@ -109,7 +109,7 @@ public class QnaServiceImpl implements QnaService{
 
   @Override
   public void deleteComment(@Param("commentNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception {
-    deleteComment(qnaPk, commentPk);
+    qnaMapper.deleteComment(qnaPk, commentPk);
   }
 
   @Override
