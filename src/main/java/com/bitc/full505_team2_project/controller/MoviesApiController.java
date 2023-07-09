@@ -27,7 +27,7 @@ import java.util.Objects;
 public class MoviesApiController {
     @Autowired
     private  MovieService movieService;
-    @GetMapping("/MovieTogetherMain")
+    @GetMapping({"/MovieTogetherMain", "/"})
     public String MovieTogetherView() throws Exception{
         return "MovieTogetherMain";
     }

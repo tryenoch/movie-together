@@ -69,7 +69,7 @@
 
       <!-- 페이지 버튼 -->
       <div class="d-flex justify-content-center mt-2">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination">
           <!-- 이전 페이지 버튼 -->
           <li class="page-item" th:classappend="${boardList.getPrePage() == 0} ? 'disabled'">
             <a class="page-link" href="#" th:href="@{/board/list(pageNum=${boardList.getPrePage()})}"> &laquo; </a>
@@ -89,7 +89,7 @@
           </li>
         </ul>
       </div>
-
+      <!-- 글 쓰기 버튼 / 로그인 시에만 보임 -->
       <div class="d-flex justify-content-end mt-2" th:if="${session.userName}">
         <a href="/board/write" class="btn p-2 px-4 btn-pink">글쓰기</a>
       </div>

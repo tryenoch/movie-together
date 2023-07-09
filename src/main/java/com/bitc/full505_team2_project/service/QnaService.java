@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public interface QnaService {
   // qna 게시글 목록
-  List<QnaDto> selectQnaList() throws Exception;
+  List<QnaDto> selectQnaList(int pageNum) throws Exception;
 
   // qna 카테고리 목록
   List<CategoryDto> categoryList() throws Exception;

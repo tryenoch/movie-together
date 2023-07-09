@@ -3,6 +3,7 @@ package com.bitc.full505_team2_project.service;
 import com.bitc.full505_team2_project.common.FileUtils;
 import com.bitc.full505_team2_project.dto.*;
 import com.bitc.full505_team2_project.mapper.QnaMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,7 +22,8 @@ public class QnaServiceImpl implements QnaService{
 
   /* 문의 게시글 목록 불러오기 */
   @Override
-  public List<QnaDto> selectQnaList() throws Exception {
+  public List<QnaDto> selectQnaList(int pageNum) throws Exception {
+    PageHelper.startPage(pageNum, 10);
     return qnaMapper.selectQnaList();
   }
 

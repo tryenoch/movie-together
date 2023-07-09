@@ -6,6 +6,8 @@ import com.bitc.full505_team2_project.dto.BoardFileDto;
 import com.bitc.full505_team2_project.dto.CategoryDto;
 import com.bitc.full505_team2_project.dto.QnaDto;
 import com.bitc.full505_team2_project.service.QnaService;
+import com.bitc.full505_team2_project.service.QnaServiceImpl;
+import com.github.pagehelper.PageInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -32,10 +34,12 @@ public class QnaController {
 
   /* qna 게시글 리스트 */
   @RequestMapping(value = {"/list", "/" }, method = RequestMethod.GET)
-  public ModelAndView qnaList(HttpServletRequest req) throws Exception {
+  public ModelAndView qnaList(@RequestParam(required = false, defaultValue = "1") int pageNum, HttpServletRequest req) throws Exception {
     ModelAndView mv = new ModelAndView("qna/qnaList");
 
-    List<QnaDto> qnaList = qnaService.selectQnaList();
+    PageInfo<QnaDto> qnaList = new PageInfo<>(qnaService.selectQnaList(pageNum), 5);
+
+    // List<QnaDto> qnaList = qnaService.selectQnaList();
     List<CategoryDto> cateList = qnaService.categoryList();
 
     /* null 값을 반환할 경우 디폴트 값 지정 (안하면 nullPointException 발생) */

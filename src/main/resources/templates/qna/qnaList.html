@@ -132,7 +132,7 @@
         </tr>
         </thead>
         <tbody class="cate-insert">
-        <tr th:if="${#lists.size(qnaList)} > 0" th:each="item : ${qnaList}">
+        <tr th:if="${#lists.size(qnaList.getList())} > 0" th:each="item : ${qnaList.getList()}">
           <td th:text="${item.qnaPk}">1</td>
           <!-- 세션 정보의 유저 이름과 작성자가 같거나 관리자일 때 게시글이 넘어가게 함 -->
           <td class="title" th:if="${#strings.equals(session.userName, item.qnaWriter)} or ${session.userGradle} == 1">
@@ -157,11 +157,36 @@
           <!--<td th:text="${item.boardVisitCnt}">조회수</td>-->
         </tr>
         <!-- 데이터가 없을 경우 -->
-        <tr th:unless="${#lists.size(qnaList)} > 0">
+        <tr th:unless="${#lists.size(qnaList.getList())} > 0">
           <td colspan="4">조회된 결과가 없습니다.</td>
         </tr>
         </tbody>
       </table>
+      
+      <!-- 페이지 버튼 -->
+      <div class="d-flex justify-content-center mt-2">
+        <ul class="pagination">
+          <!-- 이전 페이지 버튼 -->
+          <li class="page-item" th:classappend="${qnaList.getPrePage() == 0} ? 'disabled'">
+            <a class="page-link" href="#" th:href="@{/qna/list(pageNum=${qnaList.getPrePage()})}">&laquo;</a>
+          </li>
+
+          <!-- 네비게이션 버튼 -->
+          <!-- th:each를 사용하여 페이지네이션 버튼을 생성 -->
+          <!--PageInfo 클래스에서 제공하는 navigationFirstPage(), navigateLastPage()를 사용하여 숫자 배열을 생성, 해당 값을 하나씩 꺼내어 사용 -->
+          <li class="page-item" th:each="page : ${#numbers.sequence(qnaList.getNavigateFirstPage(), qnaList.getNavigateLastPage())}" th:classappend="${page == qnaList.getPageNum()} ? 'active'">
+            <a href="#" class="page-link" th:text="${page}" th:href="@{/qna/list(pageNum=${page})}">1</a>
+          </li>
+
+          <!-- 다음 페이지 버튼 -->
+          <!-- getNextPage() : 다음 페이지 번호 출력, 다음 페이지가 없으면 0 출력 -->
+          <li class="page-item" th:classappend="${qnaList.getNextPage() == 0} ? 'disabled'">
+            <a class="page-link" href="#" th:href="@{/qna/list(pageNum=${qnaList.getNextPage()})}">&raquo;</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 문의 작성 버튼 / 로그인 시에만 보임 -->
       <div class="d-flex justify-content-end mt-2" th:if="${session.userName}">
         <a href="/qna/write" class="btn p-2 px-4 btn-pink">문의 작성</a>
       </div>
