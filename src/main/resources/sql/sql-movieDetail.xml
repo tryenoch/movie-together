@@ -98,7 +98,7 @@
 
     <select id="getAllReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
         SELECT
-            review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt, review_edit
+            review_pk, review_title, review_writer, review_Content, review_date, review_like_cnt, review_edit
         FROM
             review
         WHERE
@@ -113,7 +113,7 @@
 
     <select id="getMyReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
         SELECT
-        review_pk, review_title, review_writer, review_Content, review_date, review_visit_cnt, review_edit
+        review_pk, review_title, review_writer, review_Content, review_date, review_like_cnt, review_edit
         FROM
         review
         WHERE
@@ -160,5 +160,45 @@
         VALUES
             (#{theaterCode},#{area},#{theaterName},#{type})
     </insert>
+
+    <select id="reviewLikeCnt" parameterType="int" resultType="int">
+        SELECT review_like_cnt
+        FROM review
+        WHERE review_pk = #{reviewPk}
+    </select>
+
+    <select id="setReviewLikedList" parameterType="String">
+        UPDATE
+            member
+        SET
+            member_liked_review_list =#{likedList}
+        WHERE
+            member_id = #{id}
+    </select>
+
+    <update id="plusReviewLikeCnt" parameterType="int">
+        UPDATE
+            review
+        SET
+            review_like_cnt = review_like_cnt +1
+        WHERE
+            review_pk = #{reviewPk}
+    </update>
+    <update id="minusReviewLikeCnt" parameterType="int">
+        UPDATE
+            review
+        SET
+            review_like_cnt = review_like_cnt -1
+        WHERE
+            review_pk = #{reviewPk}
+    </update>
+    <select id="getReviewLike" parameterType="String" resultType="String">
+        SELECT
+            member_liked_review_list
+        FROM
+            member
+        WHERE
+            member_id = #{id}
+    </select>
 </mapper>
 

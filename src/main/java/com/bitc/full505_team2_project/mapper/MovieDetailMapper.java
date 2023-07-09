@@ -21,6 +21,10 @@ public interface MovieDetailMapper {
     void plusLikeCnt(int moviePk);
     void minusLikeCnt(int moviePk);
     int likeCnt(int moviePk);
+    void setReviewLikedList(String id, String likedList) throws Exception;
+    void plusReviewLikeCnt(int reviewPk);
+    void minusReviewLikeCnt(int reviewPk);
+    int reviewLikeCnt(int reviewPk);
     List<ReviewDto> getAllReviewList(ReviewCardDto dto);
     List<ReviewDto> getMyReviewList(ReviewCardDto dto);
     void writeReview(ReviewDto dto);
@@ -29,4 +33,5 @@ public interface MovieDetailMapper {
     void delTheater(TheaterDto dto);
     List<TheaterDto> getTheater(String type);
     void addTheater(TheaterDto dto);
+    String getReviewLike(String id);
 }

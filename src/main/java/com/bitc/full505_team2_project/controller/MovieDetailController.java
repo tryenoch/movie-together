@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -128,6 +129,14 @@ public class MovieDetailController {
         return likeCnt;
     }
 
+    // 리뷰 좋아요를 눌렀을 때
+    @ResponseBody
+    @RequestMapping(value = "/updateReviewLike.do", method = RequestMethod.GET)
+    public int setReviewLikedList(@RequestParam String id, @RequestParam String likedList,@RequestParam String reviewPk, @RequestParam boolean type) throws Exception {
+        int likeCnt = mds.setReviewLikedList(id,likedList,reviewPk,type);
+        return likeCnt;
+    }
+
 
     // 리뷰 리스트 보내주기
     @ResponseBody
@@ -175,5 +184,12 @@ public class MovieDetailController {
                 mds.updateLotteCinemaTheater();
                 break;
         }
+    }
+
+    // 영화관 정보 업데이트
+    @ResponseBody
+    @RequestMapping(value = "/getReviewLike.do", method = RequestMethod.GET)
+    public String getReviewLike(@RequestParam String id) throws Exception {
+        return mds.getReviewLike(id);
     }
 }
