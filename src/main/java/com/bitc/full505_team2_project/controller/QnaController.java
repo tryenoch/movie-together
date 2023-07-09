@@ -1,10 +1,7 @@
 package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.common.ScriptUtils;
-import com.bitc.full505_team2_project.dto.BoardDto;
-import com.bitc.full505_team2_project.dto.BoardFileDto;
-import com.bitc.full505_team2_project.dto.CategoryDto;
-import com.bitc.full505_team2_project.dto.QnaDto;
+import com.bitc.full505_team2_project.dto.*;
 import com.bitc.full505_team2_project.service.QnaService;
 import com.bitc.full505_team2_project.service.QnaServiceImpl;
 import com.github.pagehelper.PageInfo;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.xml.stream.events.Comment;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -69,7 +67,11 @@ public class QnaController {
     ModelAndView mv = new ModelAndView("qna/qnaDetail");
 
     QnaDto qnaBoard = qnaService.selectQnaDetail(qnaPk);
+    // 댓글 리스트
+    List<CommentDto> commentList = qnaService.selectCommentList(qnaPk);
+
     mv.addObject("qnaBoard", qnaBoard);
+    mv.addObject("commentList", commentList);
 
     return mv;
   }
@@ -115,6 +117,15 @@ public class QnaController {
 public void qnaDeleteProcess(@PathVariable("qnaPk") int qnaPk, HttpServletResponse response) throws Exception {
     qnaService.deleteQna(qnaPk);
     ScriptUtils.alertAndMovePage(response, "삭제 되었습니다.", "/qna/list");
+  }
+
+  /* comment 입력하기 */
+  @RequestMapping(value = "/cmt/write", method = RequestMethod.POST)
+  public String qnaCommentInsertProcess(CommentDto comment) throws Exception {
+    qnaService.insertComment(comment);
+    int qnaPk = comment.getCommentNum();
+    return "redirect:/qna/" + qnaPk;
+
   }
 
   // 게시물 다운로드 기능

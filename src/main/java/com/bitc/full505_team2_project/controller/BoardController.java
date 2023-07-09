@@ -3,6 +3,7 @@ package com.bitc.full505_team2_project.controller;
 import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
+import com.bitc.full505_team2_project.dto.CommentDto;
 import com.bitc.full505_team2_project.service.BoardService;
 import com.github.pagehelper.PageInfo;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,7 +50,11 @@ public class BoardController {
     ModelAndView mv = new ModelAndView("board/boardDetail");
 
     BoardDto board = boardService.selectBoardDetail(boardPk);
+    // 댓글 리스트
+    List<CommentDto> commentList = boardService.selectCommentList(boardPk);
+
     mv.addObject("board", board);
+    mv.addObject("commentList", commentList);
 
     return mv;
   }
@@ -98,6 +103,14 @@ public class BoardController {
     //ScriptUtils.alert(response, "삭제 되었습니다.");
 
     ScriptUtils.alertAndMovePage(response, "삭제 되었습니다.", "/board/list");
+  }
+
+  /* comment 입력하기 */
+  @RequestMapping(value = "/cmt/write", method = RequestMethod.POST)
+  public String qnaCommentInsertProcess(CommentDto comment) throws Exception {
+    boardService.insertComment(comment);
+    int boardPk = comment.getCommentNum();
+    return "redirect:/board/" + boardPk;
 
   }
 

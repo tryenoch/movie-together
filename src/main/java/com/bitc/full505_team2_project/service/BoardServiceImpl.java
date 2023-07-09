@@ -3,8 +3,10 @@ package com.bitc.full505_team2_project.service;
 import com.bitc.full505_team2_project.common.FileUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
+import com.bitc.full505_team2_project.dto.CommentDto;
 import com.bitc.full505_team2_project.mapper.BoardMapper;
 import com.github.pagehelper.PageHelper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -71,6 +73,7 @@ public class BoardServiceImpl implements BoardService{
     }
   }
 
+
   @Override
   public void updateBoard(BoardDto board) throws Exception {
     boardMapper.updateBoard(board);
@@ -79,6 +82,25 @@ public class BoardServiceImpl implements BoardService{
   @Override
   public void deleteBoard(int boardPk) throws Exception {
     boardMapper.deleteBoard(boardPk);
+  }
+
+  // 코멘트 입력하기
+  @Override
+  public void insertComment(CommentDto comment) throws Exception {
+    boardMapper.insertComment(comment);
+  }
+
+  // 해당 게시글 코멘트 들고오기
+  @Override
+  public List<CommentDto> selectCommentList(@Param("commentNum") int boardPk) throws Exception {
+    return boardMapper.selectCommentList(boardPk);
+  }
+
+  // 코멘트 삭제하기 (작성자, 관리자)
+
+  @Override
+  public void deleteComment(@Param("commentNum") int boardPk, @Param("commentPk") int commentPk) throws Exception {
+    boardMapper.deleteComment(boardPk, commentPk);
   }
 
   // 다운로드할 파일 정보 불러오기
