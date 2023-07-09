@@ -41,10 +41,10 @@ public interface QnaMapper {
   void insertComment(CommentDto comment) throws Exception;
 
   // 코멘트 리스트 불러오기
-  List<CommentDto> selectQnaCommentList (@Param("commentQnaNum") int qnaPk) throws Exception;
+  List<CommentDto> selectCommentList (@Param("commentNum") int qnaPk) throws Exception;
 
   // 코멘트 삭제
-  void deleteComment(@Param("commentQnaNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception;
+  void deleteComment(@Param("commentNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception;
 
 
   /* 파일 관련 메소드 */

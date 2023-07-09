@@ -4,6 +4,7 @@ import com.bitc.full505_team2_project.common.FileUtils;
 import com.bitc.full505_team2_project.dto.*;
 import com.bitc.full505_team2_project.mapper.QnaMapper;
 import com.github.pagehelper.PageHelper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -100,15 +101,15 @@ public class QnaServiceImpl implements QnaService{
 
   // 해당 게시글 코멘트 들고오기
   @Override
-  public List<CommentDto> selectQnaCommentList(int qnaPk) throws Exception {
-    return null;
+  public List<CommentDto> selectCommentList(@Param("commentNum") int qnaPk) throws Exception {
+    return qnaMapper.selectCommentList(qnaPk);
   }
 
   // 코멘트 삭제하기 (작성자, 관리자)
 
   @Override
-  public void deleteComment(int qnaPk, int commentPk) throws Exception {
-
+  public void deleteComment(@Param("commentNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception {
+    deleteComment(qnaPk, commentPk);
   }
 
   @Override

@@ -38,10 +38,10 @@ public interface QnaService {
   void insertComment(CommentDto comment) throws Exception;
 
   // 코멘트 리스트 불러오기
-  List<CommentDto> selectQnaCommentList (@Param("commentQnaNum") int qnaPk) throws Exception;
+  List<CommentDto> selectCommentList (@Param("commentNum") int qnaPk) throws Exception;
 
   // 코멘트 삭제
-  void deleteComment(@Param("commentQnaNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception;
+  void deleteComment(@Param("commentNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception;
 
 
   // 다운로드 할 파일 정보 가져오기
