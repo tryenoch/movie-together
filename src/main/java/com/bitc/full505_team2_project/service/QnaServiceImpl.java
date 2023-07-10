@@ -28,6 +28,12 @@ public class QnaServiceImpl implements QnaService{
     return qnaMapper.selectQnaList();
   }
 
+  // 검색 키워드 글 목록
+  public List<QnaDto> selectSearchList(int pageNum, String searchKey, String searchItem) throws Exception{
+    PageHelper.startPage(pageNum, 10);
+    return qnaMapper.selectSearchList(searchKey, searchItem);
+  }
+
   /* 카테고리 길이 */
   public List<CategoryDto> categoryList() throws Exception{
     return qnaMapper.categoryList();

@@ -15,6 +15,9 @@ public interface BoardService {
   // 게시글 목록
   List<BoardDto> selectBoardList(int pageNum) throws Exception;
 
+  // 검색 키워드 글 목록
+  List<BoardDto> selectSearchList(int pageNum, String searchKey, String searchItem) throws Exception;
+
   // 게시글 상세보기
   BoardDto selectBoardDetail(int boardPk) throws Exception;
 
