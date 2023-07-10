@@ -14,6 +14,9 @@ public interface QnaMapper {
   // 게시판 글 목록
   List<QnaDto> selectQnaList() throws Exception;
 
+  // 검색 키워드 글 목록
+  List<QnaDto> selectSearchList(String searchKey, String searchItem) throws Exception;
+
   // 카테고리 길이
   List<CategoryDto> categoryList() throws Exception;
 

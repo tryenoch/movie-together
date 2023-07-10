@@ -30,6 +30,12 @@ public class BoardServiceImpl implements BoardService{
     return boardMapper.selectBoardList();
   }
 
+  // 검색 키워드 글 목록
+  public List<BoardDto> selectSearchList(int pageNum, String searchKey, String searchItem) throws Exception{
+    PageHelper.startPage(pageNum, 10);
+    return boardMapper.selectSearchList(searchKey, searchItem);
+  }
+
   // 게시글 상세 보기
   // 첨부파일 목록도 함께 불러오기
   @Override
