@@ -38,13 +38,13 @@
 
 
                 if(mId.trim() == "" || mId == null) {
-                    alert("아이디입력은 필수입력란입니다.");
+                    alert("아이디는 필수 입력입니다.");
                 } else{
                     mIdCheck = true;
                 }
 
                 if(pwd1.trim() == "" || pwd1 == null) {
-                    alert("비밀번호 필수입력란입니다.");
+                    alert("비밀번호는 필수 입력입니다.");
                 } else{
                     if (pwd1 == pwd2) {
                         pwdCheck = true;
@@ -55,7 +55,7 @@
 
 
                 if(mname.trim() == "" || mname == null) {
-                    alert("이름은 필수 입력란입니다.");
+                    alert("이름은 필수 입력입니다.");
                 } else{
                     mnameCheck = true;
                 }
@@ -70,7 +70,7 @@
                 const mId = $("#memberId").val();
 
                 if(mId.trim() == "" || mId == null) {
-                    alert("필수 입력란 입니다.");
+                    alert("필수 입력입니다.");
                 } else{
                     $.ajax({
                         url:"/member/IdCheck",
@@ -78,7 +78,7 @@
                         data:{userId: mId},
                         success: function (data) {
                             if (data == "true") {
-                                alert("사용 할수있는 계정입니다.")
+                                alert("사용할 수 있는 계정입니다.")
                             }
                             else{
                                 alert("이미 존재하는 계정입니다.");

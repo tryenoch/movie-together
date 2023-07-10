@@ -60,8 +60,8 @@
         <span th:text="${session.userName}" class="fw-bolder">사용자이름</span>
         <span>님 환영합니다!</span>
         <div class="btn-group">
-          <a href="/member/mypage" class="btn btn-outline-pink p-2 px-2 ms-3">마이 페이지</a>
-          <a href="/member/logout" class="btn btn-outline-pink p-2 px-2">로그아웃</a>
+          <a href="/member/mypage" class="btn btn-sm btn-outline-pink p-2 px-2 ms-1">마이 페이지</a>
+          <a href="/member/logout" class="btn btn-sm btn-outline-pink p-2 px-2">로그아웃</a>
         </div>
       </div>
       <div th:unless="${session.userName}" class="login">
@@ -71,6 +71,7 @@
     <!--</div>-->
   </nav>
   <script>
+    // 서치 버튼 누를시 로컬스토리지에 movie_name값이 저장되고 movieTogethersearch로 넘어가는 스크립트
     $(Document).ready(function () {
       $("#btn-search").on("click", function () {
         let movie_name = $("#movie_name").val();

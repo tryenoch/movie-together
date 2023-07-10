@@ -34,13 +34,13 @@ ul {
 }
 
 .menu-list > li{
-    margin-right: 30px ;
+    margin-right: 23px;
     vertical-align: bottom;
 }
 
 .menu-list a {
     line-height: 40px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 500;
 }
 
@@ -50,7 +50,7 @@ ul {
 }
 
 .logo {
-    margin-right: 25px;
+    margin-right: 20px;
     font-family: 'GmarketSans';
     font-weight: 800 !important;
     font-size: 1.4rem !important;
@@ -313,21 +313,38 @@ li.movie-search {
     object-fit: cover;
 }
 
+/* pagination */
+
+.page-link {
+    color: #ea4e79;
+}
+
+.page-link.active a, .active>.page-link {
+    color : #fff !important;
+    background-color: #fa5c88 !important;
+    border-color: #ef3668 !important;
+}
 /* comment */
 
 .cmt-tit {
     font-weight: 800;
     color: #fa5c88;
-    font-size: 1.7rem;
+    font-size: 1.9rem;
     letter-spacing: -0.1rem;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .cmt-item {
-    background-color: #eeeeee;
-    border-radius: 10px;
-    padding: 10px 15px;
+    background-color: #f1f0f0;
+    border-radius: 5px;
+    padding: 15px 20px;
+    font-size: 1.05rem;
 }
+
+.cmt-item + .cmt-item {
+    margin-top : 15px;
+}
+
 
 #comment-content {
     resize: none;

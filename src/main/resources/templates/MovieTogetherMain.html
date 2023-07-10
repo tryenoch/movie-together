@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>MovieTogether</title>
@@ -13,15 +13,26 @@
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
             integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
+            // 로그인 체크
+            let logincheck = [[${session.userId}]]
+            if(logincheck != null) {
+                let userBirth = [[${session.userBirth}]];
+                userBirth = userBirth.slice(0, 4)
+                console.log(userBirth)
+                let age = (2023 - userBirth);
+                console.log(age)
+            }
+            // 금일 박스 오피스 순위를 알기 위해서 하루전 날짜를 구함(당일에는 순위가 나오지않음!)
             let today = new Date();
             let year = today.getFullYear();
             let month = today.getMonth() + 1;
             let day = today.getDate() - 1;
             let targetDate = year.toString().padStart(4, '0') + month.toString().padStart(2, '0') + day.toString().padStart(2, '0')
-
-            function getBoxOfficeList() {
+            let adults = "";
+            //promise 사용하여 2개의 api를 사용함
+            function getBoxOfficeList() { // 영화 진흥위원회 api를 불러오는 함수
                 return new Promise(function (resolve, reject) {
 
                     $.ajax({
@@ -40,10 +51,10 @@
                 });
             }
 
-            function getMovieDetails(movieName) {
+            function getMovieDetails(movieName) { // 불러온 영화진흥위의 이름 값을 가져와서 tmdb의 검색 api를 사용함
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName,
+                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&include_adult=true&query=" + movieName,
                         type: "GET",
                         success: function (data) {
                             const movieDetails = data.results[0];
@@ -60,56 +71,63 @@
                 .then(function (dailyBoxOfficeList) {
                     const card = $("div.row");
                     const promises = [];
-
+                    // 이름 뒤에 숫자가 붙을 경우 제대로 검색되지 않아 영화와 숫자 사이의 공백을 만들어주고 프로미스에 집어넣음
                     for (let i = 0; i < dailyBoxOfficeList.length; i++) {
                         let movieName = dailyBoxOfficeList[i].movieNm;
                         let size = movieName.length
-                        let part1 = movieName.slice(0,size-1)
-                        console.log(part1)
-                        let part2 = movieName.slice(size-1, size)
-                        let part3 = movieName.slice(size-2, size)
-                        let part4 = movieName.slice(0,size-2)
-                        console.log(part2)
-                        if(isNaN(part2)){
-                        }
-                        else if(isNaN(part3)){
-                            movieName = part1 +" "+part2;
-                            console.log(movieName)
-                        }
-                        else{
-                            movieName = part4+" "+part3;
+                        let part1 = movieName.slice(0, size - 1)
+                        let part2 = movieName.slice(size - 1, size)
+                        let part3 = movieName.slice(size - 2, size)
+                        let part4 = movieName.slice(0, size - 2)
+                        if (isNaN(part2)) {
+                        } else if (isNaN(part3)) {
+                            movieName = part1 + " " + part2;
+                        } else {
+                            movieName = part4 + " " + part3;
                         }
                         const promise = getMovieDetails(movieName);
                         promises.push(promise);
                     }
                     Promise.all(promises)
                         .then(function (results) {
-                            for (let i = 0; i < results.length; i++) {
-                                    const movieDetails = results[i];
-                                    const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
-                                    let tag = "<div class=\"col-sm-3\">";
-                                    tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
-                                    tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
-                                    tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
-                                    tag += "<div class=\"card-img-overlay\">";
-                                    tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
-                                    tag += "</div>";
-                                    tag += "<div class=\"card-body\">";
-                                    tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
-                                    tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
-                                    tag += "</div>";
-                                    tag += "</div>";
-                                    tag += "</a></div>";
-
-                                    card.append(tag);
-
+                            for (let i = 0; i < results.length; i++) { // 영화 화면을 띄움
+                                const movieDetails = results[i];
+                                const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
+                                adults = movieDetails.adult;
+                                let tag = "<div class=\"col-sm-3\">";
+                                tag += "<a class='text-decoration-none text-black' id='adult-check' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "' onclick='adultcheck(" + movieDetails.adult + ")'>";
+                                tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
+                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
+                                tag += "<div class=\"card-img-overlay\">";
+                                tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
+                                tag += "</div>";
+                                tag += "<div class=\"card-body\">";
+                                tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
+                                tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
+                                tag += "</div>";
+                                tag += "</div>";
+                                tag += "</a></div>";
+                                card.append(tag);
+                                // adultcheck(movieDetails.adult)
                             }
                         })
                         .catch(function (error) {
                             alert(error);
                         });
                 })
-        })
+        });
+
+        function adultcheck(adult) {
+            if (adult) {
+                if (age > 19) {
+                    alert("성인 전용 컨텐츠입니다!")
+                    history.back();
+
+                }
+            } else {
+                location.href = '/detail/data/' + MovieName
+            }
+        }
     </script>
     <style>
 
