@@ -308,6 +308,28 @@ li.movie-search {
     object-fit: cover;
 }
 
+/* comment */
+
+.cmt-tit {
+    font-weight: 800;
+    color: #fa5c88;
+    font-size: 1.7rem;
+    letter-spacing: -0.1rem;
+    margin-bottom: 10px;
+}
+
+.cmt-item {
+    background-color: #eeeeee;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+#comment-content {
+    resize: none;
+}
+
+
+
 /* test css */
 
 h1.test {
@@ -334,4 +356,14 @@ h1.test {
 
 #likeBtn {
     background: none;
+}
+
+.card .card-body .card-title {
+    display: flex;
+    justify-content: space-between;
+    padding:0em 1.5em 0em 0em;
+}
+
+.card .card-body .card-title > span {
+    display: block;
 }

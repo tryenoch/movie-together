@@ -42,6 +42,7 @@ public class MemberController {
 //    마이페이지
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
     public String Mypage() throws Exception {
+
         return "member/mypage";
     }
 
@@ -94,7 +95,7 @@ public class MemberController {
             session.setAttribute("userId", member.getMemberId());
             session.setAttribute("userName", member.getMemberName());
             session.setAttribute("userEmail", member.getMemberEmail());
-            session.setAttribute("userGradle", member.getMemberGrade());
+            session.setAttribute("userGrade", member.getMemberGrade());
             session.setAttribute("userLikeList",member.getMemberLikeList()); // likeList가 필요해서 LikeList도 들고왔어요!
             session.setAttribute("userBirth",member.getMemberBirth()); // 생일도 필요하더라구요
             System.out.println(member.getMemberLikeList());
