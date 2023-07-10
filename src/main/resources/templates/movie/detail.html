@@ -43,7 +43,7 @@
             let overview;
 
             // 한번에 보여줄 리뷰 개수와 현재 리뷰 페이지
-            let numOfReview = 2;
+            let numOfReview = 4;
             let reviewPage = 1;
             // 성인인증 여부 확인
 
@@ -353,23 +353,26 @@
             $(document).on("click", ".delBtn", function () {
                 let pk = $(this).attr("id").substring(3);
                 let id = userId;
-                console.log(pk + "  " + id);
-                $.ajax({
-                    url: "/detail/delReview.do",
-                    type: "DELETE",
-                    data: {
-                        "reviewPk": pk,
-                        "reviewWriter": id
-                    },
-                    success: function (data) {
-                        reviewPage = 1;
-                        $("#myReviewSpace .card").remove();
-                        $("#reviewSpace .card").remove();
-                        myReviewCardAll(userId);
-                    },
-                    error: function () {
-                    }
-                });
+                if(confirm("리뷰를 삭제하시겠습니까?")){
+                    console.log(pk + "  " + id);
+                    $.ajax({
+                        url: "/detail/delReview.do",
+                        type: "DELETE",
+                        data: {
+                            "reviewPk": pk,
+                            "reviewWriter": id
+                        },
+                        success: function (data) {
+                            reviewPage = 1;
+                            $("#myReviewSpace .card").remove();
+                            $("#reviewSpace .card").remove();
+                            myReviewCardAll(userId);
+                        },
+                        error: function () {
+                        }
+                    });
+                }
+
             });
 
             // 스크롤위치가 페이지 최하단일때 리뷰를 불러옴
@@ -632,7 +635,7 @@
                             const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
                             if (MovieDetailList.length > 0) {
                                 const result = MovieDetailList[0];
-                                imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start'";
+                                imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'img-fluid rounded-start";
                                 overview = result.overview;
                                 releaseDate = result.release_date;
                                 resolve(true);
@@ -841,6 +844,8 @@
                 let editChk = "";
                 let space;
 
+                const thumbsUpIc = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-hand-thumbs-up-fill\" viewBox=\"0 0 16 16\"><path d=\"M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z\"/></svg>"
+
                 // 카드를 만드는 장소: 나의 리뷰인지 전체 리뷰인지
                 if (id != "") {
                     space = "#myReviewSpace";
@@ -861,8 +866,8 @@
                 // 좋아요 버튼이랑 숫자넣기
                 body.append("<div class='card-title d-flex '></div>")
                 body.find(".card-title").append("<div class='cardStar'>"+starIcon(star, 16)+"</div>");
-                body.find(".card-title").append("<span class='reviewLikeIs'>like:</span>");
-                body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum'>" + count + "</span>");
+                body.find(".card-title").append("<span class='reviewLikeIs'>"+thumbsUpIc+"</span>");
+                body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum ms-2'>" + putComma(count) + "</span>");
 
                 // 카드바디에 제목, 내용 넣기
                 body.append("<div class='card-title'><span class='reviewTitle'>" + title + "</span></div>");
@@ -919,8 +924,8 @@
             $(document).on("click", ".reviewDetailBtn", function () {
                 const title = $(this).find(".card-title .reviewTitle").text();
                 const content = $(this).find(".card-text.content p").text();
-                const value = $(this).val()
-                const likeCnt = $(this).find(".reviewLikeNum").text();
+                const value = $(this).val();
+                let likeCnt = $(this).find(".reviewLikeNum").text();
                 const reviewStar = $(this).find(".cardStar").clone();
                 $("#reviewDetail .modal-header span.modalStar").empty();
                 $("#reviewDetail .modal-header span.modalStar").append(reviewStar);
@@ -928,7 +933,7 @@
                 $("#reviewDetail .modal-body p").text(content);
                 $("#reviewDetail .modal-body button.reviewLikeBtn").val(value);
                 $("#reviewDetail .modal-body .reviewLikeModal .reviewLikeNum").remove();
-                $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum'>" + likeCnt + "</span>");
+                $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum d-block my-1'>" + putComma(parseInt(likeCnt.replace(/,/g, ""))) + "</span>");
                 ifLikedReview(userId, value);
             });
 
@@ -975,9 +980,9 @@
                         success: function (reviewCnt) {
                             console.log(reviewCnt);
                             let card = $("div.card[id^=review" + reviewPk + "]").find(".reviewLikeNum");
-                            card.text(reviewCnt);
+                            card.text(putComma(reviewCnt));
                             let likeNumModal = $("div.reviewLikeModal .reviewLikeNum");
-                            likeNumModal.text(reviewCnt);
+                            likeNumModal.text(putComma(reviewCnt));
                         },
                         error: function () {
                             console.log("리뷰좋아요리스트 불러오기 실패");
@@ -990,6 +995,7 @@
             // 리뷰 좋아요를 눌렀는지 아닌지 확인해서 좋아요버튼 바꿔주는 함수
             function ifLikedReview(id, reviewPk) {
                 $(".reviewLikeBtn").removeClass("active");
+                $(".reviewLikeBtn").finish();
                 if (id != "") {
                     $.ajax({
                         url: "/detail/getReviewLike.do",
@@ -999,7 +1005,8 @@
                             let list = listStr.split(",");
                             localStorage.setItem("reviewLikeList", list);
                             if (list.includes(reviewPk)) {
-                                $(".reviewLikeBtn").addClass("active");
+                                $(".reviewLikeBtn").addClass("active")
+                                $(".reviewLikeBtn").finish();
                             }
                         },
                         error: function () {
@@ -1019,9 +1026,10 @@
                         success: function (reviewList) {
 
                             if (reviewList.length == 0) {
-                                $("#myReviewSpace p").addClass("d-none")
+                                $("#myReviewSpace").addClass("d-none");
+                                $(".myReview").addClass("d-none");
                             } else {
-                                $("#myReviewSpace p").removeClass("d-none")
+                                $("#myReviewSpace p").removeClass("d-none");
                                 for (let i = 0; i < reviewList.length; i++) {
                                     let review = reviewList[i];
                                     makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, id, review.reviewEdit, review.reviewLikeCnt, review.reviewStar);
@@ -1032,12 +1040,13 @@
                                             "data-bs-toggle=\"modal\" " +
                                             "data-bs-target=\"#editReview\" " +
                                             "type='button' " +
-                                            "class='editBtn' " +
+                                            "class='editBtn btn opacity-50 border-0' " +
                                             "value='edit" + review.reviewPk + id + "' " +
                                             "id='edit" + review.reviewPk + "'>" +
                                             "수정" +
                                             "</button>");
-                                    $("#review" + review.reviewPk + id + " .card-footer").append("<button class='delBtn' id='del" + review.reviewPk + "'>삭제</button>")
+                                    $("#review" + review.reviewPk + id + " .card-footer")
+                                        .append("<button class='delBtn btn border-0 opacity-50' id='del" + review.reviewPk + "'>삭제</button>")
                                 }
                             }
                         },
@@ -1089,10 +1098,10 @@
 
     <div class="row mb-5" id="movieInfo">
 
-        <div class="col-4" id="poster"></div>
+        <div class="col-3" id="poster"></div>
 
         <!--        포스터 우측에 표시되는 정보-->
-        <div class="movieInfoTxt col-8">
+        <div class="movieInfoTxt col-9">
             <div class="d-flex justify-content-between row mb-0">
 
                 <div class="col p-0">
@@ -1140,86 +1149,90 @@
     </div>
 
 
-    <div id="ticketing" class="d-flex">
+    <div id="ticketing" class="d-flex flex-column">
         <hr class="mb-4">
+        <p class="h5 mb-4 text-center w-100">상영 시간표</p>
 
-        <div class="">
-            <p class="h5 mb-4">상영 시간표</p>
-            <table class="Calendar table w-100">
-                <thead>
-                <tr>
-                    <td>
-                        <button type="button" id="prev" class="btn btn-sm btn-secondary opacity-50"><</button>
-                    </td>
-                    <td colspan="5" class="text-center h4">
-                        <span id="calYear"></span><span>년</span>
-                        <span id="calMonth"></span><span>월</span>
-                    </td>
-                    <td>
-                        <button type="button" id="next" class="btn btn-sm btn-secondary opacity-50">></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>일</td>
-                    <td>월</td>
-                    <td>화</td>
-                    <td>수</td>
-                    <td>목</td>
-                    <td>금</td>
-                    <td>토</td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr id="calTr0"></tr>
-                <tr id="calTr1"></tr>
-                <tr id="calTr2"></tr>
-                <tr id="calTr3"></tr>
-                <tr id="calTr4"></tr>
-                <tr id="calTr5"></tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="d-flex">
+            <div class="">
 
-        <div class="w-100">
-            <div class="my-2">
-                <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
-                <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink">롯데시네마</button>
-                <button value="cgv" class="timeTableBtn btn btn-outline-pink">CGV</button>
+                <table class="Calendar table w-100">
+                    <thead>
+                    <tr>
+                        <td>
+                            <button type="button" id="prev" class="btn btn-sm btn-secondary opacity-50"><</button>
+                        </td>
+                        <td colspan="5" class="text-center h4">
+                            <span id="calYear"></span><span>년</span>
+                            <span id="calMonth"></span><span>월</span>
+                        </td>
+                        <td>
+                            <button type="button" id="next" class="btn btn-sm btn-secondary opacity-50">></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>일</td>
+                        <td>월</td>
+                        <td>화</td>
+                        <td>수</td>
+                        <td>목</td>
+                        <td>금</td>
+                        <td>토</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="calTr0"></tr>
+                    <tr id="calTr1"></tr>
+                    <tr id="calTr2"></tr>
+                    <tr id="calTr3"></tr>
+                    <tr id="calTr4"></tr>
+                    <tr id="calTr5"></tr>
+                    </tbody>
+                </table>
             </div>
 
-            <div id="megaBox" class="timeTable d-none">
-                <select class="sel1" id="megaBoxArea">
-                    <option value="">지역을 선택하세요</option>
-                </select>
-                <select class="sel2" id="megaBoxTheater">
-                    <option>영화관을 선택하세요</option>
-                </select>
-                <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
-                <p id="megaBoxLoad" class="load">로딩 중..</p>
-                <ul id="megaBoxUl"></ul>
+            <div class="w-100 ms-5 me-3">
+                <div class="my-2">
+                    <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
+                    <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink">롯데시네마</button>
+                    <button value="cgv" class="timeTableBtn btn btn-outline-pink">CGV</button>
+                </div>
+
+                <div id="megaBox" class="timeTable d-none">
+                    <select class="sel1" id="megaBoxArea">
+                        <option value="">지역을 선택하세요</option>
+                    </select>
+                    <select class="sel2" id="megaBoxTheater">
+                        <option>영화관을 선택하세요</option>
+                    </select>
+                    <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
+                    <p id="megaBoxLoad" class="load">로딩 중..</p>
+                    <ul id="megaBoxUl"></ul>
+                </div>
+                <div id="lotteCinema" class="timeTable d-none">
+                    <select class="sel1" id="lotteCinemaArea">
+                        <option value="">지역을 선택하세요</option>
+                    </select>
+                    <select class="sel2" id="lotteCinemaTheater">
+                        <option>영화관을 선택하세요</option>
+                    </select>
+                    <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
+                    <p id="lotteCinemaLoad" class="load">로딩 중..</p>
+                    <ul id="lotteCinemaUl"></ul>
+                </div>
+                <div id="cgv" class="timeTable d-none">
+                    <select class="sel1" id="cgvArea">
+                        <option value="">지역을 선택하세요</option>
+                    </select>
+                    <select class="sel2" id="cgvTheater">
+                        <option>영화관을 선택하세요</option>
+                    </select>
+                    <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
+                    <p id="cgvLoad" class="load">로딩 중..</p>
+                    <ul id="cgvUl"></ul>
+                </div>
             </div>
-            <div id="lotteCinema" class="timeTable d-none">
-                <select class="sel1" id="lotteCinemaArea">
-                    <option value="">지역을 선택하세요</option>
-                </select>
-                <select class="sel2" id="lotteCinemaTheater">
-                    <option>영화관을 선택하세요</option>
-                </select>
-                <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
-                <p id="lotteCinemaLoad" class="load">로딩 중..</p>
-                <ul id="lotteCinemaUl"></ul>
-            </div>
-            <div id="cgv" class="timeTable d-none">
-                <select class="sel1" id="cgvArea">
-                    <option value="">지역을 선택하세요</option>
-                </select>
-                <select class="sel2" id="cgvTheater">
-                    <option>영화관을 선택하세요</option>
-                </select>
-                <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
-                <p id="cgvLoad" class="load">로딩 중..</p>
-                <ul id="cgvUl"></ul>
-            </div>
+
         </div>
 
     </div>
@@ -1229,18 +1242,18 @@
 
 
     <div id="reviewDiv">
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end" style="margin-bottom: -2rem">
             <button id="writeReviewBtn" class="btn btn-pink" type="button" data-bs-toggle="modal"
-                    data-bs-target="#writeReview">작성하기
+                    data-bs-target="#writeReview">리뷰작성
             </button>
 
         </div>
-        <p class="h5 mb-4 mt-0 myReview">나의 리뷰</p>
-        <div id="myReviewSpace" class="d-flex flex-wrap justify-content-start align-items-center">
+        <p class="h5 mb-4 mt-0 myReview text-center">나의 리뷰</p>
+        <div id="myReviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
 
         </div>
-        <p class="h5 my-4 mt-0 w-100">전체 리뷰</p>
-        <div id="reviewSpace" class="d-flex flex-wrap justify-content-start align-items-center">
+        <p class="h5 my-4 mt-0 w-100 text-center">전체 리뷰</p>
+        <div id="reviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
 
         </div>
     </div>
@@ -1251,7 +1264,7 @@
                 <div class="modal-header d-flex justify-content-between"><span>리뷰 작성</span></div>
                 <div class="modal-body">
                     <form id="review">
-                        <div id="stars" class="d-flex align-items-center justify-content-center">
+                        <div id="stars" class="d-flex align-items-center justify-content-center ms-5">
                             <div id="starShow" class="d-block" style="position: relative">
                                 <div id="starBtn" class="btn-group" style="position: absolute">
                                     <button type="button" class="star" value="1"> </button>
@@ -1276,9 +1289,12 @@
                         <label for="content" class="form-label">내용</label>
                         <textarea name="reviewContent" id="content" rows="5" class="form-control w-100"
                                   required></textarea>
-                        <button type="button" id="submitBtn" data-bs-dismiss="modal" disabled>확인</button>
-                        <button type="reset" id="erase">지우기</button>
+
                     </form>
+                </div>
+                <div class="modal-footer p-1">
+                    <button type="button" class="btn btn-pink" id="submitBtn" data-bs-dismiss="modal" disabled>확인</button>
+                    <button type="reset" class="btn btn-dark" id="erase">지우기</button>
                 </div>
             </div>
         </div>
@@ -1290,7 +1306,7 @@
                 <div class="modal-header d-flex justify-content-between"><span>리뷰 수정</span></div>
                 <div class="modal-body">
                     <form id="editreviewFrm">
-                        <div id="stars2" class="d-flex align-items-center justify-content-center">
+                        <div id="stars2" class="d-flex align-items-center justify-content-center ms-5">
                             <div id="starShow2" class="d-block" style="position: relative">
                                 <div id="starBtn2" class="btn-group" style="position: absolute">
                                     <button type="button" class="star2" value="1"> </button>
@@ -1315,9 +1331,12 @@
                         <label for="content" class="form-label">내용</label>
                         <textarea name="reviewContent" id="contentEdit" rows="5" class="form-control w-100"
                                   required></textarea>
-                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal">확인</button>
-                        <button type="reset" id="eraseEdit">지우기</button>
+
                     </form>
+                </div>
+                <div class="modal-footer p-1">
+                    <button class="btn btn-pink" type="button" id="editSubmitBtn" data-bs-dismiss="modal">확인</button>
+                    <button class="btn btn-dark" type="reset" id="eraseEdit">지우기</button>
                 </div>
             </div>
         </div>
@@ -1327,10 +1346,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-between"><span class="modalTitle"></span><span class="modalStar"></span></div>
-                <div class="modal-body">
+                <div class="modal-body pb-1">
                     <p></p>
-                    <div class="reviewLikeModal">
-                        <button type="button" class="btn reviewLikeBtn" value="">like</button>
+                    <div class="reviewLikeModal text-center">
+                        <button type="button" class="btn reviewLikeBtn py-1 px-2 btn-outline-pink" value="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16"><path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/></svg>
+                        </button>
                     </div>
                 </div>
 

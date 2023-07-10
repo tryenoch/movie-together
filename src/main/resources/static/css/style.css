@@ -88,6 +88,17 @@ ul {
     color : #fff;
 }
 
+.btn-outline-pink-op {
+    background:none;
+    border: 1px solid #ef3668;
+    color: #ef3668;
+}
+
+.btn-outline-pink-op:hover {
+    background-color: #ef3668;
+    color : #fff;
+}
+
 .btn-outline-pink.active {
     background-color: #ef3668;
     color : #fff;
@@ -383,7 +394,16 @@ h1.test {
 .card .card-body .card-title {
     display: flex;
     justify-content: space-between;
-    padding:0em 1.5em 0em 0em;
+    padding:0em 0.2em 0em 0em;
+    align-items: center;
+}
+
+.card .card-body .card-title svg {
+    margin-bottom: 0.3rem;
+}
+
+.card .card-body .card-title .reviewLikeIs {
+    color: #444;
 }
 
 .card .card-body .card-title > span {
@@ -416,7 +436,7 @@ h1.test {
 
 button[class^='star'] {
     width: 24px;
-    height: 24px;
+    height: 48px;
     border: none;
     opacity: 0%;
     z-index: 2000;
@@ -425,4 +445,27 @@ button[class^='star'] {
 .modal svg {
     z-index: 0;
 }
+
+#myReviewSpace .card .card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cardStar svg {
+    color: #ef3668;
+}
+
+.modalStar {
+    width: 6rem;
+}
+
+form [id^='stars'] svg {
+    color: #ef3668;
+}
+
+#ticketing a:hover {
+    color : #ef3668;
+    font-weight: 700;
+}
+
 
