@@ -11,6 +11,12 @@ input[type=password]{
     font-family:"굴림";
 }
 
+input[type=password]:placeholder-shown{
+    font-family: 'NanumSquare';
+}
+
+
+
 a {
     text-decoration: none;
     color: #000;
@@ -57,11 +63,24 @@ ul {
     letter-spacing: -1px;
 }
 
-.logo span:first-of-type {
+.login-tit-box {
+    width: 100%;
+}
+
+.login-title {
+    overflow: inherit ;
+    font-family: 'GmarketSans';
+    margin: 10px 20px !important;
+    font-size: 1.8em !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.5px;
+}
+
+.logo span:first-of-type, .login-title span:first-of-type {
     color : #ef3668;
 }
 
-.logo span:last-of-type {
+.logo span:last-of-type, .login-title span:last-of-type {
     color : #595959;
 }
 
@@ -138,6 +157,18 @@ li.movie-search {
     font-size: 1.08rem;
 }
 
+.join {
+    color: #ef3668;
+    font-size: 1.1rem;
+}
+
+.join-form {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #ececec;
+    border-radius: 5px;
+}
+
 /* movie-board */
 
 .movie-board {
@@ -150,6 +181,13 @@ li.movie-search {
     color: #ef3668;
 }
 
+h2.board-title {
+    font-size: 2.0em;
+}
+
+#movie-name {
+    color: #585858;
+}
 
 .board-search {
     width: 100%;

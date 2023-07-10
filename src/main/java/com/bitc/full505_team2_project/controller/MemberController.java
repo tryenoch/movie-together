@@ -38,20 +38,20 @@ public class MemberController {
     
     //로그인 페이지 출력
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-    public String Login() throws Exception {
+    public String login() throws Exception {
         return "member/login";
     }
 
 //  마이페이지 출력
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
-    public String Mypage() throws Exception {
+    public String myPage() throws Exception {
 
         return "member/mypage";
     }
 
 //  수정페이지 출력
     @RequestMapping(value = {"/correction"},method = RequestMethod.GET)
-    public String Correction() throws Exception {
+    public String correction() throws Exception {
         return "member/correction";
     }
     
@@ -82,14 +82,14 @@ public class MemberController {
     
     //수정 페이지 확인
     @RequestMapping(value = "/correction",method = RequestMethod.POST)
-    public String Correction(MemberDto memberDto) {
+    public String correction(MemberDto memberDto) {
         memberService.Correction(memberDto);
         return "redirect:/member/mypage";
     }
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login_check(@ModelAttribute MemberDto dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void loginCheck(@ModelAttribute MemberDto dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         int result = memberService.loginCheck(dto.getMemberId(), dto.getMemberPw());
 
         if (result == 1) { //로그인 성공 시
@@ -112,24 +112,24 @@ public class MemberController {
 
 //            mav.setViewName("/member/loginok"); //뷰의 이름
             // return "redirect:/member/loginok";
-            ScriptUtils.alertAndMovePage(response,"회원 정보 일치 로그인 성공", "/MovieTogetherMain");
-            return "redirect:/MovieTogetherMain"; // 로그인 성공시 이동
+            ScriptUtils.alertAndMovePage(response,"로그인 되었습니다.", "/MovieTogetherMain");
+            /*return "redirect:/MovieTogetherMain"; // 로그인 성공시 이동*/
         } else { //로그인 실패 시
 //            mav.setViewName("member/Login");
 //            mav.addObject("message","error");
             ScriptUtils.alertAndMovePage(response,"회원 정보가 일치하지 않습니다.", "/member/login");
-            return "redirect:/member/login";
+            /*return "redirect:/member/login";*/
         }
     }
 
 
 
     //로그아웃 완료
-    @RequestMapping("logout")
-    public String logout(HttpSession session, HttpServletResponse response) throws Exception {
-        ScriptUtils.alertAndMovePage(response,"로그아웃 완료", "/MovieTogetherMain");
+    @RequestMapping("/logout")
+    public void logout(HttpSession session, HttpServletResponse response) throws Exception {
+        ScriptUtils.alertAndMovePage(response,"로그아웃 되었습니다.", "/MovieTogetherMain");
         memberService.logout(session);
-        return "redirect:/MovieTogetherMain"; // 로그아웃 시 메인으로 이동
+        // return "redirect:/MovieTogetherMain"; // 로그아웃 시 메인으로 이동
     }
 
 
@@ -144,12 +144,11 @@ public class MemberController {
 
     //회원가입 가입 완료시 로그인할 화면 출력
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public String join(MemberDto member,HttpServletResponse response) throws Exception {
-        ScriptUtils.alertAndMovePage(response,"회원가입 완료", "/MovieTogetherMain");
+    public void join(MemberDto member,HttpServletResponse response) throws Exception {
         System.out.println("MemberController.join");
-//        System.out.println("joinId = " + joinId + ", joinPw = " + joinPw + ", joinPwd = " + joinPwd + ", joinName = " + joinName + ", joinDay = " + joinDay + ", joinEmail = " + joinEmail);
         memberService.memberJoin(member);
-        return "/member/login";
+        ScriptUtils.alertAndMovePage(response,"회원가입 완료 되었습니다.", "/MovieTogetherMain");
+        // return "/member/login";
     }
 
     @ResponseBody
