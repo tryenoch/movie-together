@@ -94,7 +94,7 @@ public class MemberController {
             session.setAttribute("userId", member.getMemberId());
             session.setAttribute("userName", member.getMemberName());
             session.setAttribute("userEmail", member.getMemberEmail());
-            session.setAttribute("userGradle", member.getMemberGrade());
+            session.setAttribute("userGrade", member.getMemberGrade());
             session.setAttribute("userLikeList",member.getMemberLikeList()); // likeList가 필요해서 LikeList도 들고왔어요!
             System.out.println(member.getMemberLikeList());
             session.setAttribute("userGrade", member.getMemberGrade());
