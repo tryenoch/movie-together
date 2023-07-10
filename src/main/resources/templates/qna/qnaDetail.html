@@ -15,15 +15,25 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script th:inline="javascript">
     $(document).ready(function () {
+      const qnaBoard = [[${qnaBoard}]];
+      const qnaPk = parseInt(qnaBoard.qnaPk);
+
       $('#btn-delete').on("click", function () {
-        const qnaBoard = [[${qnaBoard}]];
-        const qnaPk = parseInt(qnaBoard.qnaPk);
 
         if(window.confirm("게시글을 삭제하시겠습니까?")){
           location.href = "/qna/delete/" + qnaPk;
         }
-
       });
+
+      $('#cmt-delete').on("click", function () {
+        let commentPk = $(this).val();
+        commentPk = parseInt(commentPk);
+
+        if(window.confirm("코멘트를 삭제하시겠습니까?")){
+          location.href = "/qna/cmt/delete/" + qnaPk + "/" + commentPk;
+        }
+      });
+
     });
   </script>
 </head>
@@ -84,15 +94,16 @@
       <div class="d-flex justify-content-between mt-2 mb-4">
         <a href="/qna/list" class="btn btn-dark px-4">목록</a>
         <!-- 세션 정보의 유저 이름과 작성자가 같거나 관리자일 때 버튼이 보이게함 -->
-        <div th:if="${#strings.equals(session.userName, qnaBoard.qnaWriter)} or ${session.userGradle} == 1">
+        <div th:if="${#strings.equals(session.userName, qnaBoard.qnaWriter)} or ${session.userGrade} == 1">
           <a href="/qna/update/" th:attrappend="href=${qnaBoard.qnaPk}" class="btn btn-dark px-3">수정</a>
           <button id="btn-delete" class="btn btn-dark px-3">삭제</button>
         </div>
       </div>
+
       <!-- 댓글 영역 -->
       <div class="cmt-box">
         <!-- 댓글 작성 영역 -->
-        <div class="cmt-write">
+        <div class="cmt-write" th:if="${session.userName}">
           <form th:action="@{/qna/cmt/write}" method="post">
             <!-- 작성글 번호 -->
             <input type="hidden" name="commentNum" th:value="${qnaBoard.qnaPk}">
@@ -107,15 +118,18 @@
         </div>
         <!-- 댓글 리스트 영역 -->
         <div class="cmt-list my-3">
+          <h4 th:if="${#lists.size(commentList)} > 0" class="cmt-tit">Comment</h4>
           <!-- 댓글 목록 있으면 반복 출력 -->
-          <div th:if="${#lists.size(commentList)} > 0" th:each="comment : ${commentList}">
-            <div>
-              <span class="me-3" th:text="${comment.commentId}">작성자</span>
-              <span th:text="${comment.commentDate}">작성 날짜</span>
-              <button id="cmt-delete" class="px-2 mx-2" th:if="${#strings.equals(session.userName, comment.commentId)} or ${session.userGradle} == 1">삭제</button>
+          <div th:if="${#lists.size(commentList)} > 0" th:each="comment : ${commentList}" class="cmt-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <span class="me-3 fw-bold" th:text="${comment.commentId}">작성자</span>
+                <span th:text="${comment.commentDate}">작성 날짜</span>
+              </div>
+              <button id="cmt-delete" class="px-2 mx-2 btn btn-dark" th:if="${#strings.equals(session.userName, comment.commentId)} or ${session.userGrade} == 1" th:value="${comment.commentPk}">삭제</button>
             </div>
             <!-- 코멘트 내용-->
-            <div th:text="${comment.commentContent}" class="p-2">코멘트 내용</div>
+            <div th:text="${comment.commentContent}" class="pt-1">코멘트 내용</div>
           </div>
         </div>
       </div>
