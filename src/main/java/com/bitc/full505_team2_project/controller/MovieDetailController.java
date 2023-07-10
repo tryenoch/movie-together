@@ -37,6 +37,7 @@ public class MovieDetailController {
             pk = mds.getMoviePk(movieTitle);
         }
         mv.addObject("pk",pk);
+        mv.addObject("movieTitle",movieTitle);
 
         // 로그인상태면
         HttpSession session = request.getSession();
