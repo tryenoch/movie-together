@@ -11,6 +11,12 @@ input[type=password]{
     font-family:"굴림";
 }
 
+input[type=password]:placeholder-shown{
+    font-family: 'NanumSquare';
+}
+
+
+
 a {
     text-decoration: none;
     color: #000;
@@ -138,6 +144,13 @@ li.movie-search {
 .join {
     color: #ef3668;
     font-size: 1.1rem;
+}
+
+.join-form {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #ececec;
+    border-radius: 5px;
 }
 
 /* movie-board */
