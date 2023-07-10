@@ -82,7 +82,7 @@
                         })
                 });
             myReviewCardAll(userId);
-            makeReviewCardAll(reviewPage,numOfReview, userId);
+            makeReviewCardAll(reviewPage, numOfReview, userId);
 
             // 캘린더의 버튼 클릭시 시간표 출력
             $(".calBtn").on("click", function () {
@@ -128,12 +128,12 @@
             getAreas("megaBox");
 
             // localStorage에 저장된 area 데이터를 가져와서 영화관 select option 채워넣기(없으면 ""으로 인식함)
-            getTheaters("cgv",localStorage.getItem("cgvArea"));
-            getTheaters("lotteCinema",localStorage.getItem("lotteCinemaArea"));
-            getTheaters("megaBox",localStorage.getItem("megaBoxArea"));
+            getTheaters("cgv", localStorage.getItem("cgvArea"));
+            getTheaters("lotteCinema", localStorage.getItem("lotteCinemaArea"));
+            getTheaters("megaBox", localStorage.getItem("megaBoxArea"));
 
 
-            $("#cgvArea").val(localStorage.getItem("cgvArea")).prop("selected",true);
+            $("#cgvArea").val(localStorage.getItem("cgvArea")).prop("selected", true);
 
             // cgv, 롯데시네마, 메가박스 버튼을 누르면 시간표가 나오는 div를 보여주고 나머지애들은 d-none 처리하는 함수
             $(".timeTableBtn").on("click", function () {
@@ -143,8 +143,8 @@
                 const id = $(this).val();
 
                 // localStorage에 지역, 영화관코드가 저장되어있다면 저장된 값으로 option을 선택함
-                $("#"+id+"Area").val(localStorage.getItem(id+"Area")).prop("selected", true);
-                $("#"+id+"Theater").val(localStorage.getItem(id+"Code")).prop("selected", true);
+                $("#" + id + "Area").val(localStorage.getItem(id + "Area")).prop("selected", true);
+                $("#" + id + "Theater").val(localStorage.getItem(id + "Code")).prop("selected", true);
 
                 // 선택한 영화관회사의 시간표만 보이게만듦
                 $("#" + id).removeClass("d-none");
@@ -153,41 +153,41 @@
             });
 
             // 지역을 선택하면 영화관이 나오게 하기
-            $(".sel1").on("change",function(){
+            $(".sel1").on("change", function () {
                 // selectBox의 id(lotteCinemaArea 등)
                 const area = $(this).attr("id");
                 // selectBox아래 선택된 option요소의 value(경남/부산/울산 등)
                 const selArea = $("#" + area + " option:selected").val();
-                const type = area.substring(0,area.length-4);
+                const type = area.substring(0, area.length - 4);
                 // $("#"+id+"load").removeClass("d-none");
                 // $("#"+id+"load").text("로딩 중...");
                 getTheaters(type, selArea);
 
                 // ~~Area 전역변수와 locatStroage에 지역을 저장(영화관회사(메가박스 등)을 바꿔서 선택해도
                 // select가 이미 선택되어있도록)
-                switch(area) {
+                switch (area) {
                     case "megaBoxArea":
                         megaBoxArea = selArea;
                         localStorage.setItem("megaBoxArea", selArea);
-                        if(selArea==""){
+                        if (selArea == "") {
                             megaBoxCode = "";
-                            localStorage.setItem("megaBoxCode","");
+                            localStorage.setItem("megaBoxCode", "");
                         }
                         break;
                     case "lotteCinemaArea":
                         lotteCinemaArea = selArea;
                         localStorage.setItem("lotteCinemaArea", selArea);
-                        if(selArea==""){
+                        if (selArea == "") {
                             lotteCinemaCode = "";
-                            localStorage.setItem("lotteCinemaCode","");
+                            localStorage.setItem("lotteCinemaCode", "");
                         }
                         break;
                     case "cgvArea":
                         cgvArea = selArea;
                         localStorage.setItem("cgvArea", selArea);
-                        if(selArea==""){
+                        if (selArea == "") {
                             cgvCode = "";
-                            localStorage.setItem("cgvCode","");
+                            localStorage.setItem("cgvCode", "");
                         }
                         break;
                 }
@@ -195,20 +195,20 @@
 
             // 영화관 이름을 선택하면 테이블 불러옴과 동시에 전역변수 ~~Code에 값 저장, localStorage에 ~~Code 저장
             // 이러면 나중에 캘린더 날짜 변경시 전역변수를 이용하여 테이블을 불러올수있음, detail 페이지 로드시에도 사용됨
-            $(".sel2").on("change",function(){
+            $(".sel2").on("change", function () {
                 const code = $(this).val();
                 // 누른 버튼의 id값(lotteCinema 등)
                 let type = $(this).attr("id");
-                type = type.substring(0,type.length-7);
+                type = type.substring(0, type.length - 7);
                 const date = $(".calBtn.active").val().slice(4)
 
                 // 코드를 선택하세요 를 제외한 옵션을 선택시 테이블을 가져오고, 아니면 테이블영역을 그냥 둠
-                if(code != ""){
+                if (code != "") {
                     getTable(type, movieTitle, date, code);
                 }
 
                 // 영화관코드 전역변수와 로컬스토리지에 선택한 코드를 저장함(달력날짜를 바꿀때 전역변수를 사용해서)
-                switch(type) {
+                switch (type) {
                     case "megaBox":
                         megaBoxCode = code;
                         localStorage.setItem("megaBoxCode", code);
@@ -227,35 +227,47 @@
             // 아래는 리뷰작성할때 제목, 내용 칸이 비어있으면 제출버튼 disabled로 바꾸는 함수
             let reviewTitle;
             let reviewContent;
-            $("#title").on("propertychange change paste input", function() {
+            $("#title").on("propertychange change paste input", function () {
                 reviewTitle = $("#title").val();
                 reviewContent = $("#content").val();
-                if(reviewTitle == "" || reviewContent==""){$("#submitBtn").attr("disabled","true")}
-                else {$("#submitBtn").removeAttr("disabled")}
+                if (reviewTitle == "" || reviewContent == "") {
+                    $("#submitBtn").attr("disabled", "true")
+                } else {
+                    $("#submitBtn").removeAttr("disabled")
+                }
             });
 
-            $("#content").on("propertychange change paste input", function() {
+            $("#content").on("propertychange change paste input", function () {
                 reviewContent = $("#content").val();
                 reviewTitle = $("#title").val();
-                if(reviewContent == "" || reviewTitle == ""){$("#submitBtn").attr("disabled","true")}
-                else{$("#submitBtn").removeAttr("disabled")}
+                if (reviewContent == "" || reviewTitle == "") {
+                    $("#submitBtn").attr("disabled", "true")
+                } else {
+                    $("#submitBtn").removeAttr("disabled")
+                }
             });
 
             // 아래는 리뷰수정할때 제목, 내용 칸이 비어있으면 제출버튼 disabled로 바꾸는 함수
             let reviewTitleEdit;
             let reviewContentEdit;
-            $("#titleEdit").on("propertychange change paste input", function() {
+            $("#titleEdit").on("propertychange change paste input", function () {
                 let reviewTitleEdit = $("#titleEdit").val();
                 let reviewContentEdit = $("#contentEdit").val();
-                if(reviewTitleEdit == "" || reviewContentEdit==""){$("#editSubmitBtn").attr("disabled","true")}
-                else{$("#editSubmitBtn").removeAttr("disabled")}
+                if (reviewTitleEdit == "" || reviewContentEdit == "") {
+                    $("#editSubmitBtn").attr("disabled", "true")
+                } else {
+                    $("#editSubmitBtn").removeAttr("disabled")
+                }
             });
 
-            $("#contentEdit").on("propertychange change paste input", function() {
+            $("#contentEdit").on("propertychange change paste input", function () {
                 let reviewContentEdit = $("#contentEdit").val();
                 let reviewTitleEdit = $("#titleEdit").val();
-                if(reviewTitleEdit == "" || reviewContentEdit == ""){$("#editSubmitBtn").attr("disabled","true")}
-                else{$("#editSubmitBtn").removeAttr("disabled")}
+                if (reviewTitleEdit == "" || reviewContentEdit == "") {
+                    $("#editSubmitBtn").attr("disabled", "true")
+                } else {
+                    $("#editSubmitBtn").removeAttr("disabled")
+                }
             });
 
             // 리뷰쓰기
@@ -263,9 +275,10 @@
                 let reviewWriter = userId;
                 let reviewTitle = $("#title").val();
                 let reviewContent = $("#content").val();
+                let reviewStar = $("#starNum").val();
 
 
-                if(reviewWriter !="" && reviewContent!="" && reviewTitle != ""){
+                if (reviewWriter != "" && reviewContent != "" && reviewTitle != "") {
                     reviewTitle = $("#title").val();
                     reviewContent = $("#content").val();
                     $.ajax({
@@ -275,7 +288,8 @@
                             "reviewWriter": reviewWriter,
                             "reviewTitle": reviewTitle,
                             "reviewContent": reviewContent,
-                            "reviewMoviePk": moviePk
+                            "reviewMoviePk": moviePk,
+                            "reviewStar":reviewStar,
                         },
                         success: function (data) {
                             reviewPage = 1;
@@ -287,52 +301,53 @@
                             alert("에러발생")
                         }
                     });
-                } else if(reviewWriter == ""){
+                } else if (reviewWriter == "") {
                     alert("로그인하세요");
-                } else{
+                } else {
                     alert("내용을 입력하세요");
                 }
             });
 
             // 지우기버튼
-            $("#erase").on("click",function(){
+            $("#erase").on("click", function () {
                 $("#submitBtn").attr("disabled", "true");
             });
 
             // 수정 지우기버튼
-            $("#eraseEdit").on("click",function(){
+            $("#eraseEdit").on("click", function () {
                 $("#editSubmitBtn").attr("disabled", "true");
             });
 
             // 리뷰수정모달확인버튼눌러서 리뷰 수정하기
-            $("#editSubmitBtn").on("click", function(){
+            $("#editSubmitBtn").on("click", function () {
                 let pk = $("#editPk").val();
                 let title = $("#titleEdit").val();
                 let content = $("#contentEdit").val();
+                let starNum = $("#starNum2").val();
                 $.ajax({
                     url: "/detail/editReview.do",
                     type: "PUT",
                     data: {
                         "reviewPk": pk,
                         "reviewTitle": title,
-                        "reviewContent": content
+                        "reviewContent": content,
+                        "reviewStar":starNum
                     },
                     success: function (data) {
                         reviewPage = 1;
                         $("#myReviewSpace .card").remove();
                         $("#reviewSpace .card").remove();
                         myReviewCardAll(userId);
-
                     },
                     error: function () {
-                        reject("에러 발생");
+                       console.log("수정 오류")
                     }
                 });
             });
 
             // 리뷰수정모달삭제버튼눌러서 리뷰 삭제하기
             // 삭제버튼 눌렀을때
-            $(document).on("click",".delBtn", function(){
+            $(document).on("click", ".delBtn", function () {
                 let pk = $(this).attr("id").substring(3);
                 let id = userId;
                 console.log(pk + "  " + id);
@@ -341,7 +356,7 @@
                     type: "DELETE",
                     data: {
                         "reviewPk": pk,
-                        "reviewWriter" : id
+                        "reviewWriter": id
                     },
                     success: function (data) {
                         reviewPage = 1;
@@ -374,7 +389,7 @@
                     $("#likeBtn").attr("disabled", "true");
                     $("#likeBtn").addClass("text-dark");
                     $("#writeReviewBtn").attr("disabled", "true");
-                    $("button.reviewLikeBtn").attr("disabled","true");
+                    $("button.reviewLikeBtn").attr("disabled", "true");
                 }
             };
 
@@ -453,7 +468,7 @@
                 // 오늘 날짜
                 let todayCell = $('button[value="date' + parseDate(new Date()) + '"]');
                 todayCell.removeClass();
-                todayCell.addClass("calBtn btn border-0 btn-outline-success todayCell active clickable");
+                todayCell.addClass("calBtn btn border-0 btn-outline-pink todayCell active clickable");
             }
 
             // Date 객체의 시,분,초,밀리초를 0으로 초기화시켜주는 함수
@@ -546,41 +561,41 @@
             };
 
             // select에 포함될 지역을 가져와서 그려주는 함수
-            function getAreas(type){
+            function getAreas(type) {
                 $.ajax({
                     url: "/detail/getAreas.do",
                     type: "GET",
                     data: {"type": type},
-                    success: function(data){
-                        const select = "#"+type+"Area";
-                        $(select+" option").remove();
+                    success: function (data) {
+                        const select = "#" + type + "Area";
+                        $(select + " option").remove();
                         $(select).append("<option value=''>지역을 선택하세요</option>");
-                        for(let i = 0; i<data.length; i++){
-                            $(select).append("<option value='"+data[i]+"'>"+data[i]+"</option>");
+                        for (let i = 0; i < data.length; i++) {
+                            $(select).append("<option value='" + data[i] + "'>" + data[i] + "</option>");
                         }
                     },
-                    error: function(){
+                    error: function () {
                         console.log("failed to get areas: " + type);
                     }
                 });
             }
 
             // select에 포함될 영화관 이름을 가져와서 그려주는 함수
-            function getTheaters(type, area){
-                const select = "#"+type+"Theater";
-                $(select+" option").remove();
+            function getTheaters(type, area) {
+                const select = "#" + type + "Theater";
+                $(select + " option").remove();
                 $(select).append("<option value=''>영화관을 선택하세요</option>");
-                if(area != ""){
+                if (area != "") {
                     $.ajax({
                         url: "/detail/getTheaters.do",
                         type: "GET",
                         data: {"type": type, "area": area},
-                        success: function(data){
-                            for(let i = 0; i<data.length; i++){
-                                $(select).append("<option value='"+data[i].theaterCode+"'>"+data[i].theaterName+"</option>");
+                        success: function (data) {
+                            for (let i = 0; i < data.length; i++) {
+                                $(select).append("<option value='" + data[i].theaterCode + "'>" + data[i].theaterName + "</option>");
                             }
                         },
-                        error: function(){
+                        error: function () {
                             console.log("failed to get areas: " + type);
                         }
                     });
@@ -591,20 +606,18 @@
             function posterReleasePlot(movieName) {
                 return new Promise(function (resolve, reject) {
                     let size = movieName.length
-                    let part1 = movieName.slice(0,size-1)
+                    let part1 = movieName.slice(0, size - 1)
                     console.log(part1)
-                    let part2 = movieName.slice(size-1, size)
-                    let part3 = movieName.slice(size-2, size)
-                    let part4 = movieName.slice(0,size-2)
+                    let part2 = movieName.slice(size - 1, size)
+                    let part3 = movieName.slice(size - 2, size)
+                    let part4 = movieName.slice(0, size - 2)
                     console.log(part2)
-                    if(isNaN(part2)){
-                    }
-                    else if(isNaN(part3)){
-                        movieName = part1 +" "+part2;
+                    if (isNaN(part2)) {
+                    } else if (isNaN(part3)) {
+                        movieName = part1 + " " + part2;
                         console.log(movieName)
-                    }
-                    else{
-                        movieName = part4+" "+part3;
+                    } else {
+                        movieName = part4 + " " + part3;
                     }
                     const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName;
                     $.ajax({
@@ -792,12 +805,12 @@
                 $.ajax({
                     url: "/detail/getReviewList.do",
                     type: "GET",
-                    data: {"moviePk": moviePk, "page": page, "num": num, "id":id, "all":"y"},
+                    data: {"moviePk": moviePk, "page": page, "num": num, "id": id, "all": "y"},
                     success: function (reviewList) {
                         if (reviewList.length == 0) {
                             let space = $("#reviewSpace");
                             $(".reviewMsg").remove();
-                            if (reviewPage == 1 && $("#myReviewSpace p").hasClass("d-none")) {
+                            if (reviewPage == 1 && $("#myReviewSpace").hasClass("d-none")) {
                                 space.append("<p class='reviewMsg'>등록된 리뷰가 없습니다.</p>")
                             } else {
                                 space.append("<p class='reviewMsg'>마지막 리뷰입니다.</p>")
@@ -806,7 +819,7 @@
                             for (let i = 0; i < reviewList.length; i++) {
 
                                 let review = reviewList[i];
-                                makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, "", review.reviewEdit, review.reviewLikeCnt);
+                                makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, "", review.reviewEdit, review.reviewLikeCnt, review.reviewStar);
                             }
                             reviewPage++;
                         }
@@ -819,7 +832,7 @@
             };
 
             // 리뷰 카드 하나 만들기
-            function makeReviewCard(pk, title, name, content, time, id, edit, count) {
+            function makeReviewCard(pk, title, name, content, time, id, edit, count, star) {
                 let dateTime = time.split(" ")
                 let date = dateTime[0];
                 let editChk = "";
@@ -839,61 +852,108 @@
                 let card = $("#review" + pk + id);
 
                 // 카드에 버튼 넣고 버튼안에 card-body 만들기
-                card.append("<button type='button' class=' text-start reviewDetailBtn border-0 rounded-2 bg-white' data-bs-toggle=\"modal\" data-bs-target=\"#reviewDetail\" value='"+pk+"'><div class='card-body'></div></button>")
+                card.append("<button type='button' class=' text-start reviewDetailBtn border-0 rounded-2 bg-white' data-bs-toggle=\"modal\" data-bs-target=\"#reviewDetail\" value='" + pk + "'><div class='card-body'></div></button>")
                 let body = $("#review" + pk + id + " .card-body");
 
+                // 좋아요 버튼이랑 숫자넣기
+                body.append("<div class='card-title d-flex '></div>")
+                body.find(".card-title").append("<div class='cardStar'>"+starIcon(star, 16)+"</div>");
+                body.find(".card-title").append("<span class='reviewLikeIs'>like:</span>");
+                body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum'>" + count + "</span>");
+
                 // 카드바디에 제목, 내용 넣기
-                body.append("<div class='card-title'><span class='reveiwTitle'>" + title + "</span></div>");
+                body.append("<div class='card-title'><span class='reviewTitle'>" + title + "</span></div>");
                 body.append("<div class='card-text content'><p>" + content + "</p></div>");
 
-                // 카드바디에 카드인포(작성자,날짜,수정여부) 넣기
-                if(edit == 1){editChk = "(수정됨)"}
-                body.append("<div class='card-text info'><p><span class='name'>" + name +"</span><span class='date'>"+date+"</span><span class='edit'>"+editChk+"</span></p></div>");
 
-                // 좋아요 버튼이랑 숫자넣기
-                body.find(".card-title").append("<span class='reviewLikeIs'>like:</span>");
-                body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum'>"+count+"</span>");
+                // 카드바디에 카드인포(작성자,날짜,수정여부) 넣기
+                if (edit == 1) {
+                    editChk = "(수정됨)"
+                }
+                body.append("<div class='card-text info'><span class='name'>" + name + "</span><span class='date'>" + date + "</span><span class='edit'>" + editChk + "</span></div>");
             }
 
+            // 최초 글쓰기 모달창에 별아이콘 만들기
+            $("#starShow").append(starIcon(1,48));
+            $(".star").hover(function () {
+                $("#starShow svg").remove()
+                $("#starShow").append(starIcon($(this).val(), 48));
+            });
+            $(".star").on("click",function () {
+                $("#starNum").val($(this).val());
+            });
+
+            $(".star2").hover(function () {
+                $("#starShow2 svg").remove()
+                $("#starShow2").append(starIcon($(this).val(), 48));
+            });
+            $(".star2").on("click",function () {
+                $("#starNum2").val($(this).val());
+            });
+
+            // 별점 아이콘 만들기
+            function starIcon(starNum, size){
+                let empty = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star\" viewBox=\"0 0 16 16\"><path d=\"M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z\"/></svg>";
+                let half = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star-half\" viewBox=\"0 0 16 16\"><path d=\"M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z\"/></svg>";
+                let full = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star-fill\" viewBox=\"0 0 16 16\"><path d=\"M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z\"/></svg>";
+
+                let starIcons = "";
+                let emptyIcons = 10-starNum;
+                for(let i = 0; i< Math.trunc(starNum/2); i++){
+                    starIcons = starIcons + full;
+                }
+                if(starNum%2 == 1){
+                    starIcons = starIcons + half;
+                }
+                for(let i = 0; i< Math.trunc(emptyIcons/2); i++){
+                    starIcons = starIcons + empty;
+                }
+                return starIcons;
+            }
+
+
             // 리뷰 상세 모달 열기
-            $(document).on("click",".reviewDetailBtn", function(){
-                const title = $(this).find(".card-title p").text();
+            $(document).on("click", ".reviewDetailBtn", function () {
+                const title = $(this).find(".card-title .reviewTitle").text();
                 const content = $(this).find(".card-text.content p").text();
                 const value = $(this).val()
                 const likeCnt = $(this).find(".reviewLikeNum").text();
-                $("#reviewDetail .modal-header span").text(title);
+                const reviewStar = $(this).find(".cardStar").clone();
+                $("#reviewDetail .modal-header span.modalStar").empty();
+                $("#reviewDetail .modal-header span.modalStar").append(reviewStar);
+                $("#reviewDetail .modal-header span.modalTitle").text(title);
                 $("#reviewDetail .modal-body p").text(content);
                 $("#reviewDetail .modal-body button.reviewLikeBtn").val(value);
                 $("#reviewDetail .modal-body .reviewLikeModal .reviewLikeNum").remove();
-                $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum'>"+likeCnt+"</span>");
-                ifLikedReview(userId,value);
+                $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum'>" + likeCnt + "</span>");
+                ifLikedReview(userId, value);
             });
 
             // 리뷰좋아요클릭
-            $(document).on("click",".reviewLikeBtn", function(){
+            $(document).on("click", ".reviewLikeBtn", function () {
 
-               if(userId != ""){
-                   if($(this).hasClass("active")){
-                       // 좋아요 -1, 리스트에서 id 빼서 값전송
-                       updateReviewLike(false, userId, $(this).val());
-                       $(this).removeClass("active")
-                   } else{
-                       // 좋아요 +1, 리스트에 id 추가해서 전송
-                       updateReviewLike(true, userId, $(this).val());
-                       $(this).addClass("active")
-                   }
-                   // ifLikedReview(userId,$(this).val())
-               }
+                if (userId != "") {
+                    if ($(this).hasClass("active")) {
+                        // 좋아요 -1, 리스트에서 id 빼서 값전송
+                        updateReviewLike(false, userId, $(this).val());
+                        $(this).removeClass("active")
+                    } else {
+                        // 좋아요 +1, 리스트에 id 추가해서 전송
+                        updateReviewLike(true, userId, $(this).val());
+                        $(this).addClass("active")
+                    }
+                    // ifLikedReview(userId,$(this).val())
+                }
             });
 
             // 리뷰 좋아요 클릭했을때
-            function updateReviewLike(type, id, reviewPk){
-                if(id!=""){
+            function updateReviewLike(type, id, reviewPk) {
+                if (id != "") {
                     let likedStr = localStorage.getItem("reviewLikeList");
                     let likedList = likedStr.split(",");
-                    if(type == true){
+                    if (type == true) {
                         likedList.push(reviewPk);
-                    } else if(type == false){
+                    } else if (type == false) {
                         while (likedList.includes(reviewPk)) {
                             let delIndex = likedList.indexOf(reviewPk);
                             likedList.splice(delIndex, 1);
@@ -908,10 +968,10 @@
                     $.ajax({
                         url: "/detail/updateReviewLike.do",
                         type: "GET",
-                        data: {"type":type,"id":id, "reviewPk":reviewPk, "likedList":likedStr},
+                        data: {"type": type, "id": id, "reviewPk": reviewPk, "likedList": likedStr},
                         success: function (reviewCnt) {
                             console.log(reviewCnt);
-                            let card = $("div.card[id^=review"+reviewPk+"]").find(".reviewLikeNum");
+                            let card = $("div.card[id^=review" + reviewPk + "]").find(".reviewLikeNum");
                             card.text(reviewCnt);
                             let likeNumModal = $("div.reviewLikeModal .reviewLikeNum");
                             likeNumModal.text(reviewCnt);
@@ -931,10 +991,10 @@
                     $.ajax({
                         url: "/detail/getReviewLike.do",
                         type: "GET",
-                        data: {"id":id},
+                        data: {"id": id},
                         success: function (listStr) {
                             let list = listStr.split(",");
-                            localStorage.setItem("reviewLikeList",list);
+                            localStorage.setItem("reviewLikeList", list);
                             if (list.includes(reviewPk)) {
                                 $(".reviewLikeBtn").addClass("active");
                             }
@@ -948,33 +1008,33 @@
 
             // 내가쓴리뷰 카드 만들기
             function myReviewCardAll(id) {
-                if(id!=""){
+                if (id != "") {
                     $.ajax({
                         url: "/detail/getReviewList.do",
                         type: "GET",
-                        data: {"moviePk": moviePk, "page": 1, "num": 100, "id": id, "all":"n"},
+                        data: {"moviePk": moviePk, "page": 1, "num": 100, "id": id, "all": "n"},
                         success: function (reviewList) {
 
                             if (reviewList.length == 0) {
                                 $("#myReviewSpace p").addClass("d-none")
-                            } else{
+                            } else {
                                 $("#myReviewSpace p").removeClass("d-none")
                                 for (let i = 0; i < reviewList.length; i++) {
                                     let review = reviewList[i];
-                                    makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, id, review.reviewEdit, review.reviewLikeCnt);
-                                    $("#review"+review.reviewPk+id).append("<div class='card-footer'></div>")
-                                    $("#review"+review.reviewPk+id+" .card-footer")
+                                    makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, id, review.reviewEdit, review.reviewLikeCnt, review.reviewStar);
+                                    $("#review" + review.reviewPk + id).append("<div class='card-footer'></div>")
+                                    $("#review" + review.reviewPk + id + " .card-footer")
                                         .append(
                                             "<button " +
                                             "data-bs-toggle=\"modal\" " +
                                             "data-bs-target=\"#editReview\" " +
                                             "type='button' " +
                                             "class='editBtn' " +
-                                            "value='edit"+ review.reviewPk+id+"' " +
-                                            "id='edit"+review.reviewPk+"'>" +
+                                            "value='edit" + review.reviewPk + id + "' " +
+                                            "id='edit" + review.reviewPk + "'>" +
                                             "수정" +
                                             "</button>");
-                                    $("#review"+review.reviewPk+id+" .card-footer").append("<button class='delBtn' id='del"+review.reviewPk+"'>삭제</button>")
+                                    $("#review" + review.reviewPk + id + " .card-footer").append("<button class='delBtn' id='del" + review.reviewPk + "'>삭제</button>")
                                 }
                             }
                         },
@@ -982,25 +1042,36 @@
                             // console.log("없음")
                         }
                     });
-                } else{
-                    $("#myReviewSpace p").addClass("d-none");
+                } else {
+                    $("#myReviewSpace").addClass("d-none");
+                    $(".myReview").addClass("d-none");
                 }
             }
+            // 동적으로 추가된 버튼에 적용하는 코드
+            // 수정버튼 눌렀을 때
+            $(document).on("click", ".editBtn", function () {
+
+                let pk = $(this).attr("id").substring(4);
+                let itemId = $(this).val().substring(4);
+                let title = $("#review" + itemId + " .card-title p").text();
+                let content = $("#review" + itemId + " .content p").text();
+
+
+                let cardStar = $("#review" + itemId + " .cardStar")
+                let starNum = cardStar.find(".bi-star-fill").length * 2 + cardStar.find(".bi-star-half").length;
+                console.log(starNum);
+
+                $("#titleEdit").val(title);
+                $("#contentEdit").val(content);
+                $("#editPk").val(pk);
+                $("#starShow2 svg").remove();
+                $("#starShow2").append(starIcon(starNum,48));
+                $("#starNum2").val(starNum);
+            });
 
         });
 
-        // 동적으로 추가된 버튼에 적용하는 코드
-        // 수정버튼 눌렀을 때
-        $(document).on("click",".editBtn", function(){
-            let pk = $(this).attr("id").substring(4);
-            console.log(pk);
-            let itemId =  $(this).val().substring(4);
-            let title = $("#review"+itemId+" .card-title p").text();
-            let content = $("#review"+itemId+" .content p").text();
-            $("#titleEdit").val(title);
-            $("#contentEdit").val(content);
-            $("#editPk").val(pk);
-        });
+
 
 
     </script>
@@ -1010,7 +1081,6 @@
 
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
-
 
 
     <div class="row mb-5" id="movieInfo">
@@ -1108,28 +1178,40 @@
 
         <div class="w-100">
             <div class="my-2">
-                <button value="megaBox" class="timeTableBtn btn">메가박스</button>
-                <button value="lotteCinema" class="timeTableBtn btn">롯데시네마</button>
-                <button value="cgv" class="timeTableBtn btn">CGV</button>
+                <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
+                <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink">롯데시네마</button>
+                <button value="cgv" class="timeTableBtn btn btn-outline-pink">CGV</button>
             </div>
 
             <div id="megaBox" class="timeTable d-none">
-                <select class="sel1" id="megaBoxArea"><option value="">지역을 선택하세요</option></select>
-                <select class="sel2" id="megaBoxTheater"><option>영화관을 선택하세요</option></select>
+                <select class="sel1" id="megaBoxArea">
+                    <option value="">지역을 선택하세요</option>
+                </select>
+                <select class="sel2" id="megaBoxTheater">
+                    <option>영화관을 선택하세요</option>
+                </select>
                 <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
                 <p id="megaBoxLoad" class="load">로딩 중..</p>
                 <ul id="megaBoxUl"></ul>
             </div>
             <div id="lotteCinema" class="timeTable d-none">
-                <select class="sel1" id="lotteCinemaArea"><option value="">지역을 선택하세요</option></select>
-                <select class="sel2" id="lotteCinemaTheater"><option>영화관을 선택하세요</option></select>
+                <select class="sel1" id="lotteCinemaArea">
+                    <option value="">지역을 선택하세요</option>
+                </select>
+                <select class="sel2" id="lotteCinemaTheater">
+                    <option>영화관을 선택하세요</option>
+                </select>
                 <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
                 <p id="lotteCinemaLoad" class="load">로딩 중..</p>
                 <ul id="lotteCinemaUl"></ul>
             </div>
             <div id="cgv" class="timeTable d-none">
-                <select class="sel1" id="cgvArea"><option value="">지역을 선택하세요</option></select>
-                <select class="sel2" id="cgvTheater"><option>영화관을 선택하세요</option></select>
+                <select class="sel1" id="cgvArea">
+                    <option value="">지역을 선택하세요</option>
+                </select>
+                <select class="sel2" id="cgvTheater">
+                    <option>영화관을 선택하세요</option>
+                </select>
                 <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
                 <p id="cgvLoad" class="load">로딩 중..</p>
                 <ul id="cgvUl"></ul>
@@ -1142,16 +1224,20 @@
     <hr>
 
 
-    <div>
+    <div id="reviewDiv">
         <div class="d-flex justify-content-end">
-            <button id="writeReviewBtn" type="button" data-bs-toggle="modal" data-bs-target="#writeReview">작성하기</button>
+            <button id="writeReviewBtn" class="btn btn-pink" type="button" data-bs-toggle="modal"
+                    data-bs-target="#writeReview">작성하기
+            </button>
 
         </div>
-        <div id="myReviewSpace">
-            <p class="h5 mb-4 mt-0">나의 리뷰</p>
+        <p class="h5 mb-4 mt-0 myReview">나의 리뷰</p>
+        <div id="myReviewSpace" class="d-flex flex-wrap justify-content-start align-items-center">
+
         </div>
-        <div id="reviewSpace">
-            <p class="h5 my-4 mt-0">전체 리뷰</p>
+        <p class="h5 my-4 mt-0 w-100">전체 리뷰</p>
+        <div id="reviewSpace" class="d-flex flex-wrap justify-content-start align-items-center">
+
         </div>
     </div>
 
@@ -1161,6 +1247,26 @@
                 <div class="modal-header d-flex justify-content-between"><span>리뷰 작성</span></div>
                 <div class="modal-body">
                     <form id="review">
+                        <div id="stars" class="d-flex align-items-center justify-content-center">
+                            <div id="starShow" class="d-block" style="position: relative">
+                                <div id="starBtn" class="btn-group" style="position: absolute">
+                                    <button type="button" class="star" value="1"> </button>
+                                    <button type="button" class="star" value="2"> </button>
+                                    <button type="button" class="star" value="3"> </button>
+                                    <button type="button" class="star" value="4"> </button>
+                                    <button type="button" class="star" value="5"> </button>
+                                    <button type="button" class="star" value="6"> </button>
+                                    <button type="button" class="star" value="7"> </button>
+                                    <button type="button" class="star" value="8"> </button>
+                                    <button type="button" class="star" value="9"> </button>
+                                    <button type="button" class="star" value="10"> </button>
+                                </div>
+                            </div>
+                            <div class="ms-3 h5 my-auto">
+                                <input id="starNum" style="width: 2rem; height: 1rem" readonly type="text" value="1">
+                            </div>
+                        </div>
+
                         <label for="title" class="form-label">제목</label>
                         <input class="form-control" id="title" type="text" name="reviewTitle" required>
                         <label for="content" class="form-label">내용</label>
@@ -1180,13 +1286,32 @@
                 <div class="modal-header d-flex justify-content-between"><span>리뷰 수정</span></div>
                 <div class="modal-body">
                     <form id="editreviewFrm">
+                        <div id="stars2" class="d-flex align-items-center justify-content-center">
+                            <div id="starShow2" class="d-block" style="position: relative">
+                                <div id="starBtn2" class="btn-group" style="position: absolute">
+                                    <button type="button" class="star2" value="1"> </button>
+                                    <button type="button" class="star2" value="2"> </button>
+                                    <button type="button" class="star2" value="3"> </button>
+                                    <button type="button" class="star2" value="4"> </button>
+                                    <button type="button" class="star2" value="5"> </button>
+                                    <button type="button" class="star2" value="6"> </button>
+                                    <button type="button" class="star2" value="7"> </button>
+                                    <button type="button" class="star2" value="8"> </button>
+                                    <button type="button" class="star2" value="9"> </button>
+                                    <button type="button" class="star2" value="10"> </button>
+                                </div>
+                            </div>
+                            <div class="ms-3 h5 my-auto">
+                                <input id="starNum2" style="width: 2rem; height: 1rem" readonly type="text" value="1">
+                            </div>
+                        </div>
                         <input type="hidden" id="editPk">
                         <label for="title" class="form-label">제목</label>
                         <input class="form-control" id="titleEdit" type="text" name="reviewTitle" required>
                         <label for="content" class="form-label">내용</label>
                         <textarea name="reviewContent" id="contentEdit" rows="5" class="form-control w-100"
                                   required></textarea>
-                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal" >확인</button>
+                        <button type="button" id="editSubmitBtn" data-bs-dismiss="modal">확인</button>
                         <button type="reset" id="eraseEdit">지우기</button>
                     </form>
                 </div>
@@ -1197,7 +1322,7 @@
     <div class="modal" id="reviewDetail">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between"><span></span></div>
+                <div class="modal-header d-flex justify-content-between"><span class="modalTitle"></span><span class="modalStar"></span></div>
                 <div class="modal-body">
                     <p></p>
                     <div class="reviewLikeModal">

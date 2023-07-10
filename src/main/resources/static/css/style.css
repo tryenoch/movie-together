@@ -88,6 +88,11 @@ ul {
     color : #fff;
 }
 
+.btn-outline-pink.active {
+    background-color: #ef3668;
+    color : #fff;
+}
+
 
 li.movie-search {
     margin-right: 8px;
@@ -367,3 +372,40 @@ h1.test {
 .card .card-body .card-title > span {
     display: block;
 }
+
+#reviewDiv .card {
+    margin: 1rem;
+    width: 24rem;
+}
+
+#reviewDiv .card button .card-body {
+    padding: 0.6rem;
+}
+
+#reviewDiv .card button .card-body .content {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#reviewDiv .reviewMsg {
+    margin: auto;
+    padding: 5rem;
+    width: 100%;
+    text-align: center;
+}
+
+button[class^='star'] {
+    width: 24px;
+    height: 24px;
+    border: none;
+    opacity: 0%;
+    z-index: 2000;
+}
+
+.modal svg {
+    z-index: 0;
+}
+
