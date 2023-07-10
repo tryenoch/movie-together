@@ -16,9 +16,23 @@
     <script>
         $(document).ready(function (){
             let moviename = localStorage.getItem("moviename");
-            if(moviename == "범죄도시3"){
-                moviename = "범죄도시 3"
+            let size = moviename.length
+            let part1 = moviename.slice(0,size-1)
+            let part4 = moviename.slice(0,size-2)
+            console.log(part1)
+            let part2 = moviename.slice(size-1, size)
+            let part3 = moviename.slice(size-2, size)
+            console.log(part2)
+            if(isNaN(part2)){
             }
+            else if(isNaN(part3)){
+                moviename = part1 +" "+part2;
+                console.log(moviename)
+            }
+            else{
+                moviename = part4+" "+part3;
+            }
+
             $.ajax({
                 url:"https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+moviename,
                 type:"GET",
