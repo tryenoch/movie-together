@@ -125,7 +125,13 @@ public void qnaDeleteProcess(@PathVariable("qnaPk") int qnaPk, HttpServletRespon
     qnaService.insertComment(comment);
     int qnaPk = comment.getCommentNum();
     return "redirect:/qna/" + qnaPk;
+  }
 
+  /* comment 삭제하기 */
+  @GetMapping(value = "/cmt/delete/{qnaPk}/{commentPk}")
+  public String qnaCommentDeleteProcess(@PathVariable("qnaPk") int qnaPk, @PathVariable("commentPk") int commentPk) throws Exception {
+    qnaService.deleteComment(qnaPk, commentPk);
+    return "redirect:/qna/" + qnaPk; // 삭제후 해당 게시글로 이동
   }
 
   // 게시물 다운로드 기능
