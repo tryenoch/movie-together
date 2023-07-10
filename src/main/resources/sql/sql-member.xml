@@ -17,7 +17,7 @@
     </select>
 
     <select id="selectMember" parameterType="String" resultType="com.bitc.full505_team2_project.dto.MemberDto">
-        select member_id , member_name,member_email,member_grade,member_like_list
+        select member_id , member_name,member_email,member_grade,member_like_list,member_birth
         from member
         where member_id = #{memberId} and member_pw = #{memberPw}
     </select>

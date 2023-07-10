@@ -13,13 +13,16 @@
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
             integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
             let today = new Date();
             let year = today.getFullYear();
             let month = today.getMonth() + 1;
             let day = today.getDate() - 1;
             let targetDate = year.toString().padStart(4, '0') + month.toString().padStart(2, '0') + day.toString().padStart(2, '0')
+            let adult = "";
+            let userBirth = [[${session.userBirth}]].getFullYear();
+            let userAge = 2023-userBirth;
 
             function getBoxOfficeList() {
                 return new Promise(function (resolve, reject) {
@@ -87,7 +90,7 @@
                                     const movieDetails = results[i];
                                     const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
                                     let tag = "<div class=\"col-sm-3\">";
-                                    tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
+                                    tag += "<a class='text-decoration-none text-black' id='adult-check' href='/detail/data/"+ dailyBoxOfficeList[i].movieNm + "'>";
                                     tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
                                     tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
                                     tag += "<div class=\"card-img-overlay\">";
@@ -99,7 +102,7 @@
                                     tag += "</div>";
                                     tag += "</div>";
                                     tag += "</a></div>";
-
+                                    adult = movieDetails.adult;
                                     card.append(tag);
 
                             }
@@ -120,6 +123,11 @@
     <h1 class="text-center">박스오피스 순위</h1>
     <div class="row">
     </div>
+    <script>
+        $("#adult-check").on("click",function (){
+
+        })
+    </script>
 </main>
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>
 </body>
