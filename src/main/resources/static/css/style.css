@@ -34,13 +34,13 @@ ul {
 }
 
 .menu-list > li{
-    margin-right: 30px ;
+    margin-right: 23px;
     vertical-align: bottom;
 }
 
 .menu-list a {
     line-height: 40px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 500;
 }
 
@@ -50,7 +50,7 @@ ul {
 }
 
 .logo {
-    margin-right: 25px;
+    margin-right: 20px;
     font-family: 'GmarketSans';
     font-weight: 800 !important;
     font-size: 1.4rem !important;
@@ -308,6 +308,17 @@ li.movie-search {
     object-fit: cover;
 }
 
+/* pagination */
+
+.page-link {
+    color: #ea4e79;
+}
+
+.page-link.active a, .active>.page-link {
+    color : #fff !important;
+    background-color: #fa5c88 !important;
+    border-color: #ef3668 !important;
+}
 /* comment */
 
 .cmt-tit {

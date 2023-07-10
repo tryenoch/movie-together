@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-
+//(영화 검색, 금일 박스오피스 순위 를 보여주기 위한 서비스),사용하진 않음 예비용
 @Service
 public class MovieServiceImpl implements MovieService {
 

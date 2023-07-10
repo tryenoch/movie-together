@@ -21,20 +21,21 @@
 <header th:replace="~{layout/header :: header-basic}"></header>
 <main class="container-md my-4">
     <button type="button" class="btn btn-primary" id="btn-recall">이전</button>
-
-        <button type="button" class="btn btn-primary" id="btn-next">다음</button>
-
-
+    <button type="button" class="btn btn-primary" id="btn-next">다음</button>
 
 
     <script>
+
         $(document).ready(function () {
-            function deleteElement(){
+            // card로 만들어진 요소를 전부 지워주는 함수
+            function deleteElement() {
                 const element = document.getElementById('div_card');
 
                 element.remove();
             }
+
             var PageNo = 1;
+
             function startajax(PageNo) { //ajax 사용하는 부분을 함수로 변환
                 const urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=ko&page=" + PageNo;
                 $.ajax({
@@ -47,9 +48,9 @@
                     success: function (data) {
                         console.log(urlStr);
                         const MovieList = data.results;
-                        const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
+                        const imageBaseUrl = "https://image.tmdb.org/t/p/w500" // 이미지 연결 베이스 링크
                         if (MovieList.length > 0) {
-                            for (let i = 0; i < MovieList.length; i++) {
+                            for (let i = 0; i < MovieList.length; i++) { // for문 돌려서 Movie리스트를 계속 띄워줌
                                 let tag = "<div class=\"card\" style=\"height:750px;\" id=\"div_card\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
                                 tag += "<div class=\"row g-0\">"
                                 tag += "<div class=\"col-md-5\">"
@@ -74,18 +75,19 @@
                     }
                 })
             }
+
             startajax();
-            $("#btn-recall").on("click", function() { // a 링크 누를시 화면 초기화 후 다시 화면 로드
-                if(PageNo >1) {
+            $("#btn-recall").on("click", function () { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+                if (PageNo > 1) {
                     PageNo = PageNo - 1
                     console.log("Selected PageNo:", PageNo);
                     deleteElement();
                     startajax(PageNo)
-                }else{
+                } else {
                     alert("첫 번째 페이지입니다! ")
                 }
             })
-            $("#btn-next").on("click", function() { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+            $("#btn-next").on("click", function () { // a 링크 누를시 화면 초기화 후 다시 화면 로드
                 PageNo = PageNo + 1
                 console.log("Selected PageNo:", PageNo);
                 deleteElement()
