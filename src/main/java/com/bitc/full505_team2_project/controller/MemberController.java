@@ -42,6 +42,7 @@ public class MemberController {
 //    마이페이지
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
     public String Mypage() throws Exception {
+
         return "member/mypage";
     }
 

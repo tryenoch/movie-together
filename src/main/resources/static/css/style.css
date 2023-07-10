@@ -357,3 +357,13 @@ h1.test {
 #likeBtn {
     background: none;
 }
+
+.card .card-body .card-title {
+    display: flex;
+    justify-content: space-between;
+    padding:0em 1.5em 0em 0em;
+}
+
+.card .card-body .card-title > span {
+    display: block;
+}
