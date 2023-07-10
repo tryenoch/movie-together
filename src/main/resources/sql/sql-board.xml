@@ -50,6 +50,32 @@
     WHERE board_pk = #{boardPk}
   </update>
 
+  <!-- 댓글 관련 -->
+  <!-- 댓글 입력 -->
+  <insert id="insertComment" parameterType="com.bitc.full505_team2_project.dto.CommentDto">
+    INSERT INTO comment
+    (comment_num, comment_id, comment_content, comment_date)
+    VALUES (#{commentNum}, #{commentId}, #{commentContent}, NOW())
+  </insert>
+
+  <!-- 해당 게시글 댓글 리스트 출력 -->
+  <select id="selectCommentList" parameterType="int">
+    SELECT
+    comment_pk, comment_num, comment_id, comment_content, date_format(comment_date, '%Y-%m-%d') AS comment_date
+    FROM comment
+    WHERE comment_delete_yn = 'N'
+    AND comment_num = #{commentNum}
+  </select>
+
+  <!-- 댓글 삭제 -->
+  <update id="deleteComment" parameterType="map">
+    UPDATE comment
+    SET comment_delete_yn = "Y"
+    WHERE comment_pk = #{commentPk}
+    AND comment_num = #{commentNum}
+  </update>
+
+
   <!-- 지정한 게시글의 첨부 파일 목록보기 -->
   <select id="selectBoardFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
