@@ -16,6 +16,9 @@
     <script>
         $(document).ready(function (){
             let moviename = localStorage.getItem("moviename");
+            if(moviename == "범죄도시3"){
+                moviename = "범죄도시 3"
+            }
             $.ajax({
                 url:"https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query="+moviename,
                 type:"GET",
@@ -25,6 +28,7 @@
                     const imageBaseUrl = "https://image.tmdb.org/t/p/w500"
                     if(MovieDetailList.length >0) {
                         for (let i = 0; i < MovieDetailList.length; i++) {
+
                             let tag = "<div class=\"card\" style=\"max-height: max-content;\"><a class='text-decoration-none text-black' href='/detail/data/" + MovieDetailList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
                             tag += "<div class=\"row g-0\">"
                             tag += "<div class=\"col-md-5\">"
