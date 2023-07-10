@@ -811,14 +811,16 @@
                 let body = $("#review" + pk + id + " .card-body");
 
                 // 카드바디에 제목, 내용 넣기
-                body.append("<div class='card-title'><p>" + title + "</p></div>");
+                body.append("<div class='card-title'><span class='reveiwTitle'>" + title + "</span></div>");
                 body.append("<div class='card-text content'><p>" + content + "</p></div>");
 
                 // 카드바디에 카드인포(작성자,날짜,수정여부) 넣기
                 if(edit == 1){editChk = "(수정됨)"}
                 body.append("<div class='card-text info'><p><span class='name'>" + name +"</span><span class='date'>"+date+"</span><span class='edit'>"+editChk+"</span></p></div>");
-                body.find(".info p").append("<span class='reviewLikeIs'>like:</span>");
-                body.find(".reviewLikeIs").append("<span class='reviewLikeNum'>"+count+"</span>");
+
+                // 좋아요 버튼이랑 숫자넣기
+                body.find(".card-title").append("<span class='reviewLikeIs'>like:</span>");
+                body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum'>"+count+"</span>");
             }
 
             // 리뷰 상세 모달 열기
