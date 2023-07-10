@@ -78,6 +78,8 @@ public class MemberController {
 //        return "correction";
 //    }
 
+    
+    //수정 페이지 확인
     @RequestMapping(value = "/correction",method = RequestMethod.POST)
     public String Correction(MemberDto memberDto) {
         memberService.Correction(memberDto);
@@ -108,6 +110,7 @@ public class MemberController {
 
 //            mav.setViewName("/member/loginok"); //뷰의 이름
             // return "redirect:/member/loginok";
+            ScriptUtils.alertAndMovePage(response,"회원 정보 일치 로그인 성공", "/MovieTogetherMain");
             return "redirect:/MovieTogetherMain"; // 로그인 성공시 이동
         } else { //로그인 실패 시
 //            mav.setViewName("member/Login");
@@ -119,11 +122,11 @@ public class MemberController {
 
 
 
+    //로그아웃 완료
     @RequestMapping("logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) throws Exception {
+        ScriptUtils.alertAndMovePage(response,"로그아웃 완료", "/MovieTogetherMain");
         memberService.logout(session);
-        /*mav.addObject("message", "logout");
-        return mav;*/
         return "redirect:/MovieTogetherMain"; // 로그아웃 시 메인으로 이동
     }
 
@@ -139,11 +142,11 @@ public class MemberController {
 
     //회원가입 가입 완료시 로그인할 화면 출력
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public String join(MemberDto member) {
+    public String join(MemberDto member,HttpServletResponse response) throws Exception {
+        ScriptUtils.alertAndMovePage(response,"회원가입 완료", "/MovieTogetherMain");
         System.out.println("MemberController.join");
 //        System.out.println("joinId = " + joinId + ", joinPw = " + joinPw + ", joinPwd = " + joinPwd + ", joinName = " + joinName + ", joinDay = " + joinDay + ", joinEmail = " + joinEmail);
         memberService.memberJoin(member);
-
         return "/member/login";
     }
 
@@ -158,19 +161,6 @@ public class MemberController {
         else {
             return "false";
         }
-    }
-
-    // 로그인시 임시로 만든 loginok 화면 출력
-    @RequestMapping(value = "/loginok", method = RequestMethod.GET)
-    public String ok(HttpServletRequest request) {
-
-        HttpSession session = request.getSession();
-
-        String A = (String) session.getAttribute("uId");
-        System.out.println("\n-------------------\n");
-        System.out.println(A);
-
-        return "member/loginok";
     }
 
 }
