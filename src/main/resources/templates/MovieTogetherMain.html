@@ -53,6 +53,7 @@
 
             function getMovieDetails(movieName) { // 불러온 영화진흥위의 이름 값을 가져와서 tmdb의 검색 api를 사용함
                 return new Promise(function (resolve, reject) {
+
                     $.ajax({
                         url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&include_adult=true&query=" + movieName,
                         type: "GET",
@@ -117,7 +118,7 @@
                 })
         });
 
-        function adultcheck(adult) {
+        function adultcheck(adult) { // 성인 인증을 하기위한 함수
             if (adult) {
                 if (age > 19) {
                     alert("성인 전용 컨텐츠입니다!")
