@@ -41,6 +41,27 @@ public class BoardController {
     return mv;
   }
 
+  /* 게시글 검색 리스트 */
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  public ModelAndView boardSearchList(
+    @RequestParam(required = false, defaultValue = "1") int pageNum,
+    @RequestParam("searchKey") String searchKey,
+    @RequestParam("searchItem") String searchItem) throws Exception {
+
+    ModelAndView mv = new ModelAndView("board/boardSearchList");
+
+    if(searchKey.equals("제목")) searchKey = "board_title";
+
+    System.out.println("searchKey : " + searchKey);
+    System.out.println("searchItem : " + searchItem);
+
+    PageInfo<BoardDto> boardSearchList = new PageInfo<>(boardService.selectSearchList(pageNum, searchKey, searchItem), 5);
+
+    mv.addObject("boardList", boardSearchList);
+
+    return mv;
+  }
+
   /* 게시글 상세 보기 */
   @RequestMapping(value = "{boardPk}", method = RequestMethod.GET)
   public ModelAndView boardDetail(@PathVariable("boardPk") int boardPk) throws Exception{

@@ -52,6 +52,27 @@ public class QnaController {
     return mv;
   }
 
+  /* qna 검색 리스트 */
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  public ModelAndView qnaSearchList(
+    @RequestParam(required = false, defaultValue = "1") int pageNum,
+    @RequestParam("searchKey") String searchKey,
+    @RequestParam("searchItem") String searchItem) throws Exception {
+
+    ModelAndView mv = new ModelAndView("qna/qnaSearchList");
+
+    if(searchKey.equals("제목")) searchKey = "qna_title";
+
+    System.out.println("searchKey : " + searchKey);
+    System.out.println("searchItem : " + searchItem);
+
+    PageInfo<QnaDto> qnaSearchList = new PageInfo<>(qnaService.selectSearchList(pageNum, searchKey, searchItem), 5);
+
+    mv.addObject("qnaList", qnaSearchList);
+
+    return mv;
+  }
+
   /* qna 카테고리별 리스트 */
   @ResponseBody
   @RequestMapping(value = "/list/category", method = RequestMethod.GET)
@@ -60,6 +81,7 @@ public class QnaController {
 
     return qnaList;
   }
+
 
   /* qna 게시글 상세보기 */
   @RequestMapping(value = "{qnaPk}", method = RequestMethod.GET)
@@ -125,7 +147,13 @@ public void qnaDeleteProcess(@PathVariable("qnaPk") int qnaPk, HttpServletRespon
     qnaService.insertComment(comment);
     int qnaPk = comment.getCommentNum();
     return "redirect:/qna/" + qnaPk;
+  }
 
+  /* comment 삭제하기 */
+  @GetMapping(value = "/cmt/delete/{qnaPk}/{commentPk}")
+  public String qnaCommentDeleteProcess(@PathVariable("qnaPk") int qnaPk, @PathVariable("commentPk") int commentPk) throws Exception {
+    qnaService.deleteComment(qnaPk, commentPk);
+    return "redirect:/qna/" + qnaPk; // 삭제후 해당 게시글로 이동
   }
 
   // 게시물 다운로드 기능

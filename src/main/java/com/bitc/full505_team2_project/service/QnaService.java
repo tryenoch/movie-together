@@ -14,6 +14,9 @@ public interface QnaService {
   // qna 게시글 목록
   List<QnaDto> selectQnaList(int pageNum) throws Exception;
 
+  // 검색 키워드 글 목록
+  List<QnaDto> selectSearchList(int pageNum, String searchKey, String searchItem) throws Exception;
+
   // qna 카테고리 목록
   List<CategoryDto> categoryList() throws Exception;
 

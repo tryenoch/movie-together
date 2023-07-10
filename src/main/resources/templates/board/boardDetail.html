@@ -118,13 +118,13 @@
           <div th:if="${#lists.size(commentList)} > 0" th:each="comment : ${commentList}" class="cmt-item">
             <div class="d-flex justify-content-between">
               <div>
-                <span class="me-3" th:text="${comment.commentId}">작성자</span>
+                <span class="me-3 fw-bold" th:text="${comment.commentId}">작성자</span>
                 <span th:text="${comment.commentDate}">작성 날짜</span>
               </div>
-              <button id="cmt-delete" class="px-2 mx-2" th:if="${#strings.equals(session.userName, comment.commentId)} or ${session.userGrade} == 1" th:value="${comment.commentPk}">삭제</button>
+              <button id="cmt-delete" class="px-2 mx-2 btn btn-dark" th:if="${#strings.equals(session.userName, comment.commentId)} or ${session.userGrade} == 1" th:value="${comment.commentPk}">삭제</button>
             </div>
             <!-- 코멘트 내용-->
-            <div th:text="${comment.commentContent}" class="pt-2">코멘트 내용</div>
+            <div th:text="${comment.commentContent}" class="pt-1">코멘트 내용</div>
           </div>
         </div>
       </div>

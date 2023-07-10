@@ -15,6 +15,10 @@ public interface BoardMapper {
   // 게시판 글 목록
   List<BoardDto> selectBoardList() throws Exception;
 
+  // 검색 키워드 글 목록
+  List<BoardDto> selectSearchList(String searchKey, String searchItem) throws Exception;
+  /*List<BoardDto> selectSearchList(String searchItem) throws Exception;*/
+
   // 게시판 상세 글 확인
   BoardDto selectBoardDetail(int boardPk) throws Exception;
 
