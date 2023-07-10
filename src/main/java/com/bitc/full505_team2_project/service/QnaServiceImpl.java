@@ -1,11 +1,10 @@
 package com.bitc.full505_team2_project.service;
 
 import com.bitc.full505_team2_project.common.FileUtils;
-import com.bitc.full505_team2_project.dto.BoardFileDto;
-import com.bitc.full505_team2_project.dto.CategoryDto;
-import com.bitc.full505_team2_project.dto.QnaDto;
-import com.bitc.full505_team2_project.dto.QnaFileDto;
+import com.bitc.full505_team2_project.dto.*;
 import com.bitc.full505_team2_project.mapper.QnaMapper;
+import com.github.pagehelper.PageHelper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,7 +23,8 @@ public class QnaServiceImpl implements QnaService{
 
   /* 문의 게시글 목록 불러오기 */
   @Override
-  public List<QnaDto> selectQnaList() throws Exception {
+  public List<QnaDto> selectQnaList(int pageNum) throws Exception {
+    PageHelper.startPage(pageNum, 10);
     return qnaMapper.selectQnaList();
   }
 
@@ -93,8 +93,27 @@ public class QnaServiceImpl implements QnaService{
     qnaMapper.deleteQna(qnaPk);
   }
 
+  // 코멘트 입력하기
   @Override
-  public QnaFileDto selectQnaFileInfo(int qnaFileId, int qnaPk) throws Exception {
-    return null;
+  public void insertComment(CommentDto comment) throws Exception {
+    qnaMapper.insertComment(comment);
+  }
+
+  // 해당 게시글 코멘트 들고오기
+  @Override
+  public List<CommentDto> selectCommentList(@Param("commentNum") int qnaPk) throws Exception {
+    return qnaMapper.selectCommentList(qnaPk);
+  }
+
+  // 코멘트 삭제하기 (작성자, 관리자)
+
+  @Override
+  public void deleteComment(@Param("commentNum") int qnaPk, @Param("commentPk") int commentPk) throws Exception {
+    qnaMapper.deleteComment(qnaPk, commentPk);
+  }
+
+  @Override
+  public BoardFileDto selectQnaFileInfo(int qnaFileId, int qnaPk) throws Exception {
+    return qnaMapper.selectQnaFileInfo(qnaFileId, qnaPk);
   }
 }

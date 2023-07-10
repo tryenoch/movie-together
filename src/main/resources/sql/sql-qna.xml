@@ -73,6 +73,31 @@
     WHERE qna_pk = #{qnaPk}
   </update>
 
+  <!-- 댓글 달기 -->
+  <!-- 댓글 입력 -->
+  <insert id="insertComment" parameterType="com.bitc.full505_team2_project.dto.CommentDto">
+    INSERT INTO qna_comment
+    (comment_num, comment_id, comment_content, comment_date)
+    VALUES (#{commentNum}, #{commentId}, #{commentContent}, NOW())
+  </insert>
+
+  <!-- 해당 게시글 댓글 리스트 출력 -->
+  <select id="selectCommentList" parameterType="int">
+    SELECT
+    comment_pk, comment_num, comment_id, comment_content, date_format(comment_date, '%Y-%m-%d') AS comment_date
+    FROM qna_comment
+    WHERE comment_delete_yn = 'N'
+    AND comment_num = #{commentNum}
+  </select>
+
+  <!-- 댓글 삭제 -->
+  <update id="deleteComment" parameterType="map">
+    UPDATE qna_comment
+    SET comment_delete_yn = "Y"
+    WHERE comment_pk = #{commentPk}
+    AND comment_num = #{commentNum}
+  </update>
+
   <!-- 지정한 문의글의 첨부 파일 목록보기 -->
   <select id="selectQnaFileList" parameterType="int" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
     SELECT board_file_id, board_pk, board_ofile_name, board_sfile_name,
@@ -89,6 +114,17 @@
       (#{item.boardPk}, #{item.boardOfileName}, #{item.boardSfileName}, #{item.boardFileSize}, NOW(), 2)
     </foreach>
   </insert>
+
+  <!-- 다운로드할 첨부파일 정보 가져오기 -->
+  <!-- 매개 변수를 두개 사용해야 해서 parameterType을 map으로 설정(더 많으면 dto 타입) -->
+  <select id="selectQnaFileInfo" parameterType="map" resultType="com.bitc.full505_team2_project.dto.BoardFileDto">
+    SELECT
+    board_ofile_name, board_sfile_name, board_file_size
+    FROM board_file
+    WHERE board_file_id = #{boardFileId}
+    AND board_pk = #{boardPk}
+    AND board_select = 2
+  </select>
 
 
 </mapper>

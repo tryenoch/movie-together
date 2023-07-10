@@ -62,30 +62,34 @@
                     const promises = [];
 
                     for (let i = 0; i < dailyBoxOfficeList.length; i++) {
-                        const movieName = dailyBoxOfficeList[i].movieNm;
+                        let movieName = dailyBoxOfficeList[i].movieNm;
+                        if(dailyBoxOfficeList[i].movieNm == "범죄도시3") {
+                            movieName = "범죄도시 3"
+                        }
                         const promise = getMovieDetails(movieName);
                         promises.push(promise);
                     }
                     Promise.all(promises)
                         .then(function (results) {
                             for (let i = 0; i < results.length; i++) {
-                                const movieDetails = results[i];
-                                const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
-                                let tag = "<div class=\"col-sm-3\">";
-                                tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
-                                tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
-                                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
-                                tag += "<div class=\"card-img-overlay\">";
-                                tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
-                                tag += "</div>";
-                                tag += "<div class=\"card-body\">";
-                                tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
-                                tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
-                                tag += "</div>";
-                                tag += "</div>";
-                                tag += "</a></div>";
+                                    const movieDetails = results[i];
+                                    const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
+                                    let tag = "<div class=\"col-sm-3\">";
+                                    tag += "<a class='text-decoration-none text-black' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
+                                    tag += "<div class=\"card mt-5\" style=\"max-width:300px; height:580px;\">";
+                                    tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"img-fluid rounded-start\">";
+                                    tag += "<div class=\"card-img-overlay\">";
+                                    tag += "<h4 style='color:white'>" + dailyBoxOfficeList[i].rank + "</h4>";
+                                    tag += "</div>";
+                                    tag += "<div class=\"card-body\">";
+                                    tag += "<h4 class=\"card-title\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
+                                    tag += "<p class=\"card-text\">평점: " + movieDetails.vote_average + " 총 관람객: " + dailyBoxOfficeList[i].audiAcc + "<br>상영시작날짜: " + dailyBoxOfficeList[i].openDt + "</p>";
+                                    tag += "</div>";
+                                    tag += "</div>";
+                                    tag += "</a></div>";
 
-                                card.append(tag);
+                                    card.append(tag);
+
                             }
                         })
                         .catch(function (error) {

@@ -2,11 +2,16 @@ package com.bitc.full505_team2_project.controller;
 
 import com.bitc.full505_team2_project.common.ScriptUtils;
 import com.bitc.full505_team2_project.dto.BoardDto;
+import com.bitc.full505_team2_project.dto.BoardFileDto;
+import com.bitc.full505_team2_project.dto.CommentDto;
 import com.bitc.full505_team2_project.service.BoardService;
+import com.github.pagehelper.PageInfo;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
@@ -25,10 +32,12 @@ public class BoardController {
 
   /* 게시글 리스트 */
   @RequestMapping(value = {"/list", "/" }, method = RequestMethod.GET)
-  public ModelAndView boardList() throws Exception {
+  public ModelAndView boardList(@RequestParam(required = false, defaultValue = "1") int pageNum) throws Exception {
     ModelAndView mv = new ModelAndView("board/boardList");
 
-    List<BoardDto> boardList = boardService.selectBoardList();
+    PageInfo<BoardDto> boardList = new PageInfo<>(boardService.selectBoardList(pageNum), 5);
+
+    // List<BoardDto> boardList = boardService.selectBoardList();
 
     mv.addObject("boardList", boardList);
 
@@ -41,7 +50,11 @@ public class BoardController {
     ModelAndView mv = new ModelAndView("board/boardDetail");
 
     BoardDto board = boardService.selectBoardDetail(boardPk);
+    // 댓글 리스트
+    List<CommentDto> commentList = boardService.selectCommentList(boardPk);
+
     mv.addObject("board", board);
+    mv.addObject("commentList", commentList);
 
     return mv;
   }
@@ -90,7 +103,37 @@ public class BoardController {
     //ScriptUtils.alert(response, "삭제 되었습니다.");
 
     ScriptUtils.alertAndMovePage(response, "삭제 되었습니다.", "/board/list");
+  }
 
+  /* comment 입력하기 */
+  @RequestMapping(value = "/cmt/write", method = RequestMethod.POST)
+  public String qnaCommentInsertProcess(CommentDto comment) throws Exception {
+    boardService.insertComment(comment);
+    int boardPk = comment.getCommentNum();
+    return "redirect:/board/" + boardPk;
+
+  }
+
+  // 게시물 다운로드 기능
+  @RequestMapping(value = "/downloadBoardFile", method = RequestMethod.GET)
+  public void downloadBoardFile(
+          // 매개변수 목록
+          @RequestParam("boardFileId") int boardFileId,
+          @RequestParam("boardPk") int boardPk,
+          HttpServletResponse resp
+  ) throws Exception{
+    BoardFileDto boardFile = boardService.selectBoardFileInfo(boardFileId, boardPk);
+    if(ObjectUtils.isEmpty(boardFile) == false){
+      String fileName = boardFile.getBoardOfileName();
+      byte[] files = FileUtils.readFileToByteArray(new File(boardFile.getBoardSfileName()));
+
+      resp.setContentType("applicaton/octet-stream");
+      resp.setContentLength(files.length);
+      resp.setHeader("Content-Disposition", "attachment;fileName=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
+      resp.getOutputStream().write(files);
+      resp.getOutputStream().flush();
+      resp.getOutputStream().close();
+    }
   }
 
 }

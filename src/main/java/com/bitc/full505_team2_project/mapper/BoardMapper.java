@@ -2,6 +2,7 @@ package com.bitc.full505_team2_project.mapper;
 
 import com.bitc.full505_team2_project.dto.BoardDto;
 import com.bitc.full505_team2_project.dto.BoardFileDto;
+import com.bitc.full505_team2_project.dto.CommentDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,6 +29,17 @@ public interface BoardMapper {
 
   // 조회수 업데이트
   void updateHitCount(@Param("boardPk") int boardPk) throws Exception;
+
+  /* 코멘트 관련 메소드 */
+
+  // 코멘트 등록
+  void insertComment(CommentDto comment) throws Exception;
+
+  // 코멘트 리스트 불러오기
+  List<CommentDto> selectCommentList (@Param("commentNum") int boardPk) throws Exception;
+
+  // 코멘트 삭제
+  void deleteComment(@Param("commentNum") int boardPk, @Param("commentPk") int commentPk) throws Exception;
 
   // 파일 목록 등록
   void insertBoardFileList(List<BoardFileDto> fileList) throws Exception;
