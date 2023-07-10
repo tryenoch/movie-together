@@ -1,0 +1,116 @@
+/* font */
+@import url('https://webfontworld.github.io/gmarket/GmarketSans.css');
+@import url('https://webfontworld.github.io/NanumSquare/NanumSquare.css');
+
+/* default */
+body {
+    font-family: 'NanumSquare';
+}
+
+input[type=password]{
+    font-family:"굴림";
+}
+
+input[type=password]:placeholder-shown{
+    font-family: 'NanumSquare';
+}
+
+
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+input {
+    border : none;
+    outline: none;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+/* box office page */
+
+.box-office-tit {
+    font-weight: 800;
+    color: #ef3668;
+    font-size: 2.0em;
+    margin: 25px 0;
+}
+
+.rank-item {
+    margin-bottom: 30px;
+}
+
+.rank-item .rank-img {
+    position: relative;
+    height: 450px;
+    margin-bottom: 20px;
+}
+
+.rank-item .rank-img img {
+    border-radius: 8px;
+    height: 100%;
+}
+
+.rank-item .rank-num h4 {
+    display: inline-block;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.9em;
+    z-index: 3;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+.rank-tit {
+    font-weight: 800;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+}
+.rank-desc {
+    font-size: 1.05em;
+    margin-bottom: 0.2em;
+}
+.rank-sub {
+    font-weight: 700;
+    color: #ef3668;
+    padding-right: 5px;
+}
+
+.rank-desc span+ span.rank-sub {
+    margin-left: 10px;
+}
+
+/* movie search list */
+
+.movie-item {
+    height: 400px;
+    width: 100%;
+}
+
+.movie-item .poster {
+    height: 400px;
+    border-radius: 8px;
+}
+
+.movie-item .item-tit {
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.movie-item .item-tit2 {
+    font-weight: 700;
+    color: #ea4e79;
+    margin-bottom: 15px;
+}
+
+.movie-item .item-vote {
+    font-weight: 600;
+    font-size: 1.1em;
+}
