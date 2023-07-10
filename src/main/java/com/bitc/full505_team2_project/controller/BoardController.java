@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -111,7 +108,14 @@ public class BoardController {
     boardService.insertComment(comment);
     int boardPk = comment.getCommentNum();
     return "redirect:/board/" + boardPk;
+  }
 
+  /* comment 삭제하기 */
+  /* 자바스크립트로 전달받은 get 변수 형변환을 하려면 PathVariable 이 좋다.*/
+  @GetMapping(value = "/cmt/delete/{boardPk}/{commentPk}")
+  public String qnaCommentDeleteProcess(@PathVariable("boardPk") int boardPk, @PathVariable("commentPk") int commentPk) throws Exception {
+    boardService.deleteComment(boardPk, commentPk);
+    return "redirect:/board/" + boardPk; // 삭제후 해당 게시글로 이동
   }
 
   // 게시물 다운로드 기능
