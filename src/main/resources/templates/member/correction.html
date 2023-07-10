@@ -47,7 +47,7 @@
     <div class="row">
         <div class="col-sm-3 mx-auto">
             <!--      파일 업로드를 위해서 form 태그에 enctype="multipart/form-data" 속성 추가-->
-            <form action="/member/correction" name="join" method="post">
+            <form action="/member/correction" name="join" method="post" onsubmit="return test()">
                 <div class="my-3">
                     <input type="text" class="form-control" name="memberName"  placeholder="이름 수정">
                 </div>
@@ -62,7 +62,7 @@
                 <input type="hidden" class="form-control" name="memberId" th:value="${session.userId}">
                 <!--        첨부 파일을 위한 input 태그 추가-->
                 <div class="my-3 d-grid gap-3">
-                    <button type="submit" class="w-50 p-2 btn btn-primary"  onsubmit="return test()">수정하기</button>
+                    <button type="submit" class="w-50 p-2 btn btn-primary" >수정하기</button>
                 </div>
             </form>
         </div>
