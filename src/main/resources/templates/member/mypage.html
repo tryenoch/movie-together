@@ -9,6 +9,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61D폴 블랑코 노래모음 GLwZJEdK2Kadq2F9CUG65"
         crossorigin="anonymous">
   <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/movie-style.css" rel="stylesheet">
   <!-- JavaScript Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
@@ -87,15 +88,15 @@
               const MovieDetailList = data.results;
               const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
               if (movieTitleList.length > 0) {
-                let tag = "<div class=\"card bg-secondary \">";
-                tag += "<div class=\"row g-0\">";
-                tag += "<div class=\"col-md-7\">";
+                let tag = "<div class=\"like-card\">";
+                tag += "<div class=\"row justify-content-center d-flex\">";
+                tag += "<div class=\"col-5 my-auto\">";
                 tag += "<a class='text-decoreaion-none text-black' href='/detail/data/" + MovieDetailList[0].title + "'>";
-                tag += "<img src =\"" + imageBaseUrl + MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"img-fluid rounded-start\">";
+                tag += "<img src =\"" + imageBaseUrl + MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"like-card-img\">";
                 tag += "</div>";
-                tag += "<div class=\"col-5\">";
-                tag += " <h3 class=\"card-title\">" + MovieDetailList[0].title + "</h3>";
-                tag += "<p>" + MovieDetailList[0].overview + "</p>"
+                tag += "<div class=\"col-7\">";
+                tag += " <h4 class=\"like-tit\">" + MovieDetailList[0].title + "</h4>";
+                tag += "<p class='like-desc'>" + MovieDetailList[0].overview + "</p>"
                 tag += " </div>";
                 tag += " </div>";
                 tag += "</a></div>";
@@ -155,20 +156,27 @@
 
 <!-- 콘텐츠 목록 / 탭을 누르면 활성화됨 -->
 <div class="row">
-  <div class="col-sm-8 mx-auto mt-4">
+  <div class="col-sm-8 mx-auto mt-2 content-list">
     <!-- 내 좋아요 리스트 콘텐츠 영역-->
     <div class="my-page-content" id="like-list-content">
       <div class="" id="div-likelist">
-        <p>자기가 누른 좋아요 리스트</p>
+        <div class="d-flex justify-content-center mb-3">
+          <h5 class="my-3 opacity-75 mb-4">
+            내가 좋아요 표시한 목록을 확인해보세요.
+          </h5>
+        </div>
       </div>
     </div>
+
     <!-- 내 정보 수정 콘텐츠 영역 -->
-    <div class="my-page-content" id="update-info-content">
-      <a href="/member/correction" class="w-50 p-2 btn btn-success">회원 정보 수정</a>
+    <div class="my-page-content text-center" id="update-info-content">
+      <!--<a href="/member/correction" class="w-50 p-2 btn btn-success">회원 정보 수정</a>-->
+      <div th:replace="~{member/correction :: update-my-info}"></div>
     </div>
+
     <!-- 관리자 / 영화관 업데이트 콘텐츠 영역-->
-    <div class="my-page-content" id="movie-update-content">
-      <div class="updateTheaterBtns d-flex align-items-center" th:if="${session.userGrade == 1}">
+    <div class="my-page-content" id="movie-update-content" th:if="${session.userGrade == 1}">
+      <div class="updateTheaterBtns" >
         <script>
           $(document).ready(function () {
             $("#updateCgvTheater").on("click", function () {
@@ -214,10 +222,14 @@
             });
           });
         </script>
-        <p class="my-auto text-center" style="width: 10em">영화관 정보 최신화</p>
-        <button class="btn btn-pink" type="button" id="updateCgvTheater">cgv</button>
-        <button class="btn btn-pink" type="button" id="updateMegaBoxTheater">megaBox</button>
-        <button class="btn btn-pink" type="button" id="updateLotteCinemaTheater">lotteCinema</button>
+        <div class="d-flex justify-content-center mb-3">
+          <h5 class="my-2 opacity-75">영화관 정보 최신화</h5>
+        </div>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-pink me-2 p-2 px-3" type="button" id="updateCgvTheater">CGV</button>
+          <button class="btn btn-pink me-2 p-2 px-3" type="button" id="updateMegaBoxTheater">MegaBox</button>
+          <button class="btn btn-pink p-2 px-3" type="button" id="updateLotteCinemaTheater">Lotte Cinema</button>
+        </div>
       </div>
     </div>
   </div>

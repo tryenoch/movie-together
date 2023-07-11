@@ -514,10 +514,10 @@ input[name="tab_item"] {
 }
 
 .my-page-tab {
-    padding-bottom: 40px;
+    padding-bottom: 10px;
     background-color: #fff;
     /*width: 50%;*/
-    margin: 30px auto;
+    margin: 30px auto 0;
 }
 
 .my-page-tab input:checked + .tab_item {
@@ -545,9 +545,14 @@ input[name="tab_item"] {
     cursor: pointer;
 }
 
+/* my page content */
+.content-list {
+    min-height: 400px;
+}
+
 .my-page-content {
     display: block;
-    padding: 40px 40px 0;
+    padding: 10px 20px 40px;
     clear: both;
     /*overflow: hidden;*/
 }
@@ -557,6 +562,30 @@ input[name="tab_item"] {
     background-color: #f8f8f8;
     color: #fff;
 }
+
+/* my like list */
+.like-card {
+    height: 320px;
+    width: 100%;
+}
+
+.like-card-img {
+    width: 100%;
+    vertical-align: middle;
+    /*margin: auto 0.5em ;*/
+    border-radius: 8px;
+    margin-right: 0.7em;
+}
+
+.like-tit {
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.like-desc {
+    overflow: hidden;
+}
+
 
 /* 선택 된 탭 콘텐츠를 표시 */
 
