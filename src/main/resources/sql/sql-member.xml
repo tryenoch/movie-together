@@ -3,6 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+
+<!-- namespace = 전체경로 -->
+<!-- id = 매퍼 인터페이스와 XML파일 매칭 하기 위한 메소드 명과 파일 id를 동일하게 작성 -->
+<!-- resultType = SQL문 실행하고 결과값 어떤 형식으로 변환할지 BoardDto 객체로 반환함 -->
+
+<!-- 이렇게 SQL Mapper인 XML 파일 namespace와 id 매핑하여 SQL문 호출 결과값 반환 -->
+
+
 <mapper namespace="com.bitc.full505_team2_project.mapper.MemberMapper">
 
     <insert id="memberJoin" parameterType="com.bitc.full505_team2_project.dto.MemberDto">

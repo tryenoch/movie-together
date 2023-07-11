@@ -7,6 +7,11 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+//interface를 구현한 클래스 만듬
+//@Service 어노테이션을 붙여 이 클래스가 서비스 클래스라는 것을 알려줌
+//Service가 DAO호출함 하지만 매퍼를 사용하기 때문에 DAO 사용 X , 파일 사용 X
+
 @Service //service bean으로 등록
 public class MemberServiceImpl implements MemberService{
 
