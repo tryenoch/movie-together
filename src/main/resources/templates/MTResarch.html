@@ -16,26 +16,24 @@
 
   <script>
     $(document).ready(function () {
-      let moviename = localStorage.getItem("moviename");
+      let moviename = localStorage.getItem("moviename"); //영화제목을 헤더에서 로컬스토리지로 들고옴
 
 
 
-      let size = moviename.length
-      let part1 = moviename.slice(0, size - 1)
+      let size = moviename.length //영화의 제목의 길이를 구함
+      let part1 = moviename.slice(0, size - 1) //slice를 이용해서 영화제목과 숫자를 구별함
       let part4 = moviename.slice(0, size - 2)
-      console.log(part1)
       let part2 = moviename.slice(size - 1, size)
       let part3 = moviename.slice(size - 2, size)
-      console.log(part2)
       if (isNaN(part2)) {
       } else if (isNaN(part3)) {
-        moviename = part1 + " " + part2;
+        moviename = part1 + " " + part2; // 만약 영화의 끝문자가 숫자일 경우 공백을 더함
         console.log(moviename)
       } else {
-        moviename = part4 + " " + part3;
+        moviename = part4 + " " + part3; // 만약 영화의 끝 쪽  두개 문자가 숫자일 경우 공백을 더함
       }
 
-      $.ajax({
+      $.ajax({ //tmdb 검색 api를 이용 모든 내용을 들고옴
         url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&include_adult=true&query=" + moviename,
         type: "GET",
         data: {},
@@ -46,7 +44,7 @@
 
             /* 검색어 h2에 입력 */
             $('#movie-name').append(moviename);
-
+            // for 문을 검색된 영화의 숫자만큼 반복
             for (let i = 0; i < MovieDetailList.length; i++) {
 
               let tag = "<div class=\"\">";
@@ -81,7 +79,7 @@
       })
     })
 
-    function adultcheck(adult) {
+    function adultcheck(adult) { // 성인인증 관련 함수
       if (adult) {
         if (age > 19) {
           alert("성인 전용 컨텐츠입니다!")
