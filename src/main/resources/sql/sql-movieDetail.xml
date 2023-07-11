@@ -105,7 +105,7 @@
             review_movie_pk = #{moviePk}
             AND review_writer NOT IN (SELECT member_name FROM member WHERE member_id = #{id})
         ORDER BY
-            review_date DESC
+            review_like_cnt DESC,review_date DESC
         LIMIT
             #{firstPk}, #{num}
     </select>

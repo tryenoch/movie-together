@@ -18,7 +18,7 @@
   <style></style>
   <script>
 
-    <!--    임시 패스워드 확인 주석처리   -->
+    <!--   var 변수 두개를 만들어 if문을 사용하여 입력한 글자가 6글자 이상이어야하고 p1 하고 p2가 같지 않으면 불일치 같으면 일치   -->
     function test() {
       var p1 = document.getElementById('pwd1').value;
       var p2 = document.getElementById('pwd2').value;
@@ -44,18 +44,39 @@
 <header th:replace="~{layout/header :: header-basic}"></header>
 
 <!-- main 영역 -->
-<main class="container-md my-4">
-  <div class="d-flex justify-content-center">
+<div class="container-md my-2" th:fragment="update-my-info">
+  <script>
+    <!--   var 변수 두개를 만들어 if문을 사용하여 입력한 글자가 6글자 이상이어야하고 p1 하고 p2가 같지 않으면 불일치 같으면 일치   -->
+    function test() {
+      var p1 = document.getElementById('pwd1').value;
+      var p2 = document.getElementById('pwd2').value;
+
+      if (p1.length < 6) {
+        alert('입력한 글자가 6글자 이상이어야 합니다.');
+        return false;
+      }
+
+      if (p1 != p2) {
+        alert("비밀번호 불일치");
+        return false;
+      } else {
+        alert("비밀번호가 일치합니다.");
+        return true;
+      }
+    }
+  </script>
+  <!--<div class="d-flex justify-content-center">
     <h1 class="board-title mt-5">
       회원 정보 수정
     </h1>
-  </div>
+  </div>-->
   <div class="d-flex justify-content-center">
     <h5 class="my-2 opacity-75">수정할 정보를 입력해주세요.</h5>
   </div>
   <div class="row">
     <div class="col-sm-5 mx-auto">
       <!--      파일 업로드를 위해서 form 태그에 enctype="multipart/form-data" 속성 추가-->
+      <!--      test()실행하다 예외처리 나면 return false에 의해 멈추고 걸리지 않으면 return true가 onsubmit이 동작하게 된다.     -->
       <form action="/member/correction" name="join" method="post" onsubmit="return test()">
         <div class="my-4">
           <input type="text" class="join-form" name="memberName" placeholder="수정할 닉네임을 입력해주세요.">
@@ -76,7 +97,7 @@
       </form>
     </div>
   </div>
-</main>
+</div>
 
 <!--footer 영역-->
 <footer th:replace="~{layout/footer :: footer-basic}"></footer>

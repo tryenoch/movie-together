@@ -114,3 +114,209 @@ ul {
     font-weight: 600;
     font-size: 1.1em;
 }
+
+/* movie detail page */
+
+#movieInfo {
+    height: 600px;
+    overflow: hidden;
+}
+
+#poster {
+
+}
+#poster img {
+
+}
+.movie-detail-img {
+    border-radius: 8px;
+    width: 90%;
+    /*object-fit: contain;*/
+}
+
+.movieInfoTxt {
+    padding-left: 5px;
+}
+
+.movie-detail-tit {
+    font-weight: 800;
+    font-size: 2.2em;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+.infoItem span:first-of-type {
+    font-weight: 800;
+    margin-right: 12px;
+    color: #ea4e79;
+}
+
+#likeBtn {
+    height: 100%;
+    border-radius: 8px;
+    background-color: #f3f3f3;
+}
+#likeBtnImg {
+    width: 90%;
+    opacity: 90%;
+    color: #666;
+    filter: opacity(0.5) drop-shadow(0 0 0 #a1a1a1);
+}
+
+#likeBtnImg.clicked {
+    transition: ease all 0.5s;
+    filter: none;
+    opacity: 70%;
+}
+
+.like-msg {
+    color: #ea4e79;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+hr {
+    border: 1px dashed #9a9a9a;
+    margin-bottom: 25px;
+}
+
+.sub-tit {
+    color: #ea4e79;
+    font-weight: 800;
+    font-size: 1.8em;
+    letter-spacing: -0.05em;
+    padding-bottom: 10px;
+    padding-top: 8px;
+}
+
+#casts, #likeCnt, #overview {
+    font-size: 1.05em;
+}
+
+/* 영화 상세페이지 */
+#movieInfo .infoItem {
+    margin: 10px 0;
+}
+
+
+#likeBtnImg {
+    background: url("img/heartBlank.png") center no-repeat;
+    background-size: contain;
+    width: 6em;
+    height: 6em;
+}
+
+#likeBtnImg.clicked {
+    background: url("img/heartRed.png") center no-repeat;
+    background-size: contain;
+}
+
+#likeBtn {
+    background: none;
+}
+
+.Calendar .calBtn {
+    width: 100%;
+    height: 3rem;
+}
+
+.card .card-body{
+    height: 12rem;
+}
+
+.card .card-body .card-title {
+    display: flex;
+    justify-content: space-between;
+    padding:0em 0.2em 0em 0em;
+    align-items: center;
+}
+
+.card .card-body .card-title svg {
+    margin-bottom: 0.3rem;
+}
+
+.card .card-body .card-title .reviewLikeIs {
+    color: #444;
+}
+
+.card .card-body .card-title {
+    margin-bottom: 0.2rem;
+}
+
+.card .card-body .card-title p {
+    margin-bottom: 0.2rem;
+    max-resolution: 0rem;
+    font-weight: bold;
+    font-size: large;
+}
+
+#reviewDiv .card {
+    margin: 1rem;
+    width: 22.7rem;
+}
+
+#reviewDiv .card button .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem;
+}
+
+
+#reviewDiv .card button .card-body .content {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: auto;
+}
+
+#reviewDiv .card button .card-body .info{
+    display: flex;
+}
+
+#reviewDiv .card button .card-body .info span:last-child {
+    margin-left: auto;
+}
+
+#reviewDiv .reviewMsg {
+    margin: auto;
+    padding: 5rem;
+    width: 100%;
+    text-align: center;
+}
+
+button[class^='star'] {
+    width: 24px;
+    height: 48px;
+    border: none;
+    opacity: 0%;
+    z-index: 2000;
+}
+
+.modal svg {
+    z-index: 0;
+}
+
+#myReviewSpace .card .card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cardStar svg {
+    color: #ef3668;
+}
+
+.modalStar {
+    width: 6rem;
+}
+
+form [id^='stars'] svg {
+    color: #ef3668;
+}
+
+#ticketing a:hover {
+    color : #ef3668;
+    font-weight: 700;
+}

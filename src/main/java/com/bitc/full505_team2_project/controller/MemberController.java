@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+//Controller는 웹 브라우저의 요청을 전담하여 처리하고, Service를 호출 함
+//@Controller라는 어노테이션 붙여 이 클래스가 컨트롤러 클래스라는 것을 알려주고,
+// 사용자 요청이 들어오면 이 컨트롤러가 호출되게함
+
 //View를 반환하기 위해 사용
 @Controller
 @RequestMapping("/member")
@@ -158,6 +162,8 @@ public class MemberController {
         // return "/member/login";
     }
 
+
+    //기존계정 새로운 계정 존재 여부 확인
     @ResponseBody
     @RequestMapping(value = "/IdCheck",method = RequestMethod.POST)
     public String IdCheck(@RequestParam("userId") String userId){
