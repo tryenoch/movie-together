@@ -516,7 +516,7 @@ input[name="tab_item"] {
 .my-page-tab {
     padding-bottom: 40px;
     background-color: #fff;
-    width: 50%;
+    /*width: 50%;*/
     margin: 30px auto;
 }
 
@@ -526,7 +526,7 @@ input[name="tab_item"] {
 }
 
 .tab_item {
-    width: calc(100%/3);
+    width: 25%;
     height: 50px;
     border-bottom: 1px solid #ef3668;
     background-color: #f8f8f8;
@@ -540,6 +540,39 @@ input[name="tab_item"] {
     transition: all 0.2s ease;
 }
 
+.tab_item:hover {
+    opacity: 0.75;
+    cursor: pointer;
+}
+
+.my-page-content {
+    display: block;
+    padding: 40px 40px 0;
+    clear: both;
+    /*overflow: hidden;*/
+}
+
+/* 선택된 탭 스타일 */
+.tabs input:checked + .tab_item {
+    background-color: #f8f8f8;
+    color: #fff;
+}
+
+/* 선택 된 탭 콘텐츠를 표시 */
+
+/*input[id="like-list"]:checked #like-list-content{
+    display: block;
+}
+
+input[id="update-info"]:checked #like-list-content{
+    display: block;
+}*/
+
+/*#like-list:checked ~ #like-list-content,
+#update-info:checked ~ #update-info-content,
+#movie-update:checked ~ #movie-update-content {
+    display: block !important;
+}*/
 
 
 /* 푸터 */

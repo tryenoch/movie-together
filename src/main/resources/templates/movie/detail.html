@@ -887,7 +887,7 @@
         body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum ms-2'>" + putComma(count) + "</span>");
 
         // 카드바디에 제목, 내용 넣기
-        body.append("<div class='card-title'><span class='reviewTitle'>" + title + "</span></div>");
+        body.append("<div class='card-title'><p class='reviewTitle'>" + title + "</p></div>");
         body.append("<div class='card-text content'><p>" + content + "</p></div>");
 
 
@@ -895,7 +895,7 @@
         if (edit == 1) {
           editChk = "(수정됨)"
         }
-        body.append("<div class='card-text info'><span class='name'>" + name + "</span><span class='date'>" + date + "</span><span class='edit'>" + editChk + "</span></div>");
+        body.append("<div class='card-text info'><span class='date'>" + date + "</span><span class='edit'>" + editChk + "</span><span class='name'>by " + name + "</span></div>");
       }
 
       // 최초 글쓰기 모달창에 별아이콘 만들기
@@ -950,7 +950,7 @@
         $("#reviewDetail .modal-body p").text(content);
         $("#reviewDetail .modal-body button.reviewLikeBtn").val(value);
         $("#reviewDetail .modal-body .reviewLikeModal .reviewLikeNum").remove();
-        $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum my-1'>" + putComma(parseInt(likeCnt.replace(/,/g, ""))) + "</span>");
+        $("#reviewDetail .modal-body .reviewLikeModal").append("<p class='reviewLikeNum my-1'>" + putComma(parseInt(likeCnt.replace(/,/g, ""))) + "</p>");
         ifLikedReview(userId, value);
       });
 
@@ -1166,13 +1166,14 @@
 
   </div>
 
-  <div id="ticketing" class="">
+  <div id="ticketing" class="row justify-content-md-center">
   <!--<div id="ticketing" class="d-flex flex-column ">-->
-    <div class="row justify-content-md-center">
+
       <hr class="mb-4">
-      <p class="h5 mb-4 mt-2 sub-tit">상영 시간표</p>
+      <p class="h5 mb-4 mt-2 sub-title">상영 시간표</p>
       <!-- 캘린더 -->
       <div class="col-4">
+
         <table class="Calendar table w-100">
           <thead>
           <tr>
@@ -1209,7 +1210,7 @@
       </div>
 
       <!-- 영화 시간 나오는 영역 -->
-      <div class=" col-7 ms-5 me-3">
+      <div class=" col-7">
         <div class="my-2">
           <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
           <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink">롯데시네마</button>
@@ -1251,7 +1252,6 @@
         </div>
       </div>
 
-    </div>
 
   </div>
 
@@ -1259,21 +1259,19 @@
   <hr>
 
 
-  <div class="row" id="reviewDiv">
+  <div class="row justify-content-md-center" id="reviewDiv">
     <div class="d-flex justify-content-end" style="margin-bottom: -2rem;z-index: 1000;">
       <button id="writeReviewBtn" class="btn btn-pink" type="button" data-bs-toggle="modal"
               data-bs-target="#writeReview">리뷰작성
       </button>
+    </div>
+
+    <p class="h5 mb-4 mt-0 myReview sub-title">나의 리뷰</p>
+    <div id="myReviewSpace" class="col-11 d-flex flex-wrap justify-content-start align-items-center mb-5 px-0">
 
     </div>
-    <p class="h5 mb-4 mt-0 myReview sub-tit">나의 리뷰</p>
-    <div id="myReviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
-
-    </div>
-    <p class="h5 my-4 mt-0 w-100 sub-tit">전체 리뷰</p>
-    <div id="reviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
-
-    </div>
+    <p class="h5 my-4 mt-0 w-100 sub-title">전체 리뷰</p>
+    <div id="reviewSpace" class="col-11 d-flex flex-wrap justify-content-start align-items-center mb-5"></div>
   </div>
 
   <div class="modal" id="writeReview">
@@ -1365,9 +1363,9 @@
       <div class="modal-content">
         <div class="modal-header d-flex justify-content-between"><span class="modalTitle"></span><span
           class="modalStar"></span></div>
-        <div class="modal-body pb-1">
+        <div class="modal-body">
           <p></p>
-          <div class="reviewLikeModal text-center">
+          <div class="reviewLikeModal mt-5 text-center">
             <button type="button" class="btn reviewLikeBtn py-1 px-2 btn-outline-pink" value="">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                    class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
