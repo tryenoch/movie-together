@@ -130,8 +130,8 @@ ul {
 }
 .movie-detail-img {
     border-radius: 8px;
-    width: 100%;
-    object-fit: contain;
+    width: 90%;
+    /*object-fit: contain;*/
 }
 
 .movieInfoTxt {
@@ -148,6 +148,48 @@ ul {
 
 .infoItem span:first-of-type {
     font-weight: 800;
-    margin-right: 10px;
+    margin-right: 12px;
     color: #ea4e79;
+}
+
+#likeBtn {
+    height: 100%;
+    border-radius: 8px;
+    background-color: #f3f3f3;
+}
+#likeBtnImg {
+    width: 90%;
+    opacity: 90%;
+    color: #666;
+    filter: opacity(0.5) drop-shadow(0 0 0 #a1a1a1);
+}
+
+#likeBtnImg.clicked {
+    transition: ease all 0.5s;
+    filter: none;
+    opacity: 70%;
+}
+
+.like-msg {
+    color: #ea4e79;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+hr {
+    border: 1px dashed #9a9a9a;
+    margin-bottom: 25px;
+}
+
+.sub-tit {
+    color: #ea4e79;
+    font-weight: 800;
+    font-size: 1.8em;
+    letter-spacing: -0.05em;
+    padding-bottom: 10px;
+    padding-top: 8px;
+}
+
+#casts, #likeCnt, #overview {
+    font-size: 1.05em;
 }

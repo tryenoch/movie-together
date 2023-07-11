@@ -934,7 +934,7 @@
         $("#reviewDetail .modal-body p").text(content);
         $("#reviewDetail .modal-body button.reviewLikeBtn").val(value);
         $("#reviewDetail .modal-body .reviewLikeModal .reviewLikeNum").remove();
-        $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum d-block my-1'>" + putComma(parseInt(likeCnt.replace(/,/g, ""))) + "</span>");
+        $("#reviewDetail .modal-body .reviewLikeModal").append("<span class='reviewLikeNum my-1'>" + putComma(parseInt(likeCnt.replace(/,/g, ""))) + "</span>");
         ifLikedReview(userId, value);
       });
 
@@ -1095,9 +1095,9 @@
 <main class="container-md my-4">
 
 
-  <div class="row mb-4 mt-5 justify-content-md-center" id="movieInfo">
+  <div class="mb-2 mt-5 row justify-content-md-center" id="movieInfo">
 
-    <div class="col-4 me-3" id="poster">
+    <div class="col-4 me-1" id="poster">
       <!-- 포스터 들어감 -->
     </div>
 
@@ -1109,9 +1109,9 @@
 
           <h1 class="movie-detail-tit" id="movieTitle"></h1>
           <div class="h5">
-            <div id="genres" class="infoItem"><span>장르 : </span></div>
+            <div id="genres" class="infoItem"><span>장르 </span></div>
           </div>
-          <div class="row h5 my-0">
+          <div class="row h5 my-0 mb-2">
             <div class="col">
               <div class="infoItem mt-0" id="releaseDate"><span>개봉일 </span></div>
               <div class="infoItem" id="runningTime"><span>상영시간 </span></div>
@@ -1128,8 +1128,9 @@
         </div>
 
         <div class="col-2">
-          <button id="likeBtn" type="button" class="border-0">
-            <div id="likeBtnImg"></div>
+          <button id="likeBtn" type="button" class="border-0 text-center px-3">
+            <div id="likeBtnImg" class="mx-auto py-0"></div>
+            <p class="my-0 py-0 like-msg">좋아요</p>
             <p id="likeCnt" class="text-center"></p>
           </button>
         </div>
@@ -1138,11 +1139,11 @@
       </div>
 
       <div id="casts" class="mb-3 mt-4 mx-0">
-        <p class="h5">출연/제작</p>
+        <p class="h5 infoItem"><span>출연/제작</span></p>
       </div>
 
       <div id="overview" class="mb-3 mt-5 mx-0">
-        <p class="h5">줄거리</p>
+        <p class="h5 infoItem"><span>줄거리</span></p>
       </div>
 
     </div>
@@ -1152,7 +1153,7 @@
 
   <div id="ticketing" class="d-flex flex-column">
     <hr class="mb-4">
-    <p class="h5 mb-4 text-center w-100">상영 시간표</p>
+    <p class="h5 mb-4 mt-2 sub-tit">상영 시간표</p>
 
     <div class="d-flex">
       <div class="">
@@ -1192,6 +1193,7 @@
         </table>
       </div>
 
+      <!-- 영화 시간 나오는 영역 -->
       <div class="w-100 ms-5 me-3">
         <div class="my-2">
           <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
@@ -1249,11 +1251,11 @@
       </button>
 
     </div>
-    <p class="h5 mb-4 mt-0 myReview text-center">나의 리뷰</p>
+    <p class="h5 mb-4 mt-0 myReview sub-tit">나의 리뷰</p>
     <div id="myReviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
 
     </div>
-    <p class="h5 my-4 mt-0 w-100 text-center">전체 리뷰</p>
+    <p class="h5 my-4 mt-0 w-100 sub-tit">전체 리뷰</p>
     <div id="reviewSpace" class="d-flex flex-wrap justify-content-start align-items-center mb-5">
 
     </div>
