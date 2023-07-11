@@ -38,6 +38,12 @@
 <!--        WHERE member_name = #{memberName}, member_pw = #{memberPw}-->
 <!--    </update>-->
 
+    <select id="selectLikeList" parameterType="String" resultType="String">
+        select member_like_list
+        from member
+        where member_id = #{memberId}
+    </select>
+
 
 
 </mapper>
