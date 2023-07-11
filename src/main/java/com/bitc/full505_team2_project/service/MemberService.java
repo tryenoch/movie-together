@@ -25,4 +25,5 @@ public interface MemberService {
 //    public MemberDto findByMemberEmail(String loginEmail) {
 //        return memberReposio
 //    }
+    String selectLikeList(String userId);
 }

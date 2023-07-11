@@ -43,7 +43,7 @@
             let overview;
 
             // 한번에 보여줄 리뷰 개수와 현재 리뷰 페이지
-            let numOfReview = 4;
+            let numOfReview = 2;
             let reviewPage = 1;
             // 성인인증 여부 확인
 
@@ -292,7 +292,7 @@
                             "reviewTitle": reviewTitle,
                             "reviewContent": reviewContent,
                             "reviewMoviePk": moviePk,
-                            "reviewStar":reviewStar,
+                            "reviewStar": reviewStar,
                         },
                         success: function (data) {
                             reviewPage = 1;
@@ -334,7 +334,7 @@
                         "reviewPk": pk,
                         "reviewTitle": title,
                         "reviewContent": content,
-                        "reviewStar":starNum
+                        "reviewStar": starNum
                     },
                     success: function (data) {
                         reviewPage = 1;
@@ -343,7 +343,7 @@
                         myReviewCardAll(userId);
                     },
                     error: function () {
-                       console.log("수정 오류")
+                        console.log("수정 오류")
                     }
                 });
             });
@@ -353,7 +353,7 @@
             $(document).on("click", ".delBtn", function () {
                 let pk = $(this).attr("id").substring(3);
                 let id = userId;
-                if(confirm("리뷰를 삭제하시겠습니까?")){
+                if (confirm("리뷰를 삭제하시겠습니까?")) {
                     console.log(pk + "  " + id);
                     $.ajax({
                         url: "/detail/delReview.do",
@@ -377,13 +377,17 @@
 
             // 스크롤위치가 페이지 최하단일때 리뷰를 불러옴
             $(window).scroll(function () {
+                // .scrollTop : 문서의 top 에서부터 현재창까지의 스크롤 위치를 타나냄, 스크롤 위치가 0이면 문서의 최상단을 의미
                 var scrT = $(window).scrollTop();
                 // console.log(scrT); //스크롤 값 확인용
-                if (scrT == $(document).height() - $(window).height()) {
+
+                // 현재 문서 전체의 높이 - 뷰포트의 높이 : 스크롤바 최하단의 위치
+                // (문서 높이가 1000이고 뷰포트 높이가 100이면 화면을 가장 아래로 내렸을때 스크롤바의 위치는 1000-100 = 900임)
+                // -300 : 푸터 높이를 고려, 스크롤이 맨 밑에서부터 300만큼 덜 오게되면 리뷰가 불러와짐
+                if (scrT >= $(document).height() - $(window).height() - 300) {
+                    console.log("리뷰 불러오기");
                     //스크롤이 끝에 도달했을때 실행될 이벤트
                     makeReviewCardAll(reviewPage, numOfReview, userId);
-                } else {
-                    //아닐때 이벤트
                 }
             })
 
@@ -865,8 +869,8 @@
 
                 // 좋아요 버튼이랑 숫자넣기
                 body.append("<div class='card-title d-flex '></div>")
-                body.find(".card-title").append("<div class='cardStar'>"+starIcon(star, 16)+"</div>");
-                body.find(".card-title").append("<span class='reviewLikeIs'>"+thumbsUpIc+"</span>");
+                body.find(".card-title").append("<div class='cardStar'>" + starIcon(star, 16) + "</div>");
+                body.find(".card-title").append("<span class='reviewLikeIs'>" + thumbsUpIc + "</span>");
                 body.find(".card-title .reviewLikeIs").append("<span class='reviewLikeNum ms-2'>" + putComma(count) + "</span>");
 
                 // 카드바디에 제목, 내용 넣기
@@ -882,12 +886,12 @@
             }
 
             // 최초 글쓰기 모달창에 별아이콘 만들기
-            $("#starShow").append(starIcon(1,48));
+            $("#starShow").append(starIcon(1, 48));
             $(".star").hover(function () {
                 $("#starShow svg").remove()
                 $("#starShow").append(starIcon($(this).val(), 48));
             });
-            $(".star").on("click",function () {
+            $(".star").on("click", function () {
                 $("#starNum").val($(this).val());
             });
 
@@ -895,25 +899,25 @@
                 $("#starShow2 svg").remove()
                 $("#starShow2").append(starIcon($(this).val(), 48));
             });
-            $(".star2").on("click",function () {
+            $(".star2").on("click", function () {
                 $("#starNum2").val($(this).val());
             });
 
             // 별점 아이콘 만들기
-            function starIcon(starNum, size){
-                let empty = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star\" viewBox=\"0 0 16 16\"><path d=\"M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z\"/></svg>";
-                let half = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star-half\" viewBox=\"0 0 16 16\"><path d=\"M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z\"/></svg>";
-                let full = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""+size+"\" height=\""+size+"\" fill=\"currentColor\" class=\"bi bi-star-fill\" viewBox=\"0 0 16 16\"><path d=\"M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z\"/></svg>";
+            function starIcon(starNum, size) {
+                let empty = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + size + "\" height=\"" + size + "\" fill=\"currentColor\" class=\"bi bi-star\" viewBox=\"0 0 16 16\"><path d=\"M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z\"/></svg>";
+                let half = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + size + "\" height=\"" + size + "\" fill=\"currentColor\" class=\"bi bi-star-half\" viewBox=\"0 0 16 16\"><path d=\"M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z\"/></svg>";
+                let full = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + size + "\" height=\"" + size + "\" fill=\"currentColor\" class=\"bi bi-star-fill\" viewBox=\"0 0 16 16\"><path d=\"M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z\"/></svg>";
 
                 let starIcons = "";
-                let emptyIcons = 10-starNum;
-                for(let i = 0; i< Math.trunc(starNum/2); i++){
+                let emptyIcons = 10 - starNum;
+                for (let i = 0; i < Math.trunc(starNum / 2); i++) {
                     starIcons = starIcons + full;
                 }
-                if(starNum%2 == 1){
+                if (starNum % 2 == 1) {
                     starIcons = starIcons + half;
                 }
-                for(let i = 0; i< Math.trunc(emptyIcons/2); i++){
+                for (let i = 0; i < Math.trunc(emptyIcons / 2); i++) {
                     starIcons = starIcons + empty;
                 }
                 return starIcons;
@@ -1059,6 +1063,7 @@
                     $(".myReview").addClass("d-none");
                 }
             }
+
             // 동적으로 추가된 버튼에 적용하는 코드
             // 수정버튼 눌렀을 때
             $(document).on("click", ".editBtn", function () {
@@ -1077,14 +1082,11 @@
                 $("#contentEdit").val(content);
                 $("#editPk").val(pk);
                 $("#starShow2 svg").remove();
-                $("#starShow2").append(starIcon(starNum,48));
+                $("#starShow2").append(starIcon(starNum, 48));
                 $("#starNum2").val(starNum);
             });
 
         });
-
-
-
 
 
     </script>
@@ -1267,16 +1269,16 @@
                         <div id="stars" class="d-flex align-items-center justify-content-center ms-5">
                             <div id="starShow" class="d-block" style="position: relative">
                                 <div id="starBtn" class="btn-group" style="position: absolute">
-                                    <button type="button" class="star" value="1"> </button>
-                                    <button type="button" class="star" value="2"> </button>
-                                    <button type="button" class="star" value="3"> </button>
-                                    <button type="button" class="star" value="4"> </button>
-                                    <button type="button" class="star" value="5"> </button>
-                                    <button type="button" class="star" value="6"> </button>
-                                    <button type="button" class="star" value="7"> </button>
-                                    <button type="button" class="star" value="8"> </button>
-                                    <button type="button" class="star" value="9"> </button>
-                                    <button type="button" class="star" value="10"> </button>
+                                    <button type="button" class="star" value="1"></button>
+                                    <button type="button" class="star" value="2"></button>
+                                    <button type="button" class="star" value="3"></button>
+                                    <button type="button" class="star" value="4"></button>
+                                    <button type="button" class="star" value="5"></button>
+                                    <button type="button" class="star" value="6"></button>
+                                    <button type="button" class="star" value="7"></button>
+                                    <button type="button" class="star" value="8"></button>
+                                    <button type="button" class="star" value="9"></button>
+                                    <button type="button" class="star" value="10"></button>
                                 </div>
                             </div>
                             <div class="ms-3 h5 my-auto">
@@ -1293,7 +1295,8 @@
                     </form>
                 </div>
                 <div class="modal-footer p-1">
-                    <button type="button" class="btn btn-pink" id="submitBtn" data-bs-dismiss="modal" disabled>확인</button>
+                    <button type="button" class="btn btn-pink" id="submitBtn" data-bs-dismiss="modal" disabled>확인
+                    </button>
                     <button type="reset" class="btn btn-dark" id="erase">지우기</button>
                 </div>
             </div>
@@ -1309,16 +1312,16 @@
                         <div id="stars2" class="d-flex align-items-center justify-content-center ms-5">
                             <div id="starShow2" class="d-block" style="position: relative">
                                 <div id="starBtn2" class="btn-group" style="position: absolute">
-                                    <button type="button" class="star2" value="1"> </button>
-                                    <button type="button" class="star2" value="2"> </button>
-                                    <button type="button" class="star2" value="3"> </button>
-                                    <button type="button" class="star2" value="4"> </button>
-                                    <button type="button" class="star2" value="5"> </button>
-                                    <button type="button" class="star2" value="6"> </button>
-                                    <button type="button" class="star2" value="7"> </button>
-                                    <button type="button" class="star2" value="8"> </button>
-                                    <button type="button" class="star2" value="9"> </button>
-                                    <button type="button" class="star2" value="10"> </button>
+                                    <button type="button" class="star2" value="1"></button>
+                                    <button type="button" class="star2" value="2"></button>
+                                    <button type="button" class="star2" value="3"></button>
+                                    <button type="button" class="star2" value="4"></button>
+                                    <button type="button" class="star2" value="5"></button>
+                                    <button type="button" class="star2" value="6"></button>
+                                    <button type="button" class="star2" value="7"></button>
+                                    <button type="button" class="star2" value="8"></button>
+                                    <button type="button" class="star2" value="9"></button>
+                                    <button type="button" class="star2" value="10"></button>
                                 </div>
                             </div>
                             <div class="ms-3 h5 my-auto">
@@ -1345,12 +1348,16 @@
     <div class="modal" id="reviewDetail">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between"><span class="modalTitle"></span><span class="modalStar"></span></div>
+                <div class="modal-header d-flex justify-content-between"><span class="modalTitle"></span><span
+                        class="modalStar"></span></div>
                 <div class="modal-body pb-1">
                     <p></p>
                     <div class="reviewLikeModal text-center">
                         <button type="button" class="btn reviewLikeBtn py-1 px-2 btn-outline-pink" value="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16"><path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                                <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+                            </svg>
                         </button>
                     </div>
                 </div>
