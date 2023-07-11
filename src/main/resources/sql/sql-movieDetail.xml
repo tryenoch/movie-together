@@ -98,12 +98,11 @@
 
     <select id="getAllReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
         SELECT
-            review_pk, review_title, review_writer, review_Content, review_date, review_like_cnt, review_edit
+        *
         FROM
             review
         WHERE
             review_movie_pk = #{moviePk}
-            AND review_delete_yn = 'N'
             AND review_writer NOT IN (SELECT member_name FROM member WHERE member_id = #{id})
         ORDER BY
             review_date DESC
@@ -113,12 +112,11 @@
 
     <select id="getMyReviewList" parameterType="com.bitc.full505_team2_project.dto.ReviewCardDto" resultType="com.bitc.full505_team2_project.dto.ReviewDto">
         SELECT
-        review_pk, review_title, review_writer, review_Content, review_date, review_like_cnt, review_edit
+        *
         FROM
         review
         WHERE
         review_movie_pk = #{moviePk}
-        AND review_delete_yn = 'N'
         AND review_writer IN (SELECT member_name FROM member WHERE member_id = #{id})
         ORDER BY
         review_date DESC
@@ -128,13 +126,13 @@
 
     <insert id="writeReview" parameterType="com.bitc.full505_team2_project.dto.ReviewDto">
         INSERT INTO review
-        (`review_title`,`review_writer` , `review_content`, `review_date`, `review_movie_pk`)
-        VALUES (#{reviewTitle}, (SELECT member_name FROM member WHERE member_id = #{reviewWriter}), #{reviewContent}, NOW(),#{reviewMoviePk});
+        (`review_title`,`review_writer` , `review_content`, `review_date`, `review_movie_pk`, `review_star`)
+        VALUES (#{reviewTitle}, (SELECT member_name FROM member WHERE member_id = #{reviewWriter}), #{reviewContent}, NOW(),#{reviewMoviePk}, #{reviewStar});
     </insert>
 
     <update id="editReview" parameterType="com.bitc.full505_team2_project.dto.ReviewDto">
         UPDATE review
-        SET review_title = #{reviewTitle}, review_content = #{reviewContent}, review_Edit = 1
+        SET review_title = #{reviewTitle}, review_content = #{reviewContent}, review_Edit = 1, review_star = #{reviewStar}
         WHERE review_pk = #{reviewPk}
     </update>
 
