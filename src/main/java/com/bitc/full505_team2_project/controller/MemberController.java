@@ -151,6 +151,8 @@ public class MemberController {
         // return "/member/login";
     }
 
+
+    //기존계정 새로운 계정 존재 여부 확인
     @ResponseBody
     @RequestMapping(value = "/IdCheck",method = RequestMethod.POST)
     public String IdCheck(@RequestParam("userId") String userId){
