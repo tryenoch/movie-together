@@ -56,4 +56,8 @@ public class MemberServiceImpl implements MemberService{
         memberMapper.Correction(memberDto);
     }
 
+    @Override
+    public String selectLikeList(String memberId) {
+        return memberMapper.selectLikeList(memberId);
+    }
 }
