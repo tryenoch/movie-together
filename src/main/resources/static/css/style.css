@@ -107,6 +107,22 @@ ul {
     color : #fff;
 }
 
+.btn-outline-pink-op {
+    background:none;
+    border: 1px solid #ef3668;
+    color: #ef3668;
+}
+
+.btn-outline-pink-op:hover {
+    background-color: #ef3668;
+    color : #fff;
+}
+
+.btn-outline-pink.active {
+    background-color: #ef3668;
+    color : #fff;
+}
+
 
 li.movie-search {
     margin-right: 8px;
@@ -165,6 +181,13 @@ li.movie-search {
     color: #ef3668;
 }
 
+h2.board-title {
+    font-size: 2.0em;
+}
+
+#movie-name {
+    color: #585858;
+}
 
 .board-search {
     width: 100%;
@@ -409,9 +432,78 @@ h1.test {
 .card .card-body .card-title {
     display: flex;
     justify-content: space-between;
-    padding:0em 1.5em 0em 0em;
+    padding:0em 0.2em 0em 0em;
+    align-items: center;
+}
+
+.card .card-body .card-title svg {
+    margin-bottom: 0.3rem;
+}
+
+.card .card-body .card-title .reviewLikeIs {
+    color: #444;
 }
 
 .card .card-body .card-title > span {
     display: block;
 }
+
+#reviewDiv .card {
+    margin: 1rem;
+    width: 24rem;
+}
+
+#reviewDiv .card button .card-body {
+    padding: 0.6rem;
+}
+
+#reviewDiv .card button .card-body .content {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#reviewDiv .reviewMsg {
+    margin: auto;
+    padding: 5rem;
+    width: 100%;
+    text-align: center;
+}
+
+button[class^='star'] {
+    width: 24px;
+    height: 48px;
+    border: none;
+    opacity: 0%;
+    z-index: 2000;
+}
+
+.modal svg {
+    z-index: 0;
+}
+
+#myReviewSpace .card .card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cardStar svg {
+    color: #ef3668;
+}
+
+.modalStar {
+    width: 6rem;
+}
+
+form [id^='stars'] svg {
+    color: #ef3668;
+}
+
+#ticketing a:hover {
+    color : #ef3668;
+    font-weight: 700;
+}
+
+
