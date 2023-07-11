@@ -409,7 +409,7 @@ h1.test {
 
 /* 영화 상세페이지 */
 #movieInfo .infoItem {
-    margin: 10px 10px;
+    margin: 10px 0;
 }
 
 
