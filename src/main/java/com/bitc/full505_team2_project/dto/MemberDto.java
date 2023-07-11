@@ -2,6 +2,8 @@ package com.bitc.full505_team2_project.dto;
 
 import lombok.Data;
 
+
+//데이터를 주고 받을때 사용하는 객체 dto를 만들어줌
 @Data
 public class MemberDto {
   private String memberId;

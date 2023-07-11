@@ -1,116 +1,131 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mypage</title>
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61D폴 블랑코 노래모음 GLwZJEdK2Kadq2F9CUG65"
-          crossorigin="anonymous">
-    <link href="/css/style.css" rel="stylesheet">
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-            crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마이페이지</title>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61D폴 블랑코 노래모음 GLwZJEdK2Kadq2F9CUG65"
+        crossorigin="anonymous">
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/movie-style.css" rel="stylesheet">
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+          crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
-    <style></style>
-    <script th:inline="javascript">
-        $(document).ready(function() {
-            let movieTitle // 영화 제목
-            let userLikeList; // 영화 좋아요(String 형식)
-            let movieTitleList = []; // 영화 제목을 배열 형식으로 변경
-            userLikeList = [[${session.userLikeList}]];
-            let userLikeListArray = userLikeList.split(",") // String 형식의 pk값을 ,을 기준으로 구별
-            let userLikeListInt = userLikeListArray.map(Number); // STring 형식의 pk값을 Int로 변경
+  <style></style>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      let movieTitle // 영화 제목
+      let userLikeList; // 영화 좋아요(String 형식)
+      let movieTitleList = []; // 영화 제목을 배열 형식으로 변경
+      userLikeList = [[${session.userLikeList}]];
+      let userLikeListArray = userLikeList.split(",") // String 형식의 pk값을 ,을 기준으로 구별
+      let userLikeListInt = userLikeListArray.map(Number); // STring 형식의 pk값을 Int로 변경
 
-            function getInfo() {
-                return new Promise(function (resolve, reject) {
-                    let promises = []
-                    for (let i = 0; i < userLikeListInt.length; i++) {
-                        promises.push(
-                            new Promise(function (innerResolve, innerReject) {
-                                $.ajax({
-                                    url: "/detail/getInfo/" + userLikeListInt[i],
-                                    type: "GET",
-                                    data: {},
-                                    success: function (data) {
-                                        movieTitle = data.movieTitle;
-                                        movieTitleList[i] = movieTitle;
-                                        innerResolve();
-                                    },
-                                    error: function () {
-                                        innerReject("에러 발생");
-                                    },
-                                });
-                            })
-                        );
-                    }
-                    Promise.all(promises)
-                        .then(function () {
-                            resolve(movieTitleList);
-                        })
-                        .catch(function (error) {
-                            reject(error);
-                        });
+      function getInfo() {
+        return new Promise(function (resolve, reject) {
+          let promises = []
+          for (let i = 0; i < userLikeListInt.length; i++) {
+            promises.push(
+              new Promise(function (innerResolve, innerReject) {
+                $.ajax({
+                  url: "/detail/getInfo/" + userLikeListInt[i],
+                  type: "GET",
+                  data: {},
+                  success: function (data) {
+                    movieTitle = data.movieTitle;
+                    movieTitleList[i] = movieTitle;
+                    innerResolve();
+                  },
+                  error: function () {
+                    innerReject("에러 발생");
+                  },
                 });
-            }
+              })
+            );
+          }
+          Promise.all(promises)
+            .then(function () {
+              resolve(movieTitleList);
+            })
+            .catch(function (error) {
+              reject(error);
+            });
+        });
+      }
 
-            getInfo()
-                .then(function (result) {
-                    console.log(result);
-                    let promises = [];
+      getInfo()
+        .then(function (result) {
+          console.log(result);
+          let promises = [];
 
-                    for (let i = 0; i < movieTitleList.length; i++) {
-                        const moviename = movieTitleList[i];
-                        promises.push(movieDetail(moviename))
-                        console.log(promises)
-                    }
-                    return Promise.all(promises);
-                })
-                .then(function () {
-                    console.log("모든 영화 정보 가져옴")
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-            function movieDetail(moviename) {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + moviename,
-                        type: "GET",
-                        data: {},
-                        success: function (data) {
-                            console.log(data)
-                            const MovieDetailList = data.results;
-                            const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
-                            if (movieTitleList.length > 0) {
-                                let tag = "<div class=\"card bg-secondary \">";
-                                tag += "<div class=\"row g-0\">";
-                                tag += "<div class=\"col-md-7\">";
-                                tag += "<a class='text-decoreaion-none text-black' href='/detail/data/"+MovieDetailList[0].title+"'>";
-                                tag += "<img src =\""+imageBaseUrl+ MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"img-fluid rounded-start\">";
-                                tag += "</div>";
-                                tag += "<div class=\"col-5\">";
-                                tag += " <h3 class=\"card-title\">"+MovieDetailList[0].title + "</h3>";
-                                tag += "<p>"+MovieDetailList[0].overview+"</p>"
-                                tag += " </div>";
-                                tag += " </div>";
-                                tag += "</a></div>";
-                                $("#div-likelist").append(tag);
-                            }
-                            resolve();
-                        },
-                        error: function () {
-                            reject("에러 발생")
-                        },
-                    });
-                });
-            }
+          for (let i = 0; i < movieTitleList.length; i++) {
+            const moviename = movieTitleList[i];
+            promises.push(movieDetail(moviename))
+            console.log(promises)
+          }
+          return Promise.all(promises);
         })
-    </script>
+        .then(function () {
+          console.log("모든 영화 정보 가져옴")
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+      function movieDetail(moviename) {
+        return new Promise(function (resolve, reject) {
+          $.ajax({
+            url: "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + moviename,
+            type: "GET",
+            data: {},
+            success: function (data) {
+              console.log(data)
+              const MovieDetailList = data.results;
+              const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+              if (movieTitleList.length > 0) {
+                let tag = "<div class=\"like-card\">";
+                tag += "<div class=\"row justify-content-center d-flex\">";
+                tag += "<div class=\"col-5 my-auto\">";
+                tag += "<a class='text-decoreaion-none text-black' href='/detail/data/" + MovieDetailList[0].title + "'>";
+                tag += "<img src =\"" + imageBaseUrl + MovieDetailList[0].backdrop_path + "\" alt=\"\" class=\"like-card-img\">";
+                tag += "</div>";
+                tag += "<div class=\"col-7\">";
+                tag += " <h4 class=\"like-tit\">" + MovieDetailList[0].title + "</h4>";
+                tag += "<p class='like-desc'>" + MovieDetailList[0].overview + "</p>"
+                tag += " </div>";
+                tag += " </div>";
+                tag += "</a></div>";
+                $("#div-likelist").append(tag);
+              }
+              resolve();
+            },
+            error: function () {
+              reject("에러 발생")
+            },
+          });
+        });
+      }
+
+      /* 탭 컨텐츠 숨기기 */
+      let tabContent = $(".my-page-content");
+
+      tabContent.hide();
+
+      let tabMenu = $("input[name='tab_item']");
+
+      tabMenu.on("click", function () {
+        tabContent.hide();
+        tabContent.eq($(tabMenu).index(this)).show();
+      });
+
+
+    })
+  </script>
 </head>
 <body>
 
@@ -118,68 +133,106 @@
 <header th:replace="~{layout/header :: header-basic}"></header>
 
 <!-- main 영역 -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-3 mx-auto">
-            <div class="my-3 d-grid gap-3">
-                <a href="/member/correction" class="w-50 p-2 btn btn-success">회원 정보 수정</a>
-                <div class="updateTheaterBtns d-flex align-items-center" th:if="${session.userGrade == 1}">
-                    <script>
-                        $(document).ready(function(){
-                            $("#updateCgvTheater").on("click",function(){
-                                $.ajax({
-                                    url:"/detail/updateTheater.do",
-                                    data:{"type":"cgv"},
-                                    type:"GET",
-                                    success:function(){
-                                        console.log("update success");
-                                    },
-                                    error:function(){
-                                        console.log("update error")
-                                    }
-                                });
-                            });
+<div class="container my-4">
+  <div class="d-flex justify-content-center">
+    <h1 class="board-title mt-5">
+      MY PAGE
+    </h1>
+  </div>
+  <div class="d-flex justify-content-center">
+    <h5 class="my-2 opacity-75">내 회원 정보를 확인해보세요.</h5>
+  </div>
+  <!-- 탭 목록 -->
+  <div class="my-page-tab d-flex justify-content-center">
+    <input id="like-list" type="radio" name="tab_item">
+    <label class="tab_item" for="like-list">마이 영화 리스트</label>
+    <input id="update-info" type="radio" name="tab_item">
+    <label class="tab_item" for="update-info">내 정보 수정</label>
+    <!-- 관리자에게만 보이는 탭 -->
+    <input id="movie-update" type="radio" name="tab_item" th:if="${session.userGrade == 1}">
+    <label class="tab_item" for="movie-update" th:if="${session.userGrade == 1}">영화관 업데이트</label>
+  </div>
+</div>
 
-                            $("#updateMegaBoxTheater").on("click",function(){
-                                $.ajax({
-                                    url:"/detail/updateTheater.do",
-                                    data:{"type":"megaBox"},
-                                    type:"GET",
-                                    success:function(){
-                                        console.log("update success");
-                                    },
-                                    error:function(){
-                                        console.log("update error")
-                                    }
-                                });
-                            });
-
-                            $("#updateLotteCinemaTheater").on("click",function(){
-                                $.ajax({
-                                    url:"/detail/updateTheater.do",
-                                    data:{"type":"lotteCinema"},
-                                    type:"GET",
-                                    success:function(){
-                                        console.log("update success");
-                                    },
-                                    error:function(){
-                                        console.log("update error")
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-                    <p class="my-auto text-center" style="width: 10em">영화관 정보 최신화</p>
-                    <button class="btn btn-pink" type="button" id="updateCgvTheater">cgv</button>
-                    <button class="btn btn-pink" type="button" id="updateMegaBoxTheater">megaBox</button>
-                    <button class="btn btn-pink" type="button" id="updateLotteCinemaTheater">lotteCinema</button>
-                </div>
-            </div>
+<!-- 콘텐츠 목록 / 탭을 누르면 활성화됨 -->
+<div class="row">
+  <div class="col-sm-8 mx-auto mt-2 content-list">
+    <!-- 내 좋아요 리스트 콘텐츠 영역-->
+    <div class="my-page-content" id="like-list-content">
+      <div class="" id="div-likelist">
+        <div class="d-flex justify-content-center mb-3">
+          <h5 class="my-3 opacity-75 mb-4">
+            내가 좋아요 표시한 목록을 확인해보세요.
+          </h5>
         </div>
-        <div class="" id="div-likelist">
-            <p>자기가 누른 좋아요 리스트</p>
-        </div>
+      </div>
     </div>
+
+    <!-- 내 정보 수정 콘텐츠 영역 -->
+    <div class="my-page-content text-center" id="update-info-content">
+      <!--<a href="/member/correction" class="w-50 p-2 btn btn-success">회원 정보 수정</a>-->
+      <div th:replace="~{member/correction :: update-my-info}"></div>
+    </div>
+
+    <!-- 관리자 / 영화관 업데이트 콘텐츠 영역-->
+    <div class="my-page-content" id="movie-update-content" th:if="${session.userGrade == 1}">
+      <div class="updateTheaterBtns" >
+        <script>
+          $(document).ready(function () {
+            $("#updateCgvTheater").on("click", function () {
+              $.ajax({
+                url: "/detail/updateTheater.do",
+                data: {"type": "cgv"},
+                type: "GET",
+                success: function () {
+                  console.log("update success");
+                },
+                error: function () {
+                  console.log("update error")
+                }
+              });
+            });
+
+            $("#updateMegaBoxTheater").on("click", function () {
+              $.ajax({
+                url: "/detail/updateTheater.do",
+                data: {"type": "megaBox"},
+                type: "GET",
+                success: function () {
+                  console.log("update success");
+                },
+                error: function () {
+                  console.log("update error")
+                }
+              });
+            });
+
+            $("#updateLotteCinemaTheater").on("click", function () {
+              $.ajax({
+                url: "/detail/updateTheater.do",
+                data: {"type": "lotteCinema"},
+                type: "GET",
+                success: function () {
+                  console.log("update success");
+                },
+                error: function () {
+                  console.log("update error")
+                }
+              });
+            });
+          });
+        </script>
+        <div class="d-flex justify-content-center mb-3">
+          <h5 class="my-2 opacity-75">영화관 정보 최신화</h5>
+        </div>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-pink me-2 p-2 px-3" type="button" id="updateCgvTheater">CGV</button>
+          <button class="btn btn-pink me-2 p-2 px-3" type="button" id="updateMegaBoxTheater">MegaBox</button>
+          <button class="btn btn-pink p-2 px-3" type="button" id="updateLotteCinemaTheater">Lotte Cinema</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!--footer 영역-->
