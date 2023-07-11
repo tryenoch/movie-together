@@ -506,6 +506,42 @@ form [id^='stars'] svg {
     font-weight: 700;
 }
 
+/* MY page */
+
+/* 라디오 버튼 ui 삭제 */
+input[name="tab_item"] {
+    display: none;
+}
+
+.my-page-tab {
+    padding-bottom: 40px;
+    background-color: #fff;
+    width: 50%;
+    margin: 30px auto;
+}
+
+.my-page-tab input:checked + .tab_item {
+    background-color: #ef3668;
+    color: #fff;
+}
+
+.tab_item {
+    width: calc(100%/3);
+    height: 50px;
+    border-bottom: 1px solid #ef3668;
+    background-color: #f8f8f8;
+    line-height: 50px;
+    font-size: 1.1em;
+    text-align: center;
+    color: #ef3668;
+    display: block;
+    float: left;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+
+
 /* 푸터 */
 footer .contents {
     height: 300px;
