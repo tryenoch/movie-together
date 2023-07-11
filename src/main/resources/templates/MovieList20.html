@@ -48,7 +48,7 @@
         const element = document.getElementById('div_card2'); // 지워줄 범위 안의 요소를 변수에 저장
         element.remove(); // 요소를 삭제함
         let tag = "<div id=\"div_card2\">" // div 자체를 삭제해버리므로 다시 div 태그를 만들어줌
-        tag +=  "</div>"
+        tag += "</div>"
         $("#div_card").append(tag);
       }
 
@@ -110,7 +110,7 @@
           deleteElement();
           startajax(PageNo)
         } else {
-          alert("첫 번째 페이지입니다! ")
+          alert("첫 번째 페이지입니다! ") // 첫번 쨰 페이지일 경우 알림창 띄움
         }
       })
       $("#btn-next").on("click", function () { // next 버튼 누를시 화면 초기화 후 다시 화면 로드
