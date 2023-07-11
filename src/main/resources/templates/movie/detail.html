@@ -376,17 +376,33 @@
 
       });
 
-      // 스크롤위치가 페이지 최하단일때 리뷰를 불러옴
-      $(window).scroll(function () {
+      // 스크롤이벤트 등록, 스크롤발생시 hadleScroll 실행
+      $(window).on('scroll', handleScroll);
+      function handleScroll() {
+        // .scrollTop : 문서의 top 에서부터 현재창까지의 스크롤 위치를 타나냄, 스크롤 위치가 0이면 문서의 최상단을 의미
         var scrT = $(window).scrollTop();
         // console.log(scrT); //스크롤 값 확인용
-        if (scrT == $(document).height() - $(window).height()) {
+
+        // 현재 문서 전체의 높이 - 뷰포트의 높이 : 스크롤바 최하단의 위치
+        // (문서 높이가 1000이고 뷰포트 높이가 100이면 화면을 가장 아래로 내렸을때 스크롤바의 위치는 1000-100 = 900임)
+        // -300 : 푸터 높이를 고려, 스크롤이 맨 밑에서부터 300만큼 덜 오게되면 리뷰가 불러와짐
+        if (scrT >= $(document).height() - $(window).height() - 300) {
+          console.log("리뷰 불러오기");
           //스크롤이 끝에 도달했을때 실행될 이벤트
           makeReviewCardAll(reviewPage, numOfReview, userId);
-        } else {
-          //아닐때 이벤트
         }
-      })
+
+        // 스크롤 이벤트 해제(1회 실행후 해제)
+        $(window).off('scroll', handleScroll);
+
+        // 작업이 완료된 후 스크롤 이벤트 재등록
+        // 이럼으로써 스크롤이벤트가 일정시간에 한번씩만 실행되게함
+        // 스크롤을 빠르게 내려서 한번에 주르르륵 실행되게하면 비동기로 실행되면서 리뷰불러오기가 씹히는 문제 발생
+        // (reviewPage가 한번에 주르르륵 증가하면서 마지막페이지로 이동되어 db에서 데이터가 안불러와짐)
+        setTimeout(function() {
+          $(window).on('scroll', handleScroll);
+        }, 150); // 재등록 딜레이 설정 (ms단위)
+      }
 
       // 로그인 체크하여 각종버튼 비활성화
       function loginChk(id) {
