@@ -429,6 +429,10 @@ h1.test {
     background: none;
 }
 
+.card .card-body{
+    height: 12rem;
+}
+
 .card .card-body .card-title {
     display: flex;
     justify-content: space-between;
@@ -444,18 +448,28 @@ h1.test {
     color: #444;
 }
 
-.card .card-body .card-title > span {
-    display: block;
+.card .card-body .card-title {
+    margin-bottom: 0.2rem;
+}
+
+.card .card-body .card-title p {
+    margin-bottom: 0.2rem;
+    max-resolution: 0rem;
+    font-weight: bold;
+    font-size: large;
 }
 
 #reviewDiv .card {
     margin: 1rem;
-    width: 24rem;
+    width: 22.7rem;
 }
 
 #reviewDiv .card button .card-body {
+    display: flex;
+    flex-direction: column;
     padding: 0.6rem;
 }
+
 
 #reviewDiv .card button .card-body .content {
     white-space: normal;
@@ -463,6 +477,15 @@ h1.test {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-bottom: auto;
+}
+
+#reviewDiv .card button .card-body .info{
+    display: flex;
+}
+
+#reviewDiv .card button .card-body .info span:last-child {
+    margin-left: auto;
 }
 
 #reviewDiv .reviewMsg {
