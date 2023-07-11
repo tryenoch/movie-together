@@ -14,4 +14,6 @@ public interface MemberMapper {
     public int IdCheck(String ID1);
 
     public void Correction(MemberDto memberDto);
+
+    public String selectLikeList(String memberId);
 }
