@@ -31,6 +31,12 @@
       <button type="button" class="btn btn-outline-pink me-3 px-3" id="btn-recall">이전</button>
       <button type="button" class="btn btn-outline-pink px-3" id="btn-next">다음</button>
     </div>
+  <div id="div_card">
+    <div id="div_card2">
+
+    </div>
+  </div>
+
 
 
 
@@ -39,14 +45,16 @@
     $(document).ready(function () {
       // card로 만들어진 요소를 전부 지워주는 함수
       function deleteElement() {
-        const element = document.getElementById('div_card');
-
-        element.remove();
+        const element = document.getElementById('div_card2'); // 지워줄 범위 안의 요소를 변수에 저장
+        element.remove(); // 요소를 삭제함
+        let tag = "<div id=\"div_card2\">" // div 자체를 삭제해버리므로 다시 div 태그를 만들어줌
+        tag +=  "</div>"
+        $("#div_card").append(tag);
       }
 
       var PageNo = 1;
 
-      function startajax(PageNo) { //ajax 사용하는 부분을 함수로 변환
+      function startajax(PageNo) { //ajax 사용하는 부분을 함수로 변환(tmdb)
         const urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=ko&page=" + PageNo;
         $.ajax({
           url: urlStr,
@@ -60,10 +68,11 @@
             const MovieList = data.results;
             const imageBaseUrl = "https://image.tmdb.org/t/p/w500" // 이미지 연결 베이스 링크
             if (MovieList.length > 0) {
+
               for (let i = 0; i < MovieList.length; i++) { // for문 돌려서 Movie리스트를 계속 띄워줌
-                let tag = "<div class=\"\" id=\"div_card\">"
-                tag += "<a class='text-decoration-none text-black' href='/detail/data/" + MovieList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
-                tag += "<div class=\"row movie-item mx-auto mb-5\">"
+
+                let tag = "<a class='text-decoration-none text-black' href='/detail/data/" + MovieList[i].title + "'>" // 디테일 페이지로 이동하기위한 링크 추가
+                tag += "<div class=\"row movie-item mx-auto mb-5\" >"
 
                 /* 왼쪽 그림 */
                 tag += "<div class=\"col-sm-3 me-1\">"
@@ -82,7 +91,7 @@
                 tag += "</div>"
                 tag += "</div>"
                 tag += "</a></div>"
-                $("#movie-result").append(tag);
+                $("#div_card2").append(tag);
 
               }
             } else {
@@ -94,7 +103,7 @@
       }
 
       startajax();
-      $("#btn-recall").on("click", function () { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+      $("#btn-recall").on("click", function () { // recall 버튼 누를시 화면 초기화 후 다시 화면 로드
         if (PageNo > 1) {
           PageNo = PageNo - 1
           console.log("Selected PageNo:", PageNo);
@@ -104,7 +113,7 @@
           alert("첫 번째 페이지입니다! ")
         }
       })
-      $("#btn-next").on("click", function () { // a 링크 누를시 화면 초기화 후 다시 화면 로드
+      $("#btn-next").on("click", function () { // next 버튼 누를시 화면 초기화 후 다시 화면 로드
         PageNo = PageNo + 1
         console.log("Selected PageNo:", PageNo);
         deleteElement()
