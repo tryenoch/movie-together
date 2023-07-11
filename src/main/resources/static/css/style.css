@@ -506,4 +506,12 @@ form [id^='stars'] svg {
     font-weight: 700;
 }
 
+/* 푸터 */
+footer .contents {
+    height: 300px;
+    text-align: center;
+}
+
+
+
 

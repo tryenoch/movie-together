@@ -44,7 +44,14 @@ public class MemberController {
 
 //  마이페이지 출력
     @RequestMapping(value = {"/mypage"},method = RequestMethod.GET)
-    public String myPage() throws Exception {
+    public String myPage(HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        String likeList;
+        if(session.getAttribute("userId") != null){
+            String userId = session.getAttribute("userId").toString();
+            likeList = memberService.selectLikeList(userId);
+            session.setAttribute("userLikeList", likeList);
+        }
 
         return "member/mypage";
     }
