@@ -110,6 +110,17 @@
         });
       }
 
+      /* 탭 컨텐츠 숨기기 */
+      let tabContent = $(".my-page-content");
+
+      tabContent.hide();
+
+      let tabMenu = $("input[name='tab_item']");
+
+      tabMenu.on("click", function () {
+        tabContent.hide();
+        tabContent.eq($(tabMenu).index(this)).show();
+      });
 
 
     })
@@ -132,7 +143,7 @@
   </div>
   <!-- 탭 목록 -->
   <div class="my-page-tab d-flex justify-content-center">
-    <input id="like-list" type="radio" name="tab_item" checked>
+    <input id="like-list" type="radio" name="tab_item">
     <label class="tab_item" for="like-list">마이 영화 리스트</label>
     <input id="update-info" type="radio" name="tab_item">
     <label class="tab_item" for="update-info">내 정보 수정</label>
