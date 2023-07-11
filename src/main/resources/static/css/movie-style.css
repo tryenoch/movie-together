@@ -216,6 +216,11 @@ hr {
     background: none;
 }
 
+.Calendar .calBtn {
+    width: 100%;
+    height: 3rem;
+}
+
 .card .card-body{
     height: 12rem;
 }
