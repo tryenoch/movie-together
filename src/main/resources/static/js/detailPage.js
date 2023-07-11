@@ -48,7 +48,7 @@ $(document).ready(function () {
                 })
                 .catch(function () {
 
-                })
+                });
         })
         .catch(function (err) {
             // tmbId = 0;
@@ -320,7 +320,7 @@ $(document).ready(function () {
             success: function (data) {
                 reviewPage = 1;
                 $("#myReviewSpace .card").remove();
-                $("#reviewSpace .card").remove();
+                $(".reviewMsg").remove();
                 myReviewCardAll(userId);
             },
             error: function () {
@@ -368,19 +368,23 @@ $(document).ready(function () {
         if (scrT >= $(document).height() - $(window).height() - 300) {
             console.log("리뷰 불러오기");
             //스크롤이 끝에 도달했을때 실행될 이벤트
-            makeReviewCardAll(reviewPage, numOfReview, userId);
+            makeReviewCardAll(reviewPage, numOfReview, userId)
+                .then(function(){
+                    reviewPage++;
+                })
+                .catch(function(){});
         }
 
         // 스크롤 이벤트 해제(1회 실행후 해제)
         $(window).off('scroll', handleScroll);
 
         // 작업이 완료된 후 스크롤 이벤트 재등록
-        // 이럼으로써 스크롤이벤트가 일정시간에 한번씩만 실행되게함
-        // 스크롤을 빠르게 내려서 한번에 주르르륵 실행되게하면 비동기로 실행되면서 리뷰불러오기가 씹히는 문제 발생
-        // (reviewPage가 한번에 주르르륵 증가하면서 마지막페이지로 이동되어 db에서 데이터가 안불러와짐)
+        // 이럼으로써 스크롤이벤트가 일정시간에 한번씩만 입력되게 함
+        // 스크롤을 빠르게 내려서 한번에 주르르륵 실행되게하면 리뷰불러오기가 씹히는 문제 발생(promise를 써도 문제 발생함)
+        // 원인은 reviewPage가 한번에 빠르게 증가하면서 불러올 리뷰가 순식간에 마지막페이지가 되면서 db에서 데이터가 안불러와지기 때문인듯
         setTimeout(function() {
             $(window).on('scroll', handleScroll);
-        }, 150); // 재등록 딜레이 설정 (ms단위)
+        }, 50); // 재등록 딜레이 설정 (ms단위)
     }
 
     // 로그인 체크하여 각종버튼 비활성화
@@ -801,33 +805,35 @@ $(document).ready(function () {
 
     // 모든 리뷰 불러와서 만들기
     function makeReviewCardAll(page, num, id) {
-        $.ajax({
-            url: "/detail/getReviewList.do",
-            type: "GET",
-            data: {"moviePk": moviePk, "page": page, "num": num, "id": id, "all": "y"},
-            success: function (reviewList) {
-                if (reviewList.length == 0) {
-                    let space = $("#reviewSpace");
-                    $(".reviewMsg").remove();
-                    if (reviewPage == 1 && $("#myReviewSpace").hasClass("d-none")) {
-                        space.append("<p class='reviewMsg'>등록된 리뷰가 없습니다.</p>")
-                    } else {
-                        space.append("<p class='reviewMsg'>마지막 리뷰입니다.</p>")
-                    }
-                } else {
-                    for (let i = 0; i < reviewList.length; i++) {
+            return new Promise(function (resolve) {
+                $.ajax({
+                    url: "/detail/getReviewList.do",
+                    type: "GET",
+                    data: {"moviePk": moviePk, "page": page, "num": num, "id": id, "all": "y"},
+                    success: function (reviewList) {
+                        if (reviewList.length == 0) {
+                            let space = $("#reviewSpace");
+                            $(".reviewMsg").remove();
+                            if (reviewPage == 1 && $("#myReviewSpace").hasClass("d-none")) {
+                                space.append("<p class='reviewMsg'>등록된 리뷰가 없습니다.</p>")
+                            } else {
+                                space.append("<p class='reviewMsg'>마지막 리뷰입니다.</p>")
+                            }
+                        } else {
+                            for (let i = 0; i < reviewList.length; i++) {
 
-                        let review = reviewList[i];
-                        makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, "", review.reviewEdit, review.reviewLikeCnt, review.reviewStar);
-                    }
-                    reviewPage++;
-                }
-            },
-            error: function () {
-                // console.log("없음")
-            }
-        });
+                                let review = reviewList[i];
+                                makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, "", review.reviewEdit, review.reviewLikeCnt, review.reviewStar);
+                            }
+                            resolve(true);
 
+                        }
+                    },
+                    error: function () {
+                        // console.log("없음")
+                    }
+                });
+            });
     };
 
     // 리뷰 카드 하나 만들기
@@ -876,18 +882,33 @@ $(document).ready(function () {
 
     // 최초 글쓰기 모달창에 별아이콘 만들기
     $("#starShow").append(starIcon(1, 48));
+
+    // .star 클래스의 투명한 버튼에 마우스를 올리면 아이콘(svg)파일을 모두 지운 뒤 버튼의 value(1~10까지)에 따라 별아이콘을 새로 만듦
     $(".star").hover(function () {
-        $("#starShow svg").remove()
+        $("#starShow svg").remove();
         $("#starShow").append(starIcon($(this).val(), 48));
-    });
+    },
+        // 버튼에서 마우스를 뗐을 때는 입력된 값에 따라서 별 아이콘을 다시 그림
+        function(){
+            $("#starShow svg").remove();
+            $("#starShow").append(starIcon($("#starNum").val(), 48));
+        });
+
+    // 버튼 클릭 시 값을 input태그에 입력
     $(".star").on("click", function () {
         $("#starNum").val($(this).val());
     });
 
+
+    // 수정 모달 창에 위와 같은 내용 적용
     $(".star2").hover(function () {
         $("#starShow2 svg").remove()
         $("#starShow2").append(starIcon($(this).val(), 48));
+    }, function(){
+        $("#starShow2 svg").remove();
+        $("#starShow2").append(starIcon($("#starNum2").val(), 48));
     });
+
     $(".star2").on("click", function () {
         $("#starNum2").val($(this).val());
     });
