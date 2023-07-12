@@ -115,14 +115,16 @@
       let tabContent = $(".my-page-content");
 
       tabContent.hide();
+      tabContent.css("display", "none");
+      /*($(tabContent).index(1)).show();*/
 
       let tabMenu = $("input[name='tab_item']");
 
       tabMenu.on("click", function () {
         tabContent.hide();
         tabContent.eq($(tabMenu).index(this)).show();
+        tabContent.eq($(tabMenu).index(this)).css("display", "block");
       });
-
 
     })
   </script>
