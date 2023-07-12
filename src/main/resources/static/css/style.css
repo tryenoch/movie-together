@@ -609,11 +609,25 @@ input[id="update-info"]:checked #like-list-content{
 
 
 /* 푸터 */
+
+footer {
+    margin-top : 3em;
+}
 footer .contents {
-    height: 300px;
-    text-align: center;
+    min-height: 350px;
+    padding: 20px 60px 30px;
+    color: #656565;
 }
 
+.footer-member p {
+    margin-bottom: 2px;
+}
+
+.footer-member .name {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-right: 0.2em;
+}
 
 
 
