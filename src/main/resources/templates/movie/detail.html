@@ -175,7 +175,7 @@
 
   <div id="reviewDiv">
     <!-- 나의 리뷰 영역 -->
-    <div class="row justify-content-md-center">
+    <div class="row justify-content-md-center" th:if="${session.userName}">
       <!-- 타이틀, 버튼 -->
       <div class="col-12">
         <div class="d-flex justify-content-between">
@@ -193,9 +193,10 @@
           <!-- 리뷰 목록 들어가는 곳-->
         </div>
       </div>
+      <hr class="">
     </div>
 
-    <hr class="">
+
 
     <!-- 전체 리뷰 영역 -->
     <div class="row justify-content-md-center">
