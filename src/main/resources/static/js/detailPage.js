@@ -295,11 +295,15 @@ $(document).ready(function () {
     // 지우기버튼
     $("#erase").on("click", function () {
         $("#submitBtn").attr("disabled", "true");
+        $("#title").val("");
+        $("#content").val("");
     });
 
     // 수정 지우기버튼
     $("#eraseEdit").on("click", function () {
         $("#editSubmitBtn").attr("disabled", "true");
+        $("#titleEdit").val("");
+        $("#contentEdit").val("");
     });
 
     // 리뷰수정모달확인버튼눌러서 리뷰 수정하기
@@ -352,6 +356,10 @@ $(document).ready(function () {
                 }
             });
         }
+
+    });
+
+    $("button[type='reset']").on("click",function(){
 
     });
 
@@ -1042,7 +1050,8 @@ $(document).ready(function () {
                         $("#myReviewSpace").addClass("d-none");
                         $(".myReview").addClass("d-none");
                     } else {
-                        $("#myReviewSpace p").removeClass("d-none");
+                        $("#myReviewSpace").removeClass("d-none");
+                        $(".myReview").removeClass("d-none");
                         for (let i = 0; i < reviewList.length; i++) {
                             let review = reviewList[i];
                             makeReviewCard(review.reviewPk, review.reviewTitle, review.reviewWriter, review.reviewContent, review.reviewDate, id, review.reviewEdit, review.reviewLikeCnt, review.reviewStar);

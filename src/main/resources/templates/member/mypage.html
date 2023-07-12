@@ -22,9 +22,15 @@
       let movieTitle // 영화 제목
       let userLikeList; // 영화 좋아요(String 형식)
       let movieTitleList = []; // 영화 제목을 배열 형식으로 변경
-      userLikeList = [[${session.userLikeList}]];
-      let userLikeListArray = userLikeList.split(",") // String 형식의 pk값을 ,을 기준으로 구별
-      let userLikeListInt = userLikeListArray.map(Number); // STring 형식의 pk값을 Int로 변경
+      let userLikeListArray;
+      let userLikeListInt;
+      if([[${session.userLikeList}]] != null){
+        userLikeList = [[${session.userLikeList}]];
+        userLikeListArray = userLikeList.split(",") // String 형식의 pk값을 ,을 기준으로 구별
+        userLikeListInt = userLikeListArray.map(Number); // STring 형식의 pk값을 Int로 변경
+      }
+
+
 
       function getInfo() {
         return new Promise(function (resolve, reject) {
