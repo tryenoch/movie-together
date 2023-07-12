@@ -609,6 +609,10 @@ input[id="update-info"]:checked #like-list-content{
 
 
 /* 푸터 */
+
+footer {
+    margin-top : 3em;
+}
 footer .contents {
     min-height: 350px;
     padding: 20px 60px 30px;
