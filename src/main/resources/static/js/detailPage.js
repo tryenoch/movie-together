@@ -619,17 +619,17 @@ $(document).ready(function () {
     // 포스터, 줄거리만 추가
     function posterReleasePlot(movieName) {
         return new Promise(function (resolve, reject) {
-            let size = movieName.length
-            let part1 = movieName.slice(0, size - 1)
-            let part2 = movieName.slice(size - 1, size)
-            let part3 = movieName.slice(size - 2, size)
-            let part4 = movieName.slice(0, size - 2)
-            if (isNaN(part2)) {
-            } else if (isNaN(part3)) {
-                movieName = part1 + " " + part2;
-            } else {
-                movieName = part4 + " " + part3;
-            }
+            // let size = movieName.length
+            // let part1 = movieName.slice(0, size - 1)
+            // let part2 = movieName.slice(size - 1, size)
+            // let part3 = movieName.slice(size - 2, size)
+            // let part4 = movieName.slice(0, size - 2)
+            // if (isNaN(part2)) {
+            // } else if (isNaN(part3)) {
+            //     movieName = part1 + " " + part2;
+            // } else {
+            //     movieName = part4 + " " + part3;
+            // }
             const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName;
             $.ajax({
                 url: urlStr,
@@ -885,7 +885,7 @@ $(document).ready(function () {
         if (edit == 1) {
             editChk = "(수정됨)"
         }
-        body.append("<div class='card-text info'><span class='date'>" + date + "</span><span class='edit'>" + editChk + "</span><span class='name'>by " + name + "</span></div>");
+        body.append("<div class='card-text info'><span class='date'>" + date + "</span><span class='edit'>" + editChk + "</span><span class='name'>" + name + "</span></div>");
     }
 
     // 최초 글쓰기 모달창에 별아이콘 만들기

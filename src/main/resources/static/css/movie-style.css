@@ -379,6 +379,23 @@ button[class^='star'] {
     z-index: 0;
 }
 
+.modal-body {
+    font-size: 1.1em;
+    padding: 1.8em;
+}
+
+#review .form-label {
+    margin-top: 10px;
+}
+
+#review .modal-footer {
+    padding: 0.5em 0.5em;
+}
+
+#review textarea.form-control {
+    resize: none;
+}
+
 #myReviewSpace .card .card-footer {
     display: flex;
     justify-content: flex-end;
