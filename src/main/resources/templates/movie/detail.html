@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title th:text="${movieTitle}">Title</title>
   <link rel="stylesheet" href="/css/bootstrap.css">
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script src="/js/jquery-3.7.0.js"></script>
@@ -21,17 +21,17 @@
 <body>
 
 <header th:replace="~{layout/header :: header-basic}"></header>
-<main class="container-md my-4">
+<main class="container-md my-5">
 
-
+  <!-- 영화 정보 -->
   <div class="mb-2 mt-5 row justify-content-md-center" id="movieInfo">
 
-    <div class="col-4 me-1" id="poster">
+    <div class="col-4" id="poster">
       <!-- 포스터 들어감 -->
     </div>
 
     <!--        포스터 우측에 표시되는 정보-->
-    <div class="movieInfoTxt col-7 pt-3">
+    <div class="movieInfoTxt col-8 pt-3">
       <div class="d-flex justify-content-between row mb-0">
 
         <div class="col ps-2 ms-1">
@@ -64,7 +64,6 @@
           </button>
         </div>
 
-
       </div>
 
       <div id="casts" class="mb-3 mt-4 mx-0">
@@ -79,15 +78,20 @@
 
   </div>
 
+  <!--<hr class="mb-5">-->
+
+  <!-- 상영 시간표 -->
+  <div class="row justify-content-md-center">
+    <div class="col-12 d-flex justify-content-start">
+      <h4 class="h5 mb-3 sub-tit">상영 시간표</h4>
+      <h5 class="sub-tit2">영화관별 상영 시간을 확인해보세요.</h5>
+    </div>
+  </div>
   <div id="ticketing" class="row justify-content-md-center">
   <!--<div id="ticketing" class="d-flex flex-column ">-->
-
-      <hr class="mb-4">
-      <p class="h5 mb-4 mt-2 sub-title">상영 시간표</p>
       <!-- 캘린더 -->
       <div class="col-4">
-
-        <table class="Calendar table w-100">
+        <table class="Calendar bg-white p-2 py-3 table w-100">
           <thead>
           <tr>
             <td>
@@ -123,70 +127,90 @@
       </div>
 
       <!-- 영화 시간 나오는 영역 -->
-      <div class=" col-7">
-        <div class="my-2">
-          <button value="megaBox" class="timeTableBtn btn btn-outline-pink">메가박스</button>
-          <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink">롯데시네마</button>
-          <button value="cgv" class="timeTableBtn btn btn-outline-pink">CGV</button>
+      <div class="col-8 time-list">
+        <div class="my-2 btn-group mb-3">
+          <button value="megaBox" class="timeTableBtn btn btn-outline-pink px-4">메가박스</button>
+          <button value="lotteCinema" class="timeTableBtn btn btn-outline-pink px-4">롯데시네마</button>
+          <button value="cgv" class="timeTableBtn btn btn-outline-pink px-4">CGV</button>
         </div>
 
         <div id="megaBox" class="timeTable d-none">
-          <select class="sel1" id="megaBoxArea">
+          <select class="sel1 movie-area" id="megaBoxArea">
             <option value="">지역을 선택하세요</option>
           </select>
-          <select class="sel2" id="megaBoxTheater">
+          <select class="sel2 movie-theater" id="megaBoxTheater">
             <option>영화관을 선택하세요</option>
           </select>
-          <a href="https://www.megabox.co.kr/booking" class="float-end">메가박스 바로가기</a>
+          <a href="https://www.megabox.co.kr/booking" class="float-end movie-direct-btn">▶ 메가박스 바로가기</a>
           <p id="megaBoxLoad" class="load">로딩 중..</p>
-          <ul id="megaBoxUl"></ul>
+          <ul id="megaBoxUl" class="load-list"></ul>
         </div>
         <div id="lotteCinema" class="timeTable d-none">
-          <select class="sel1" id="lotteCinemaArea">
+          <select class="sel1 movie-area" id="lotteCinemaArea">
             <option value="">지역을 선택하세요</option>
           </select>
-          <select class="sel2" id="lotteCinemaTheater">
+          <select class="sel2 movie-theater" id="lotteCinemaTheater">
             <option>영화관을 선택하세요</option>
           </select>
-          <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end">롯데시네마 바로가기</a>
+          <a href="https://www.lottecinema.co.kr/NLCHS/Ticketing" class="float-end movie-direct-btn">▶ 롯데시네마 바로가기</a>
           <p id="lotteCinemaLoad" class="load">로딩 중..</p>
-          <ul id="lotteCinemaUl"></ul>
+          <ul id="lotteCinemaUl" class="load-list"></ul>
         </div>
         <div id="cgv" class="timeTable d-none">
-          <select class="sel1" id="cgvArea">
+          <select class="sel1 movie-area" id="cgvArea">
             <option value="">지역을 선택하세요</option>
           </select>
-          <select class="sel2" id="cgvTheater">
+          <select class="sel2 movie-theater" id="cgvTheater">
             <option>영화관을 선택하세요</option>
           </select>
-          <a href="http://www.cgv.co.kr/ticket/" class="float-end">CGV 바로가기</a>
+          <a href="http://www.cgv.co.kr/ticket/" class="float-end movie-direct-btn">▶ CGV 바로가기</a>
           <p id="cgvLoad" class="load">로딩 중..</p>
-          <ul id="cgvUl"></ul>
+          <ul id="cgvUl" class="load-list"></ul>
         </div>
       </div>
 
-
   </div>
 
+  <hr class="my-5">
 
-  <hr>
-
-
-  <div class="row justify-content-md-center" id="reviewDiv">
-    <div class="d-flex justify-content-end" style="margin-bottom: -2rem;z-index: 1000;">
-      <button id="writeReviewBtn" class="btn btn-pink" type="button" data-bs-toggle="modal"
-              data-bs-target="#writeReview">리뷰작성
-      </button>
+  <div id="reviewDiv">
+    <!-- 나의 리뷰 영역 -->
+    <div class="row justify-content-md-center" th:if="${session.userName}">
+      <!-- 타이틀, 버튼 -->
+      <div class="col-12">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-start">
+            <h4 class="h5 mb-3 sub-tit">나의 리뷰</h4>
+            <span class="sub-tit2">나만의 영화 리뷰를 남겨보세요.</span>
+          </div>
+          <div class="" style="margin-bottom: -2rem; z-index: 1000;">
+            <button id="writeReviewBtn" class="btn btn-pink px-3" type="button" data-bs-toggle="modal"
+                    data-bs-target="#writeReview">리뷰작성
+            </button>
+          </div>
+        </div>
+        <div id="myReviewSpace" class=" d-flex flex-wrap justify-content-start align-items-center mb-5 px-0">
+          <!-- 리뷰 목록 들어가는 곳-->
+        </div>
+      </div>
+      <hr class="">
     </div>
 
-    <p class="h5 mb-4 mt-0 myReview sub-title">나의 리뷰</p>
-    <div id="myReviewSpace" class="col-11 d-flex flex-wrap justify-content-start align-items-center mb-5 px-0">
 
+
+    <!-- 전체 리뷰 영역 -->
+    <div class="row justify-content-md-center">
+      <div class="col-12">
+        <p class="h5 my-4 mt-0 w-100 sub-tit">전체 리뷰</p>
+        <div id="reviewSpace" class="col-12 d-flex flex-wrap justify-content-start align-items-center mb-5">
+          <!-- 전체 리뷰 목록 들어가는 곳 -->
+        </div>
+      </div>
     </div>
-    <p class="h5 my-4 mt-0 w-100 sub-title">전체 리뷰</p>
-    <div id="reviewSpace" class="col-11 d-flex flex-wrap justify-content-start align-items-center mb-5"></div>
   </div>
 
+  <!-- 모달 창 목록 -->
+  <!-- 리뷰 작성 -->
   <div class="modal" id="writeReview">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -229,6 +253,7 @@
     </div>
   </div>
 
+  <!-- 리뷰 수정 -->
   <div class="modal" id="editReview">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -271,6 +296,7 @@
     </div>
   </div>
 
+  <!-- 리뷰 상세보기 -->
   <div class="modal" id="reviewDetail">
     <div class="modal-dialog">
       <div class="modal-content">
