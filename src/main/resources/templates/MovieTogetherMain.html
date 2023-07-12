@@ -16,6 +16,16 @@
           integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
   <script th:inline="javascript">
     $(document).ready(function () {
+      function putComma(n) { // 콤마 넣는 함수(준호씨가 만듬)
+        let result = "";
+        let num = parseInt(n);
+        while (parseInt(num / 1000) > 0) {
+          result = "," + String(num % 1000).padStart(3, '0') + result;
+          num = parseInt(num / 1000);
+        }
+        result = String(num) + result;
+        return result;
+      }
       // 로그인 체크
       let logincheck = [[${session.userId}]]
       if (logincheck != null) {
@@ -76,17 +86,17 @@
           // 이름 뒤에 숫자가 붙을 경우 제대로 검색되지 않아 영화와 숫자 사이의 공백을 만들어주고 프로미스에 집어넣음
           for (let i = 0; i < dailyBoxOfficeList.length; i++) {
             let movieName = dailyBoxOfficeList[i].movieNm;
-            let size = movieName.length
-            let part1 = movieName.slice(0, size - 1)
-            let part2 = movieName.slice(size - 1, size)
-            let part3 = movieName.slice(size - 2, size)
-            let part4 = movieName.slice(0, size - 2)
-            if (isNaN(part2)) {
-            } else if (isNaN(part3)) {
-              movieName = part1 + " " + part2;
-            } else {
-              movieName = part4 + " " + part3;
-            }
+            // let size = movieName.length
+            // let part1 = movieName.slice(0, size - 1)
+            // let part2 = movieName.slice(size - 1, size)
+            // let part3 = movieName.slice(size - 2, size)
+            // let part4 = movieName.slice(0, size - 2)
+            // if (isNaN(part2)) {
+            // } else if (isNaN(part3)) {
+            //   movieName = part1 + " " + part2;
+            // } else {
+            //   movieName = part4 + " " + part3;
+            // }
             const promise = getMovieDetails(movieName);
             promises.push(promise);
           }
@@ -95,9 +105,9 @@
               for (let i = 0; i < results.length; i++) { // 영화 화면을 띄움
                 const movieDetails = results[i];
                 const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
-                adults = movieDetails.adult;
+
                 let tag = "<div class=\"rank-item col-sm-3\">";
-                tag += "<a class='text-decoration-none text-black' id='adult-check' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "' onclick='adultcheck(" + movieDetails.adult + ")'>";
+                tag += "<a class='text-decoration-none text-black' id='adult-check' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
                 tag += "<div class=\"rank-img\" style=\"\">";
                 tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"\">";
                 tag += "<div class=\"rank-num\">";
@@ -106,12 +116,12 @@
                 tag += "</div>";
                 tag += "<div class=\"\">";
                 tag += "<h4 class=\"rank-tit\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
-                tag += "<p class=\"rank-desc\"> <span class='rank-sub'>평점</span> <span>" + movieDetails.vote_average + " </span><span class='rank-sub'>총 관람객</span> <span>" + dailyBoxOfficeList[i].audiAcc + "명 </span></p>";
+                tag += "<p class=\"rank-desc\"> <span class='rank-sub'>평점</span> <span>" + movieDetails.vote_average + " </span><span class='rank-sub'>총 관람객</span> <span>" + putComma(dailyBoxOfficeList[i].audiAcc) + "명 </span></p>";
                 tag += "<p class=\"rank-desc\"><span class='rank-sub'>개봉일</span> <span>" + dailyBoxOfficeList[i].openDt + "</span></p>";
                 tag += "</div>";
                 tag += "</a></div>";
                 card.append(tag);
-                // adultcheck(movieDetails.adult)
+
               }
             })
             .catch(function (error) {

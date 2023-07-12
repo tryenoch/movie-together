@@ -54,8 +54,8 @@
 
       var PageNo = 1;
 
-      function startajax(PageNo) { //ajax 사용하는 부분을 함수로 변환(tmdb)
-        const urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=ko&page=" + PageNo;
+      function startajax(PageNo) { //페이지 번호를 들고와서 ajax 사용하는 부분을 함수로 변환(tmdb)
+        const urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=ko&page=" + PageNo; // 페이지 번호
         $.ajax({
           url: urlStr,
           headers: {
@@ -94,7 +94,7 @@
                 $("#div_card2").append(tag);
 
               }
-            } else {
+            } else { // 오류시 오류창 띄우고 뒷부분으로 돌아감
               alert("영화정보를 불러오는중 오류가 발생했습니다.")
               history.back();
             }
@@ -106,7 +106,7 @@
       $("#btn-recall").on("click", function () { // recall 버튼 누를시 화면 초기화 후 다시 화면 로드
         if (PageNo > 1) {
           PageNo = PageNo - 1
-          console.log("Selected PageNo:", PageNo);
+          console.log("Selected PageNo:", PageNo); // 페이지번호 확인
           deleteElement();
           startajax(PageNo)
         } else {
@@ -115,7 +115,7 @@
       })
       $("#btn-next").on("click", function () { // next 버튼 누를시 화면 초기화 후 다시 화면 로드
         PageNo = PageNo + 1
-        console.log("Selected PageNo:", PageNo);
+        console.log("Selected PageNo:", PageNo); // 페이지번호 확인
         deleteElement()
         startajax(PageNo)
       })
