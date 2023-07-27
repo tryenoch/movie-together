@@ -630,7 +630,7 @@ $(document).ready(function () {
             // } else {
             //     movieName = part4 + " " + part3;
             // }
-            const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName;
+            const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + conv(movieName);
             $.ajax({
                 url: urlStr,
                 type: "GET",

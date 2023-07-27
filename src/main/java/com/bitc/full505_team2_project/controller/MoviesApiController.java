@@ -3,24 +3,11 @@ package com.bitc.full505_team2_project.controller;
 import com.bitc.full505_team2_project.dto.DailyMovieDTO;
 import com.bitc.full505_team2_project.dto.MovieDetailDTO;
 import com.bitc.full505_team2_project.service.MovieService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 
 @Controller // 메인 화면으로 보내주는 컨트롤러 -kdu

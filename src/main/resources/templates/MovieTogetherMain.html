@@ -15,21 +15,31 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"
           integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
-  <script th:inline="javascript" th:type="module">
-    // import conv from "/static/js/movieNameConverter";
+<!--  영화제목 변환기 : conv() 함수 포함-->
+  <script src="/js/movieNameConverter.js"></script>
 
-    function conv(movieName){
-      let result = "";
-      switch (movieName){
-        case "예시":
-          result = "결과";
-          break;
-        case "명탐정코난: 흑철의 어영":
-          result = "명탐정 코난: 흑철의 어영";
-          break;
-      }
-      return result;
-    }
+  <script>
+    // import conv from "/templates/movieNameConverter.js";
+
+    // function conv(mn){
+    //   const movieName = mn;
+    //   let result;
+    //
+    //   switch (movieName){
+    //     case "예시":
+    //       result = "결과";
+    //       break;
+    //
+    //     case "명탐정코난: 흑철의 어영":
+    //       result = "명탐정 코난: 흑철의 어영";
+    //       break;
+    //
+    //     default:
+    //       result = movieName;
+    //       break;
+    //   }
+    //   return result;
+    // }
 
     $(document).ready(function () {
 
@@ -44,9 +54,9 @@
         return result;
       }
       // 로그인 체크
-      let logincheck = [[${session.userId}]]
+      let logincheck = "[[${session.userId}]]"
       if (logincheck != null) {
-        let userBirth = [[${session.userBirth}]];
+        let userBirth = "[[${session.userBirth}]]";
         userBirth = userBirth.slice(0, 4)
         console.log(userBirth)
         let age = (2023 - userBirth);
@@ -101,7 +111,8 @@
           const card = $("#rank-list");
           const promises = [];
           for (let i = 0; i < dailyBoxOfficeList.length; i++) {
-            let movieName = dailyBoxOfficeList[i].movieNm;
+            // conv() : 영화진흥원에 등록된 영화제목을 tmdb에 등록된 영화제목으로 변환해줌(포스터를 tmdb에서 불러오기위함)
+            let movieName = conv(dailyBoxOfficeList[i].movieNm);
             // 이름 뒤에 숫자가 붙을 경우 제대로 검색되지 않아 영화와 숫자 사이의 공백을 만들어주고 프로미스에 집어넣음
             // let size = movieName.length
             // let part1 = movieName.slice(0, size - 1)
@@ -114,20 +125,8 @@
             // } else {
             //   movieName = part4 + " " + part3;
             // }
+
             let promise = getMovieDetails(movieName);
-
-            // tmdb데이터를 찾지 못한 경우
-            promise.then(function(result){
-              if(result===undefined){
-                movieName = conv(movieName);
-                if(movieName != ""){
-                  promise = getMovieDetails(movieName);
-                  console.log(movieName);
-                }
-              }
-            });
-
-
 
             promises.push(promise);
           }
@@ -140,7 +139,6 @@
 
                 if(movieDetails === undefined){
                   imageBaseUrl = "/img/noPoster.jpg";
-                  console.log('tmdb 결과 없음');
                 }
                 else{
                   imageBaseUrl += movieDetails.poster_path;
