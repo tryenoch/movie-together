@@ -510,6 +510,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
                         dto.setGradeAge(countryMovieInformation.path("admissionCode").asText());
                         dto.setRunningTime(countryMovieInformation.path("duration").asText());
                         dto.setReleaseDate(countryMovieInformation.path("releaseDate").asText());
+                        dto.setReleaseDate(countryMovieInformation.path("releaseDate").asText());
                     }
                 }
                 dto.setAudience(common.path("totalAudienceCount").asText());

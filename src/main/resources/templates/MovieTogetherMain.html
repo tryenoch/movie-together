@@ -14,8 +14,25 @@
           crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"
           integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-  <script th:inline="javascript">
+
+  <script th:inline="javascript" th:type="module">
+    // import conv from "/static/js/movieNameConverter";
+
+    function conv(movieName){
+      let result = "";
+      switch (movieName){
+        case "예시":
+          result = "결과";
+          break;
+        case "명탐정코난: 흑철의 어영":
+          result = "명탐정 코난: 흑철의 어영";
+          break;
+      }
+      return result;
+    }
+
     $(document).ready(function () {
+
       function putComma(n) { // 콤마 넣는 함수(준호씨가 만듬)
         let result = "";
         let num = parseInt(n);
@@ -83,9 +100,9 @@
         .then(function (dailyBoxOfficeList) {
           const card = $("#rank-list");
           const promises = [];
-          // 이름 뒤에 숫자가 붙을 경우 제대로 검색되지 않아 영화와 숫자 사이의 공백을 만들어주고 프로미스에 집어넣음
           for (let i = 0; i < dailyBoxOfficeList.length; i++) {
             let movieName = dailyBoxOfficeList[i].movieNm;
+            // 이름 뒤에 숫자가 붙을 경우 제대로 검색되지 않아 영화와 숫자 사이의 공백을 만들어주고 프로미스에 집어넣음
             // let size = movieName.length
             // let part1 = movieName.slice(0, size - 1)
             // let part2 = movieName.slice(size - 1, size)
@@ -97,26 +114,52 @@
             // } else {
             //   movieName = part4 + " " + part3;
             // }
-            const promise = getMovieDetails(movieName);
+            let promise = getMovieDetails(movieName);
+
+            // tmdb데이터를 찾지 못한 경우
+            promise.then(function(result){
+              if(result===undefined){
+                movieName = conv(movieName);
+                if(movieName != ""){
+                  promise = getMovieDetails(movieName);
+                  console.log(movieName);
+                }
+              }
+            });
+
+
+
             promises.push(promise);
           }
           Promise.all(promises)
             .then(function (results) {
               for (let i = 0; i < results.length; i++) { // 영화 화면을 띄움
                 const movieDetails = results[i];
-                const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
+                let imageBaseUrl = "https://image.tmdb.org/t/p/w300"
+                let vote = 0;
+
+                if(movieDetails === undefined){
+                  imageBaseUrl = "/img/noPoster.jpg";
+                  console.log('tmdb 결과 없음');
+                }
+                else{
+                  imageBaseUrl += movieDetails.poster_path;
+                  vote = movieDetails.vote_average
+                }
+
+
 
                 let tag = "<div class=\"rank-item col-sm-3\">";
                 tag += "<a class='text-decoration-none text-black' id='adult-check' href='/detail/data/" + dailyBoxOfficeList[i].movieNm + "'>";
                 tag += "<div class=\"rank-img\" style=\"\">";
-                tag += "<img src=\"" + imageBaseUrl + movieDetails.poster_path + "\" alt=\"그림 들어갈 부분\" class=\"\">";
+                tag += "<img src=\"" + imageBaseUrl + "\" alt=\"그림 들어갈 부분\" class=\"\">";
                 tag += "<div class=\"rank-num\">";
                 tag += "<h4 class=\" \"><span class=''>" + dailyBoxOfficeList[i].rank + "</span></h4>";
                 tag += "</div>";
                 tag += "</div>";
                 tag += "<div class=\"\">";
                 tag += "<h4 class=\"rank-tit\">" + dailyBoxOfficeList[i].movieNm + "</h4>";
-                tag += "<p class=\"rank-desc\"> <span class='rank-sub'>평점</span> <span>" + movieDetails.vote_average + " </span><span class='rank-sub'>총 관람객</span> <span>" + putComma(dailyBoxOfficeList[i].audiAcc) + "명 </span></p>";
+                tag += "<p class=\"rank-desc\"> <span class='rank-sub'>평점</span> <span>" + vote + " </span><span class='rank-sub'>총 관람객</span> <span>" + putComma(dailyBoxOfficeList[i].audiAcc) + "명 </span></p>";
                 tag += "<p class=\"rank-desc\"><span class='rank-sub'>개봉일</span> <span>" + dailyBoxOfficeList[i].openDt + "</span></p>";
                 tag += "</div>";
                 tag += "</a></div>";
@@ -129,6 +172,7 @@
             });
         })
     });
+
 
     function adultcheck(adult) {
       if (adult) {
