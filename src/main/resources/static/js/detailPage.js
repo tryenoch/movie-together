@@ -630,7 +630,7 @@ $(document).ready(function () {
             // } else {
             //     movieName = part4 + " " + part3;
             // }
-            const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + movieName;
+            const urlStr = "https://api.themoviedb.org/3/search/movie?api_key=ad2f7390e457d7dc76e7fda8dcae77b2&language=ko-KR&page=1&query=" + conv(movieName);
             $.ajax({
                 url: urlStr,
                 type: "GET",
@@ -640,11 +640,13 @@ $(document).ready(function () {
                     const imageBaseUrl = "https://image.tmdb.org/t/p/w1280";
                     if (MovieDetailList.length > 0) {
                         const result = MovieDetailList[0];
-                        imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'rounded-start";
-                        overview = result.overview;
-                        releaseDate = result.release_date;
-                        resolve(true);
+                            imgSrc = imageBaseUrl + result.poster_path + "' alt='" + movieName + " 포스터' class = 'rounded-start";
+                            overview = result.overview;
+                            releaseDate = result.release_date;
+                    } else {
+                        imgSrc = "/img/noPoster.jpg";
                     }
+                    resolve(true);
                 },
                 error: function () {
                     reject("에러 발생");
@@ -672,6 +674,8 @@ $(document).ready(function () {
                     audience = data.audience;
                     boxOfficeRank = data.boxOfficeRank;
                     casts = data.casts;
+                    releaseDate = data.releaseDate;
+                    overview = "";
 
                     // 비동기 실행이 정상 실행 시 실행
                     resolve(true);
