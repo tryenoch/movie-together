@@ -64,7 +64,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     private String url;
 
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
-    public static String WEB_DRIVER_PATH = "C:\\chromeDriver\\chromedriver.exe";
+    public static String WEB_DRIVER_PATH = "file:///home/ec2-user/downloads/chromedriver-linux64/chromedriver";
 
     @Override
     public List<MovieTimeTableDto> getCgvSchedule(String title, String date, String code) throws Exception {
