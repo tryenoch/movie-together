@@ -64,7 +64,7 @@ public class MovieDetailServiceImpl implements MovieDetailService {
     private String url;
 
     public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
-    public static String WEB_DRIVER_PATH = "file:///home/ec2-user/downloads/chromedriver-linux64/chromedriver";
+    public static String WEB_DRIVER_PATH = "/home/ec2-user/downloads/chromedriver-linux64/chromedriver";
 
     @Override
     public List<MovieTimeTableDto> getCgvSchedule(String title, String date, String code) throws Exception {
@@ -86,14 +86,15 @@ public class MovieDetailServiceImpl implements MovieDetailService {
 
                 // WebDriver 옵션 설정
                 ChromeOptions options = new ChromeOptions();
-                options.addArguments("--disable-popup-blocking"); // 팝업 안띄움
+                /*options.addArguments("--disable-popup-blocking"); // 팝업 안띄움
                 options.addArguments("--enable-automation");
                 options.addArguments("--window-position=-100000,-100000");
                 options.addArguments("--window-size=0,0");
                 options.addArguments("--lang=ko");
-                options.addArguments("--disable-gpu");            //gpu 비활성화
-                options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음
 
+                options.addArguments("--blink-settings=imagesEnabled=false"); //이미지 다운 안받음*/
+
+                options.addArguments("--disable-gpu");            //gpu 비활성화
 
                 driver = new ChromeDriver(options);
                 driver.get(url);
