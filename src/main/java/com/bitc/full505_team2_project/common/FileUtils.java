@@ -39,7 +39,7 @@ public class FileUtils {
       cateName = "qna"; // 2번이면 문의게시판 폴더
     }
 
-    String path = "C:/upload/" + cateName + "/" + current.format(format);
+    String path = "file:///home/ec2-user/movietogether/img/upload/" + cateName + "/" + current.format(format);
 
     // 자바의 File 클래스, 객체 생성, 위에서 생성한 경로로
     File file = new File(path);
